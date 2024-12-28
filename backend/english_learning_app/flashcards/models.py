@@ -1,27 +1,42 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
 
 
-class Topic(models.Model):
+class CreatedBy(models.Model):
+	created_by = models.ForeignKey(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.SET_NULL,
+		null=True,
+		db_column='created_by'
+	)
+
+	class Meta:
+		abstract=True
+
+
+class Topic(CreatedBy):
 	name = models.CharField(max_length=100)
 
 	def __str__(self):
 		return self.name
 
 
-class Vocabulary(models.Model):
+class Vocabulary(CreatedBy):
 	word = models.CharField(max_length=100)
-	topic = models.ForeignKey(Topic, related_name='vocabularies', on_delete=models.CASCADE)
+	topic = models.ForeignKey(Topic, related_name='vocabularies', on_delete=models.SET_NULL, null=True)
 
 	def __str__(self):
 		return self.word
 
 
-class Translation(models.Model):
+class Translation(CreatedBy):
 	class LanguageEnums(models.TextChoices):
 		EN = ('en', _('English'))
+		VN = ('vn', _('Vietnamese'))
+		JA = ('ja', _('Japanese'))
 
-	vocabulary = models.ForeignKey(Vocabulary, related_name='translations', on_delete=models.CASCADE)
+	vocabulary = models.ForeignKey(Vocabulary, related_name='translations', on_delete=models.SET_NULL, null=True)
 	translation = models.CharField(max_length=200)
 	language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
 
