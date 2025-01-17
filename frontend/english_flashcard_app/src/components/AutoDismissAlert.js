@@ -11,10 +11,7 @@ const AutoDismissAlert = ({ id, message, type = 'success', duration = 1000, onCl
   
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(() => {
-        onClose(id);
-      }, 200);
+      handleCloseAlert(id);
     }, duration);
 
     return () => clearTimeout(timer);
