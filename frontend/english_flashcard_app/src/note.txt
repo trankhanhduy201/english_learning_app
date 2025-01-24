@@ -1,1 +1,2 @@
 1. React Query
+2. Check useMemo in Provider for returned data

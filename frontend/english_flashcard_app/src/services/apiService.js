@@ -1,4 +1,4 @@
-import * as apiConfigs from '../configs/apiConfigs'
+import * as apiConfigs from '../configs/apiConfigs';
 
 const API_BASE_URL = apiConfigs.API_BASE_URL;
 const API_TOKEN = apiConfigs.API_TOKEN;
@@ -10,10 +10,12 @@ export const callApi = async (endpoint, options = {}, throwEx = true) => {
   // }
 
   const headers = {
-    ...options?.header
+    ...options?.header,
+    'Content-Type': 'application/json'
   }
+
   try {
-    let dataJson = {}
+    let dataJson = {};
     const resp = await fetch(`${API_BASE_URL}/${endpoint}`, {
       ...options,
       headers

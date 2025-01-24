@@ -3,13 +3,13 @@ import * as topicsLoader from './loaders/topicLoader'
 import Home from "../pages/Home";
 import Topics from "../pages/Topics";
 import Error from "../pages/Error";
-import Layout from "../pages/Layout";
 import Topic from "../pages/Topic";
+import PrivateRoute from "../components/PrivateRoute";
 
 const routes = createBrowserRouter([
 	{
 		path: "/",
-    Component: Layout,
+    Component: PrivateRoute,
 		children: [
 			{
 				index: true,
