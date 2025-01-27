@@ -1,2 +1,6 @@
 1. React Query
 2. Check useMemo in Provider for returned data
+3. dispatch with payload is a promise
+
+Get-ExecutionPolicy
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser

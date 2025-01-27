@@ -1,17 +1,10 @@
 import Layout from "../pages/Layout";
 import * as authApi from "../services/authApi";
-import { Navigate } from "react-router-dom";
-import Cookies from 'js-cookie';
-
-const TOKEN_KEY = 'auth_token';
-const REFRESH_TOKEN_KEY = 'refresh_auth_token';
-const EXPIRE_MINUTES = 60; 
+import { Navigate, useNavigate } from "react-router-dom";
+import * as cookies from "../utils/cookies";
 
 const PrivateRoute = () => {
-  const token = Cookies.get(TOKEN_KEY);
-  const refreshToken = Cookies.get(REFRESH_TOKEN_KEY);
-  const expireDays = EXPIRE_MINUTES / 1440;
-
+  const { token, refreshToken } = cookies.getAuthTokens();
   const refreshNewToken = async (refresh) => {
     let newTokenData = {};
     if (!refresh) {
@@ -34,13 +27,11 @@ const PrivateRoute = () => {
 
     const { newToken, newRefresh } = await refreshNewToken(refreshToken, { throwEx: false });
     if (newToken) {
-      Cookies.set(TOKEN_KEY, newToken, { expires: expireDays, secure: true });
-      Cookies.set(REFRESH_TOKEN_KEY, newRefresh, { expires: expireDays, secure: true });
+      cookies.setAuthTokens(newToken, newRefresh);
       return true;
     }
 
-    Cookies.remove(TOKEN_KEY);
-    Cookies.remove(REFRESH_TOKEN_KEY);
+    cookies.clearAuthTokens();
     return false;
   }
 

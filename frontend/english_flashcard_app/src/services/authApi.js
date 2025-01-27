@@ -8,7 +8,6 @@ export const getToken = async (username, password, options = {}) => {
 }
 
 export const verifyToken = async (token, options = {}) => {
-  console.log(options);
   return await callApi('api/token/verify', {
     method: 'POST',
     body: JSON.stringify({ token })

@@ -5,8 +5,13 @@ import Topics from "../pages/Topics";
 import Error from "../pages/Error";
 import Topic from "../pages/Topic";
 import PrivateRoute from "../components/PrivateRoute";
+import Login from "../pages/Login";
 
 const routes = createBrowserRouter([
+	{
+		path: '/login',
+		element: <Login />
+	},
 	{
 		path: "/",
     Component: PrivateRoute,
