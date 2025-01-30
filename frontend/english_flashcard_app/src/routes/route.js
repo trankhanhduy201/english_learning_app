@@ -1,11 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import * as topicsLoader from './loaders/topicLoader'
-import Home from "../pages/Home";
-import Topics from "../pages/Topics";
 import Error from "../pages/Error";
-import Topic from "../pages/Topic";
-import PrivateRoute from "../components/PrivateRoute";
+import RenderPrivatePage from "../components/RenderPrivatePage";
 import Login from "../pages/Login";
+import Layout from "../pages/Layout";
 
 const routes = createBrowserRouter([
 	{
@@ -14,22 +12,22 @@ const routes = createBrowserRouter([
 	},
 	{
 		path: "/",
-    Component: PrivateRoute,
+    Component: Layout,
 		children: [
 			{
 				index: true,
 				path: '/',
-				element: <Home />
+				element: <RenderPrivatePage pageName={'home'} />
 			},
 			{
 				path: '/topics',
-				element: <Topics />,
+				element: <RenderPrivatePage pageName={'topics'} />,
 				errorElement: <Error />,
 				loader: topicsLoader.getTopics,
 			},
 			{
 				path: '/topic/:topicId',
-				element: <Topic />,
+				element: <RenderPrivatePage pageName={'topic'} />,
 				errorElement: <Error />,
 				loader: topicsLoader.getTopicById,
 			}

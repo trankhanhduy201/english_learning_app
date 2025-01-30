@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setError, clearError } from "../stores/slices/errorSlice"
+import { setAlert, clearAlert } from "../stores/slices/errorSlice"
+import * as alertConfigs from "../configs/alertConfigs";
 
 const useFetch = (callApiFunc) => {
   const [data, setData] = useState(null);
@@ -8,12 +9,15 @@ const useFetch = (callApiFunc) => {
 
   useEffect(() => {
     const callApi = async () => {
-      dispatch(clearError());
+      dispatch(clearAlert());
       try {
         const results = await callApiFunc();
         setData(results.data);
       } catch (error) {
-        dispatch(setError(error?.errors?.detail || 'Something wrong'));
+        dispatch(setAlert({
+          type: alertConfigs.ERROR_TYPE,
+          message: error?.errors?.detail || 'Something wrong'
+        }));
       }
     }
     callApi();

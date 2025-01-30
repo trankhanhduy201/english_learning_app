@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import * as authApi from "../services/authApi";
 import * as cookies from "../utils/cookies";
 import { useNavigate } from "react-router-dom";
+import * as alertConfigs from "../configs/alertConfigs";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../stores/slices/alertSlice";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -9,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,6 +24,10 @@ const Login = () => {
           resp.data.refresh
         );
         setError("");
+        dispatch(setAlert({
+          type: alertConfigs.SUCCESS_TYPE,
+          message: `Hi ${username}, wellcome back!`
+        }));
         navigate("/");
       })
       .catch(error => {

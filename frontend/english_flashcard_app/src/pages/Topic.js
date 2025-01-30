@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setError } from '../stores/slices/errorSlice';
+import { setAlert } from '../stores/slices/alertSlice';
 import Flashcard, { EMPTY_VOCAB } from '../components/Flashcard';
+import * as alertConfigs from "../configs/alertConfigs";
 
 const Topic = () => {
   const dispatch = useDispatch();
@@ -56,7 +57,10 @@ const Topic = () => {
         setVocabs(newVocabs);
         setOriginVocabs(newVocabs);
       } catch(error) {
-        dispatch(setError('Can not get vocabularies'));
+        dispatch(setAlert({
+          type: alertConfigs.ERROR_TYPE,
+          message: 'Can not get vocabularies'
+        }));
       }
     }
 
