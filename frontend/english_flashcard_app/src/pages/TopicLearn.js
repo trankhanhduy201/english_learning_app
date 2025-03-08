@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '../stores/slices/alertSlice';
 import Flashcard, { EMPTY_VOCAB } from '../components/Flashcard';
 import * as alertConfigs from "../configs/alertConfigs";
+import _ from "lodash";
 
 const Topic = () => {
   const dispatch = useDispatch();
@@ -14,44 +15,32 @@ const Topic = () => {
   
   let reverseVocabs = useMemo(() => {
     return vocabs.reduce((newVocabs, vocab) => {
-      const translationsToVocabs = () => {
-        return vocab.translations['en'].reduce((newTranslations, translation) => {
-          newTranslations.push({
+      // Convert translations to vocabs
+      const trans2Vocabs = () => {
+        return vocab.translations['en'].reduce((newTrans, trans) => {
+          newTrans.push({
             ...EMPTY_VOCAB,
-            word: translation.translation,
-            translations: {en: [{ translation: vocab.word }]}
+            word: trans.translation,
+            translations: {en: [{ trans: vocab.word }]}
           });
-          return newTranslations;
+          return newTrans;
         }, []);
       }
 
+      // Merge to new vocabs
       return [
         ...newVocabs, 
-        ...translationsToVocabs()
+        ...trans2Vocabs()
       ];
     }, []);
   }, [originVocabs]);
   
   useEffect(() => {
     const getVocabs = async () => {
-      const getTranslations = translations => {
-        return translations.reduce((accumulator, item) => {
-          const lang = item.language || '';
-          if (!lang) {
-            return accumulator;
-          }
-          if (!accumulator[lang]) {
-            accumulator[lang] = [];
-          }
-          accumulator[lang].push(item);
-          return accumulator;
-        }, {});
-      }
-
       try {
         const results = await vocabsPromise;
         const newVocabs = results.data.map(item => {
-          item.translations = getTranslations(item.translations);
+          item.translations = _.groupBy(item.translations, 'language');
           return item;
         }, []);
         setVocabs(newVocabs);
