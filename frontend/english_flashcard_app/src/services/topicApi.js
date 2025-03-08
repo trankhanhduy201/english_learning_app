@@ -11,3 +11,11 @@ export const getTopicById = async (id) => {
     method: 'GET'
   });
 };
+
+export const updateTopic = async (id, datas, options = {}) => {
+  return await callApi(`/topics/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(datas),
+    ...options
+  });
+}

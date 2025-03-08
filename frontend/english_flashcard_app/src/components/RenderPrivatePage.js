@@ -2,8 +2,10 @@ import * as authApi from "../services/authApi";
 import { Navigate } from "react-router-dom";
 import * as cookies from "../utils/cookies";
 import Home from "../pages/Home";
-import Topics from "./Topics";
+import Topics from "../pages/Topics";
 import Topic from "../pages/Topic";
+import TopicLearn from "../pages/TopicLearn";
+import Vocab from "../pages/Vocab";
 
 const refreshNewToken = async (refresh) => {
   let newTokenData = {};
@@ -50,6 +52,10 @@ const PrivateRoute = ({ pageName }) => {
       return <Topics />;
     case 'topic':
       return <Topic />;
+    case 'topic_learn':
+      return <TopicLearn />;
+    case 'vocab':
+      return <Vocab />;
   }
 };
 

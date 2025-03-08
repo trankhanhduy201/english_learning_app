@@ -58,7 +58,7 @@ function Flashcard({ vocabs = [], onReverseVocabs }) {
                   <div className="flashcard-content">
                     <hr />
                     {vocab.translations['en'] && vocab.translations['en'].map((item, index) => (
-                      <>{item.translation + (index < item.translation.length - 1 ? '' : ', ')}</>
+                      <>{item.translation + (index < vocab.translations['en'].length - 1 ? ', ' : '')}</>
                     ))}
                     <div className="text-start mt-2">
                       Examples:

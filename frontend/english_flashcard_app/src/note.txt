@@ -1,6 +1,9 @@
 1. React Query
 2. Check useMemo in Provider for returned data
 3. dispatch with payload is a promise
+4. utilize use, and combine with suspend for suspense-enabled data fetching. (requires React 18+)
+Loader data + Non critical data (Suspend + use (react > 19) + Error Boundaries)
+Loader data + Non critical data (Suspend + Await + Error Boundaries)
 
 Get-ExecutionPolicy
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser

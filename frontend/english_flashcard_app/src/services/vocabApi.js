@@ -6,3 +6,9 @@ export const getVocabs = async (topicId, lang = 'en') => {
     method: 'GET'
   });
 }
+
+export const getVocab = async (vocabId) => {
+  return await callApi(`vocabularies/${vocabId}/`, {
+    method: 'GET'
+  });
+}

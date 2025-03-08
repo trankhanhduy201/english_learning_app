@@ -11,7 +11,7 @@ export const getTopics = async () => {
   }
 }
 
-export const getTopicById = async ({ request, params }) => {
+export const getTopic = async ({ request, params }) => {
   try {
     const url = new URL(request.url);
     const topicResp = await topicApi.getTopicById(params.topicId);

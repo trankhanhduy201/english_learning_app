@@ -5,7 +5,7 @@ const Topics = () => {
 
   return (
     <>
-        <h1>Topics</h1>
+        <h1 className='text-start'>Topics</h1>
         <hr />
         <ListTopic />
     </>

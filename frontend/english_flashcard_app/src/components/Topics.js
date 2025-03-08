@@ -12,7 +12,7 @@ const Topics = () => {
               <th>#</th>
               <th>Topic</th>
               <th>Description</th>
-              <th>Action</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -22,8 +22,15 @@ const Topics = () => {
                 <td>{topic.name}</td>
                 <td>{topic.description}</td>
                 <td>
-                  <Link className="btn btn-primary btn-sm" to={`/topic/${topic.id}`}>Learn</Link>
-                  <button className="btn btn-danger btn-sm ms-1">Remove</button>
+                  <Link to={`/topic/${topic.id}/learn`} className="me-2">
+                    <i class="bi bi-clipboard-pulse text-dark"></i>
+                  </Link>
+                  <Link to={`/topic/${topic.id}`} className="me-2">
+                    <i class="bi bi-pencil-square text-dark"></i>
+                  </Link>
+                  <Link to={`/topic/${topic.id}`}>
+                    <i class="bi bi-trash text-dark"></i>
+                  </Link>
                 </td>
               </tr>
             ))}
