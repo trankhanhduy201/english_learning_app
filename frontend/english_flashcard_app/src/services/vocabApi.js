@@ -7,8 +7,16 @@ export const getVocabs = async (topicId, lang = 'en') => {
   });
 }
 
-export const getVocab = async (vocabId) => {
-  return await callApi(`vocabularies/${vocabId}/`, {
+export const getVocab = async (id) => {
+  return await callApi(`vocabularies/${id}/`, {
     method: 'GET'
+  });
+}
+
+export const updateVocab = async (id, datas, options = {}) => {
+  return await callApi(`/vocabularies/${id}/`, {
+    method: 'PUT',
+    body: JSON.stringify(datas),
+    ...options
   });
 }

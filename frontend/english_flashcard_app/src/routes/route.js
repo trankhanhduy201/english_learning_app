@@ -1,7 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
-import * as topicsLoader from './loaders/topicLoader'
-import * as vocabsLoader from './loaders/vocabLoader'
-import * as topicsAction from './actions/topicAction'
+import * as topicsLoader from './loaders/topicLoader';
+import * as vocabsLoader from './loaders/vocabLoader';
+import * as topicsAction from './actions/topicAction';
+import * as vocabsAction from './actions/vocabAction';
+import * as transAction from './actions/transAction';
 import Error from "../pages/Error";
 import RenderPrivatePage from "../components/RenderPrivatePage";
 import Login from "../pages/Login";
@@ -35,12 +37,19 @@ const routes = createBrowserRouter([
         element: <RenderPrivatePage pageName={'topic'} />,
         loader: topicsLoader.getTopic,
         action: topicsAction.editTopic,
-        shouldRevalidate: defaultShouldRevalidate,
+        shouldRevalidate: defaultShouldRevalidate
       },
       {
         path: '/topic/:topicId/vocab/:vocabId',
         element: <RenderPrivatePage pageName={'vocab'} />,
         loader: vocabsLoader.getVocab,
+        action: vocabsAction.editVocab,
+        shouldRevalidate: defaultShouldRevalidate
+      },
+      {
+        path: '/translation/:transId',
+        action: transAction.editTrans,
+        shouldRevalidate: defaultShouldRevalidate
       },
       {
         path: '/topic/:topicId/learn',
