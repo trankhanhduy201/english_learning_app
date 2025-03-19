@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Await, useFetcher, useLoaderData, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Tab, Tabs, Form } from "react-bootstrap";
@@ -26,8 +26,9 @@ const Vocab = () => {
   const dispatch = useDispatch();
   const { topicId, vocabId } = useParams();
   const { vocab, topics: topicsPromise } = useLoaderData();
-  const [translations, setTranslations] = useState(
-    _.groupBy(vocab.translations.map((t, index) => ({ ...t, idx: index })), 'language')
+  const [ activeTab, setActiveTab ] = useState('en');
+  const [ translations, setTranslations ] = useState(
+    _.groupBy(vocab.translations.map((v, i) => ({ ...v, idx: i })), 'language')
   );
 
   useEffect(() => {
@@ -48,7 +49,8 @@ const Vocab = () => {
 
   const handleAddTrans = (lang) => {
     setTranslations(oldState => {
-      const newId = Math.max(...oldState[lang].map(t => t.id)) + 1;
+      const newId = Math.max(...oldState[lang].map(v => v.idx)) + 1;
+      console.log([...oldState[lang], { translation: '', language: lang, idx: newId }]);
       return {
         ...oldState,
         [lang]: [...oldState[lang], { translation: '', language: lang, idx: newId }]
@@ -78,6 +80,40 @@ const Vocab = () => {
         };
       });
     }
+  };
+
+  const textRef = useRef(null);
+  const languageRef = useRef(null);
+  const handleAddLang = () => {
+    const nWord = textRef.current.value;
+    const sLang= languageRef.current.value;
+    if (!nWord || !sLang) {
+      textRef.current.style.borderColor = !nWord ? 'red' : '';
+      languageRef.current.style.borderColor = !sLang ? 'red' : '';
+      return;
+    }
+
+    setTranslations(oldState => {
+      let newVocab = { 
+        translation: nWord, 
+        language: sLang, 
+        idx: 0 
+      }
+
+      if (!oldState[sLang]) {
+        return { ...oldState, [sLang]: [newVocab] };
+      }
+
+      newVocab.idx = Math.max(...oldState[sLang].map(t => t.idx)) + 1;
+      return { ...oldState, [sLang]: [...oldState[sLang], newVocab]};
+    });
+
+    // Reset input fields
+    textRef.current.value = "";
+    languageRef.current.value = "";
+    textRef.current.style.borderColor = '';
+    languageRef.current.style.borderColor = '';
+    setActiveTab(sLang);
   };
 
   return (
@@ -128,13 +164,24 @@ const Vocab = () => {
                   ))}
                 </ul>
               )}
+              <div className="mb-3">
+                <label htmlFor="description" className="form-label">Description</label>
+                <textarea className="form-control" name="description">{vocab?.description}</textarea>
+              </div>
+              {vocabFetcher.data?.errors?.description && (
+                <ul>
+                  {vocabFetcher.data.errors.description.map((error, index) => (
+                    <li className='text-danger' key={index}>{error}</li>
+                  ))}
+                </ul>
+              )}
           </div>
           <div className="col-lg-6 text-start">
             <h1 className='text-start'>Translations</h1>
             <div className="container mt-4">
-              <Tabs defaultActiveKey="en" id="my-tabs" className="mb-3">
+              <Tabs activeKey={activeTab} onSelect={k => setActiveTab(k)} id="my-tabs" className="mb-3">
                 {Object.keys(translations).map((lang, index) => 
-                  <Tab key={index} eventKey={lang} title={lang}>
+                  <Tab key={index} eventKey={lang} title={lang} >
                     <DndContext
                       sensors={sensors}
                       collisionDetection={closestCenter}
@@ -163,20 +210,20 @@ const Vocab = () => {
                                         <input
                                           type="text"
                                           className="form-control"
-                                          name={`translations[${item.idx}][translation]`}
+                                          name={`translations[${lang}][${item.idx}][translation]`}
                                           defaultValue={item.translation}
                                         />
                                         <input
                                           type="hidden"
                                           className="form-control"
-                                          name={`translations[${item.idx}][language]`}
+                                          name={`translations[${lang}][${item.idx}][language]`}
                                           defaultValue={lang}
                                         />
                                         {item.id && (
                                           <input 
                                             type="hidden"
                                             className="form-control"
-                                            name={`translations[${item.idx}][id]`}
+                                            name={`translations[${lang}][${item.idx}][id]`}
                                             defaultValue={item.id}
                                           />
                                         )}
@@ -214,6 +261,26 @@ const Vocab = () => {
                     </DndContext>
                   </Tab>
                 )}
+                <Tab key={Object.keys(translations).length + 1} eventKey={'＋'} title={'＋'}>
+                  <div className="mb-3">
+                    <label htmlFor="textInput" className="form-label">Enter word</label>
+                    <input type="text" className="form-control" id="textInput" placeholder="Type something..." ref={textRef} />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="languageSelect" className="form-label">Select Language</label>
+                    <select className="form-select" id="languageSelect" ref={languageRef}>
+                      <option value="">-- No choice --</option>
+                      <option value="en">English</option>
+                      <option value="ja">Japanese (日本語)</option>
+                      <option value="vn">Vietnamese (Tiếng Việt)</option>
+                    </select>
+                  </div>
+                  <div className="mb-3 text-end">
+                    <button type="button" className='btn btn-secondary' onClick={() => handleAddLang()}>
+                      <i className="bi bi-plus-circle"></i> New
+                    </button>
+                  </div>
+                </Tab>
               </Tabs>
             </div>
           </div>
