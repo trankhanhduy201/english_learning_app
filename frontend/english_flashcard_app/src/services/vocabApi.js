@@ -20,3 +20,11 @@ export const updateVocab = async (id, datas, options = {}) => {
     ...options
   });
 }
+
+export const createVocab = async (datas, options = {}) => {
+  return await callApi(`/vocabularies/`, {
+    method: 'POST',
+    body: JSON.stringify(datas),
+    ...options
+  });
+}

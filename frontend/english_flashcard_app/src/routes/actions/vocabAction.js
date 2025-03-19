@@ -1,3 +1,4 @@
+import { redirect } from "react-router-dom";
 import * as vocabApi from "../../services/vocabApi";
 import qs from "qs";
 
@@ -13,6 +14,14 @@ const getTrans = (trans) => {
 export const editVocab = async ({ request, params }) => {
   const formData = await request.formData();
   const updateVocab = qs.parse(Object.fromEntries(formData));
+
+  if (params.vocabId === 'new') {
+    return await vocabApi.createVocab({
+      ...updateVocab,
+      translations: getTrans(updateVocab?.translations)
+    }, { throwEx: false });
+  }
+
 	return await vocabApi.updateVocab(
     params.vocabId, 
     { ...updateVocab, id: params.vocabId, translations: getTrans(updateVocab?.translations) }, 

@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
-import { Await, useFetcher, useLoaderData, useParams } from 'react-router-dom';
+import { Await, useFetcher, useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Tab, Tabs, Form } from "react-bootstrap";
 import _ from "lodash";
@@ -21,24 +21,35 @@ import {
 } from '@dnd-kit/sortable';
 import { SortableTr } from '../components/SortableTr';
 
+const EVENT_KEY_NEW_TAB = 'new';
+
 const Vocab = () => {
+  const navigate = useNavigate();
   const vocabFetcher = useFetcher();
   const dispatch = useDispatch();
   const { topicId, vocabId } = useParams();
   const { vocab, topics: topicsPromise } = useLoaderData();
   const [ activeTab, setActiveTab ] = useState('en');
   const [ translations, setTranslations ] = useState(
-    _.groupBy(vocab.translations.map((v, i) => ({ ...v, idx: i })), 'language')
+    _.groupBy(vocab?.translations.map((v, i) => ({ ...v, idx: i })), 'language')
   );
+
 
   useEffect(() => {
     if (vocabFetcher.data?.status === "success") {
       dispatch(setAlert({
         type: alertConfigs.SUCCESS_TYPE,
-        message: "Vocab updated successfully"
+        message: `Vocab is ${vocabId === 'new' ? 'created' : 'updated'} successfully`
       }));
+      if (vocabId === 'new') {
+        navigate(`/topic/${topicId}/vocab/${vocabFetcher.data.data.id}`);
+      }
     }
   }, [vocabFetcher.data]);
+
+  useEffect(() => {
+    setActiveTab(oldState => translations.length > 0 ? Object.keys(translations)[0] : EVENT_KEY_NEW_TAB);
+  }, []);
 
   const handleDelTrans = (idx, lang) => {
     setTranslations(oldState => ({
@@ -50,7 +61,6 @@ const Vocab = () => {
   const handleAddTrans = (lang) => {
     setTranslations(oldState => {
       const newId = Math.max(...oldState[lang].map(v => v.idx)) + 1;
-      console.log([...oldState[lang], { translation: '', language: lang, idx: newId }]);
       return {
         ...oldState,
         [lang]: [...oldState[lang], { translation: '', language: lang, idx: newId }]
@@ -118,18 +128,18 @@ const Vocab = () => {
 
   return (
     <div className="container mt-4">
-      <vocabFetcher.Form action={`/topic/${topicId}/vocab/${vocabId}`} method="put">
+      <vocabFetcher.Form action={`/topic/${topicId}/vocab/${vocabId}`} method={vocabId === 'new' ? 'POST' : 'PUT'}>
         <div className="row">
           <div className="col-lg-6 text-start mb-4">
             <h1 className='text-start'>Vocab info</h1>
               <input type="hidden" name="_not_revalidate" defaultValue={'1'}/>
               <div className="mb-3">
                 <label htmlFor="word" className="form-label">Name</label>
-                <input type="text" className="form-control" name="word" defaultValue={vocab.word}/>
+                <input type="text" className="form-control" name="word" defaultValue={vocab?.word}/>
               </div>
-              {vocabFetcher.data?.errors?.name && (
+              {vocabFetcher.data?.errors?.word && (
                 <ul>
-                  {vocabFetcher.data.errors.name.map((error, index) => (
+                  {vocabFetcher.data.errors.word.map((error, index) => (
                     <li className='text-danger' key={index}>{error}</li>
                   ))}
               </ul>
@@ -143,7 +153,7 @@ const Vocab = () => {
                           <Form.Select
                             className='form-control'
                             name='topic'
-                            defaultValue={vocab.topic}
+                            defaultValue={vocab?.topic}
                           >
                             <option value=''>-- No choice --</option>
                             {data.data && (
@@ -157,9 +167,9 @@ const Vocab = () => {
                     </Await>
                   </Suspense>
               </div>
-              {vocabFetcher.data?.errors?.topic_id && (
+              {vocabFetcher.data?.errors?.topic && (
                 <ul>
-                  {vocabFetcher.data.errors.topic_id.map((error, index) => (
+                  {vocabFetcher.data.errors.topic.map((error, index) => (
                     <li className='text-danger' key={index}>{error}</li>
                   ))}
                 </ul>
@@ -261,7 +271,7 @@ const Vocab = () => {
                     </DndContext>
                   </Tab>
                 )}
-                <Tab key={Object.keys(translations).length + 1} eventKey={'＋'} title={'＋'}>
+                <Tab key={Object.keys(translations).length + 1} eventKey={EVENT_KEY_NEW_TAB} title={'＋'}>
                   <div className="mb-3">
                     <label htmlFor="textInput" className="form-label">Enter word</label>
                     <input type="text" className="form-control" id="textInput" placeholder="Type something..." ref={textRef} />
