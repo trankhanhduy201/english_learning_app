@@ -20,7 +20,7 @@ const Topics = () => {
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{topic.name}</td>
-                <td>{topic.description}</td>
+                <td>{topic.descriptions}</td>
                 <td>
                   <Link to={`/topic/${topic.id}/learn`} className="me-2">
                     <i class="bi bi-clipboard-pulse text-dark"></i>

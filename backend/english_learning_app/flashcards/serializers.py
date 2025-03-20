@@ -5,7 +5,7 @@ from .models import Topic, Vocabulary, Translation
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
-        fields = ['id', 'name', 'created_by']
+        fields = ['id', 'name', 'descriptions', 'created_by']
 
 
 class TranslationSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class VocabularySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vocabulary
-        fields = ['id', 'word', 'topic', 'translations', 'created_by']
+        fields = ['id', 'word', 'topic', 'translations', 'descriptions', 'created_by']
 
     def _create_or_update_translations(self, instance, translations):
         if len(translations) > 0:
@@ -27,20 +27,21 @@ class VocabularySerializer(serializers.ModelSerializer):
             translation_ids = [item['id'] for item in self.data.get('translations') if 'id' in item]
 
             # For update existed item
+            update_fields = ['translation', 'language']
             updated_ids = []
             update_translations = Translation.objects.filter(pk__in=translation_ids, vocabulary=instance)
             if len(update_translations) > 0:
                 for translation in update_translations:
-                    update_data = [item for item in translations if 'id' in item and item['id'] == translation.id]
-                    if len(update_data) > 0:
+                    update_data = next((item for item in translations if 'id' in item and int(item['id']) == translation.id), None)
+                    if update_data:
                         updated_ids.append(translation.id)
-                        translation.__dict__.update(update_data[0])
-                Translation.objects.bulk_update(update_translations, ['translation', 'language'])
+                        translation.__dict__.update({k: v for k, v in update_data.items() if k in update_fields})
+                Translation.objects.bulk_update(update_translations, update_fields)
 
             # For create new item
             new_translations = []
             for translation in translations:
-                if 'id' not in translation or translation['id'] not in translation_ids:
+                if 'id' not in translation or int(translation['id']) not in translation_ids:
                     new_translations.append(Translation(vocabulary=instance, **translation))
             if len(new_translations) > 0:
                 Translation.objects.bulk_create(new_translations)

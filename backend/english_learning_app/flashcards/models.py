@@ -17,6 +17,7 @@ class CreatedBy(models.Model):
 
 class Topic(CreatedBy):
 	name = models.CharField(max_length=100)
+	descriptions = models.TextField(blank=True, null=True)
 
 	def __str__(self):
 		return self.name
@@ -25,6 +26,7 @@ class Topic(CreatedBy):
 class Vocabulary(CreatedBy):
 	word = models.CharField(max_length=100)
 	topic = models.ForeignKey(Topic, related_name='vocabularies', on_delete=models.SET_NULL, null=True)
+	descriptions = models.TextField(blank=True, null=True)
 
 	def __str__(self):
 		return self.word

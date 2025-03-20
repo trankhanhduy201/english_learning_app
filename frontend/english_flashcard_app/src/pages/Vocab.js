@@ -48,7 +48,8 @@ const Vocab = () => {
   }, [vocabFetcher.data]);
 
   useEffect(() => {
-    setActiveTab(oldState => translations.length > 0 ? Object.keys(translations)[0] : EVENT_KEY_NEW_TAB);
+    const langs = Object.keys(translations)
+    setActiveTab(oldState => langs.length > 0 ? langs[0] : EVENT_KEY_NEW_TAB);
   }, []);
 
   const handleDelTrans = (idx, lang) => {
@@ -153,7 +154,7 @@ const Vocab = () => {
                           <Form.Select
                             className='form-control'
                             name='topic'
-                            defaultValue={vocab?.topic}
+                            defaultValue={topicId}
                           >
                             <option value=''>-- No choice --</option>
                             {data.data && (
@@ -175,12 +176,12 @@ const Vocab = () => {
                 </ul>
               )}
               <div className="mb-3">
-                <label htmlFor="description" className="form-label">Description</label>
-                <textarea className="form-control" name="description">{vocab?.description}</textarea>
+                <label htmlFor="descriptions" className="form-label">Descriptions</label>
+                <textarea rows={5} className="form-control" name="descriptions">{vocab?.descriptions}</textarea>
               </div>
-              {vocabFetcher.data?.errors?.description && (
+              {vocabFetcher.data?.errors?.descriptions && (
                 <ul>
-                  {vocabFetcher.data.errors.description.map((error, index) => (
+                  {vocabFetcher.data.errors.descriptions.map((error, index) => (
                     <li className='text-danger' key={index}>{error}</li>
                   ))}
                 </ul>
@@ -287,7 +288,7 @@ const Vocab = () => {
                   </div>
                   <div className="mb-3 text-end">
                     <button type="button" className='btn btn-secondary' onClick={() => handleAddLang()}>
-                      <i className="bi bi-plus-circle"></i> New
+                      <i className="bi bi-plus-circle"></i> Add
                     </button>
                   </div>
                 </Tab>

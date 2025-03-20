@@ -48,12 +48,12 @@ const Topic = () => {
               </ul>
             )}
             <div className="mb-3">
-              <label htmlFor="description" className="form-label">Description</label>
-              <textarea className="form-control" name="description">{topic?.description}</textarea>
+              <label htmlFor="descriptions" className="form-label">Descriptions</label>
+              <textarea rows={5} className="form-control" name="descriptions">{topic?.descriptions}</textarea>
             </div>
-            {fetcher.data?.errors?.description && (
+            {fetcher.data?.errors?.descriptions && (
               <ul>
-                {fetcher.data.errors.description.map((error, index) => (
+                {fetcher.data.errors.descriptions.map((error, index) => (
                   <li className='text-danger' key={index}>{error}</li>
                 ))}
               </ul>
@@ -75,7 +75,7 @@ const Topic = () => {
                         <tr>
                           <th>#</th>
                           <th>Word</th>
-                          <th>Description</th>
+                          <th>Descriptions</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -85,7 +85,7 @@ const Topic = () => {
                             <tr key={vocab.id}>
                               <td>{index + 1}</td>
                               <td>{vocab.word}</td>
-                              <td>{vocab.description}</td>
+                              <td>{vocab.descriptions}</td>
                               <td>
                                 <div className='d-flex justify-content-end'>
                                   <Link to={`/topic/${topicId}/vocab/${vocab.id}`} className="me-2">
@@ -110,7 +110,7 @@ const Topic = () => {
                         <tr>
                           <td className='text-end' colSpan="4">
                             <Link to={`/topic/${topicId}/vocab/new`} className="btn btn-secondary">
-                              <i className="bi bi-plus-circle"></i> Add
+                              <i className="bi bi-plus-circle"></i> New
                             </Link>
                           </td>
                         </tr>
