@@ -3,6 +3,8 @@ import * as apiConfigs from '../configs/apiConfigs';
 const API_BASE_URL = apiConfigs.API_BASE_URL;
 const API_TOKEN = apiConfigs.API_TOKEN;
 
+const checkStatusNoContent = (status) => [204, 304].includes(status);
+
 export const callApi = async (endpoint, options = {}) => {
   const headers = {
     Authorization: `Bearer ${API_TOKEN}`,
@@ -22,8 +24,10 @@ export const callApi = async (endpoint, options = {}) => {
       ...options,
       headers
     });
+    
     const contentType = resp.headers.get('Content-Type');
-    if (contentType && contentType.includes('application/json')) {
+    //const contentLength = resp.headers.get('Content-Length');
+    if (!checkStatusNoContent(resp.status) && contentType && contentType.includes('application/json')) {
       dataJson = await resp.json();
     }
 

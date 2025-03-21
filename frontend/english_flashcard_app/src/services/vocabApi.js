@@ -28,3 +28,9 @@ export const createVocab = async (datas, options = {}) => {
     ...options
   });
 }
+
+export const deleteVocab = async (id, options = {}) => {
+  return await callApi(`/vocabularies/${id}/`, {
+    method: 'DELETE'
+  });
+}

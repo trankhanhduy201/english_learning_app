@@ -1,4 +1,4 @@
-import { redirect } from "react-router-dom";
+import { data } from "react-router-dom";
 import * as vocabApi from "../../services/vocabApi";
 import qs from "qs";
 
@@ -20,6 +20,15 @@ export const editVocab = async ({ request, params }) => {
       ...updateVocab,
       translations: getTrans(updateVocab?.translations)
     }, { throwEx: false });
+  }
+
+  if (params.action === 'delete') {
+    // await vocabApi.deleteVocab(params.vocabId, { throwEx: false });
+    
+    return { 
+      status: 'success',
+      data: { id: params.vocabId }
+    };
   }
 
 	return await vocabApi.updateVocab(

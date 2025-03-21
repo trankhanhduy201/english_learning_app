@@ -20,6 +20,7 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { SortableTr } from '../components/SortableTr';
+import * as utils from '../utils/commons';
 
 const EVENT_KEY_NEW_TAB = 'new';
 
@@ -42,7 +43,11 @@ const Vocab = () => {
         message: `Vocab is ${vocabId === 'new' ? 'created' : 'updated'} successfully`
       }));
       if (vocabId === 'new') {
-        navigate(`/topic/${topicId}/vocab/${vocabFetcher.data.data.id}`);
+        if (vocabFetcher.data.data?.id) {
+          navigate(`/topic/${topicId}/vocab/${vocabFetcher.data.data.id}`);
+        } else {
+          navigate(`/topic/${topicId}`);
+        }
       }
     }
   }, [vocabFetcher.data]);
@@ -61,7 +66,7 @@ const Vocab = () => {
 
   const handleAddTrans = (lang) => {
     setTranslations(oldState => {
-      const newId = Math.max(...oldState[lang].map(v => v.idx)) + 1;
+      const newId = utils.getNextMaxId(oldState[lang], 'idx');
       return {
         ...oldState,
         [lang]: [...oldState[lang], { translation: '', language: lang, idx: newId }]
@@ -177,7 +182,7 @@ const Vocab = () => {
               )}
               <div className="mb-3">
                 <label htmlFor="descriptions" className="form-label">Descriptions</label>
-                <textarea rows={5} className="form-control" name="descriptions">{vocab?.descriptions}</textarea>
+                <textarea rows={5} className="form-control" name="descriptions" defaultValue={vocab?.descriptions}></textarea>
               </div>
               {vocabFetcher.data?.errors?.descriptions && (
                 <ul>

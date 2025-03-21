@@ -40,7 +40,7 @@ const routes = createBrowserRouter([
         shouldRevalidate: defaultShouldRevalidate
       },
       {
-        path: '/topic/:topicId/vocab/:vocabId',
+        path: '/topic/:topicId/vocab/:vocabId/:action?',
         element: <RenderPrivatePage pageName={'vocab'} />,
         loader: vocabsLoader.getVocab,
         action: vocabsAction.editVocab,
