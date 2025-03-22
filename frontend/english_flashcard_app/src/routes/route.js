@@ -33,7 +33,7 @@ const routes = createBrowserRouter([
         loader: topicsLoader.getTopics,
       },
       {
-        path: '/topic/:topicId',
+        path: '/topic/:topicId/:action?',
         element: <RenderPrivatePage pageName={'topic'} />,
         loader: topicsLoader.getTopic,
         action: topicsAction.editTopic,

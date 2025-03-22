@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
-import { Await, useFetcher, useLoaderData, useNavigate, useParams } from 'react-router-dom';
+import { Await, Link, useFetcher, useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Tab, Tabs, Form } from "react-bootstrap";
 import _ from "lodash";
@@ -131,6 +131,26 @@ const Vocab = () => {
     languageRef.current.style.borderColor = '';
     setActiveTab(sLang);
   };
+
+  const delVocabFetcher = useFetcher();
+  const handleDelVocab = () => {
+    const formData = new FormData();
+    formData.append('_not_revalidate', '1');
+    delVocabFetcher.submit(formData, {
+      action: `/topic/${topicId}/vocab/${vocabId}/delete`, 
+      method: 'delete'
+    });
+  }
+
+  useEffect(() => {
+    if (delVocabFetcher.data?.status === "success") {
+      dispatch(setAlert({
+        type: alertConfigs.SUCCESS_TYPE,
+        message: "Vocab deleted successfully"
+      }));
+      navigate(`/topic/${topicId}`);
+    }
+  }, [delVocabFetcher.data]);
 
   return (
     <div className="container mt-4">
@@ -301,8 +321,14 @@ const Vocab = () => {
             </div>
           </div>
           <div className='d-flex justify-content-start'>
-            <button type="submit" className="btn btn-primary" disabled={vocabFetcher.state === "submitting"}>
-              {vocabFetcher.state === "submitting" ? "Saving..." : "Save"}
+            <Link to={`/topic/${topicId}`} className="btn btn-secondary me-2">
+              <i className="bi bi-arrow-left"></i> Back
+            </Link>
+            <button type="submit" className="btn btn-primary me-2" disabled={vocabFetcher.state === "submitting"}>
+              <i className="bi bi-pencil-square text-white"></i> {vocabFetcher.state === "submitting" ? "Saving..." : "Save"}
+            </button>
+            <button type="button" className="btn btn-danger" disabled={delVocabFetcher.state === "submitting"} onClick={handleDelVocab}>
+              <i className="bi bi-trash text-white"></i> {delVocabFetcher.state === "submitting" ? "Deleting..." : "Delete"}
             </button>
           </div>
         </div>

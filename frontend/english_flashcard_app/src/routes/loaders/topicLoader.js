@@ -13,14 +13,18 @@ export const getTopics = async () => {
 
 export const getTopic = async ({ request, params }) => {
   try {
-    const url = new URL(request.url);
-    const topicResp = await topicApi.getTopicById(params.topicId);
-    const vocabResp = vocabApi.getVocabs(
-      params.topicId,
-      url.searchParams.get('lang') || langConfigs.DEFAULT_LANG
-    );
+    let topicResp = null;
+    let vocabResp = null;
+    if (params.topicId !== 'new') {
+      const url = new URL(request.url);
+      topicResp = await topicApi.getTopicById(params.topicId);
+      vocabResp = vocabApi.getVocabs(
+        params.topicId,
+        url.searchParams.get('lang') || langConfigs.DEFAULT_LANG
+      );
+    }
     return {
-      topic: topicResp.data,
+      topic: topicResp ? topicResp.data : topicResp,
       vocabs: vocabResp
     };
   } catch (error) {

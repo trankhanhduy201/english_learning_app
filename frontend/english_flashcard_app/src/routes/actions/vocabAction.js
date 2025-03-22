@@ -23,7 +23,7 @@ export const editVocab = async ({ request, params }) => {
   }
 
   if (params.action === 'delete') {
-    // await vocabApi.deleteVocab(params.vocabId, { throwEx: false });
+    await vocabApi.deleteVocab(params.vocabId, { throwEx: false });
     
     return { 
       status: 'success',
