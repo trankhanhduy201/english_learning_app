@@ -23,13 +23,13 @@ const Topics = () => {
                 <td>{topic.descriptions}</td>
                 <td>
                   <Link to={`/topic/${topic.id}/learn`} className="me-2">
-                    <i class="bi bi-clipboard-pulse text-dark"></i>
+                    <i className="bi bi-clipboard-pulse text-dark"></i>
                   </Link>
                   <Link to={`/topic/${topic.id}`} className="me-2">
-                    <i class="bi bi-pencil-square text-dark"></i>
+                    <i className="bi bi-pencil-square text-dark"></i>
                   </Link>
                   <Link to={`/topic/${topic.id}`}>
-                    <i class="bi bi-trash text-dark"></i>
+                    <i className="bi bi-trash text-dark"></i>
                   </Link>
                 </td>
               </tr>

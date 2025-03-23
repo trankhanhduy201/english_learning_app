@@ -1,11 +1,8 @@
 import * as authApi from "../services/authApi";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import * as cookies from "../utils/cookies";
-import Home from "../pages/Home";
-import Topics from "../pages/Topics";
-import Topic from "../pages/Topic";
-import TopicLearn from "../pages/TopicLearn";
-import Vocab from "../pages/Vocab";
+import { useEffect, useState } from "react";
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const refreshNewToken = async (refresh) => {
   let newTokenData = {};
@@ -27,7 +24,6 @@ const verifyToken = async (token, refreshToken) => {
     return true;
   }
 
-  console.log(refreshToken);
   const { newToken, newRefresh } = await refreshNewToken(refreshToken, { throwEx: false });
   if (newToken) {
     cookies.setAuthTokens(newToken, newRefresh);
@@ -38,25 +34,27 @@ const verifyToken = async (token, refreshToken) => {
   return false;
 }
 
-const PrivateRoute = ({ pageName }) => {
-  const { token, refreshToken } = cookies.getAuthTokens();
+const PrivatePage = ({children}) => {
+  const location = useLocation();
+  const [ isVerified, setIsVerified ] = useState(null);
 
-  if (!token || !verifyToken(token, refreshToken)) {
+  useEffect(() => {
+    const verify = async () => {
+      const { token, refreshToken } = cookies.getAuthTokens();
+      const verified = await verifyToken(token, refreshToken);
+      setIsVerified(verified);
+    }
+    verify();
+  }, [location.pathname]);
+
+  if (isVerified === null) {
+    return <LoadingOverlay />;
+  }
+
+  if (!isVerified) {
     return <Navigate to='/login' />;
   }
-  
-  switch (pageName) {
-    case 'home':
-      return <Home />;
-    case 'topics':
-      return <Topics />;
-    case 'topic':
-      return <Topic />;
-    case 'topic_learn':
-      return <TopicLearn />;
-    case 'vocab':
-      return <Vocab />;
-  }
+  return (<>{children}</>);
 };
 
-export default PrivateRoute;
+export default PrivatePage;
