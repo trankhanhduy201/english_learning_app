@@ -1,8 +1,13 @@
 import * as authApi from "../services/authApi";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import * as cookies from "../utils/cookies";
 import { useEffect, useState } from "react";
 import LoadingOverlay from '../components/LoadingOverlay';
+import Home from '../pages/Home';
+import Topics from '../pages/Topics';
+import Topic from '../pages/Topic';
+import TopicLearn from '../pages/TopicLearn';
+import Vocab from '../pages/Vocab';
 
 const refreshNewToken = async (refresh) => {
   let newTokenData = {};
@@ -24,9 +29,9 @@ const verifyToken = async (token, refreshToken) => {
     return true;
   }
 
-  const { newToken, newRefresh } = await refreshNewToken(refreshToken, { throwEx: false });
-  if (newToken) {
-    cookies.setAuthTokens(newToken, newRefresh);
+  const { access, refresh } = await refreshNewToken(refreshToken, { throwEx: false });
+  if (access) {
+    cookies.setAuthTokens(access, refresh);
     return true;
   }
 
@@ -34,8 +39,7 @@ const verifyToken = async (token, refreshToken) => {
   return false;
 }
 
-const PrivatePage = ({children}) => {
-  const location = useLocation();
+const PrivatePage = ({ pageName }) => {
   const [ isVerified, setIsVerified ] = useState(null);
 
   useEffect(() => {
@@ -44,8 +48,10 @@ const PrivatePage = ({children}) => {
       const verified = await verifyToken(token, refreshToken);
       setIsVerified(verified);
     }
+
+    setIsVerified(null);
     verify();
-  }, [location.pathname]);
+  }, [pageName]);
 
   if (isVerified === null) {
     return <LoadingOverlay />;
@@ -54,7 +60,21 @@ const PrivatePage = ({children}) => {
   if (!isVerified) {
     return <Navigate to='/login' />;
   }
-  return (<>{children}</>);
+
+  switch (pageName) {
+    case 'Home':
+      return <Home />;
+    case 'Topics':
+      return <Topics />;
+    case 'Topic':
+      return <Topic />;
+    case 'Vocab':
+      return <Vocab />;
+    case 'TopicLearn':
+      return <TopicLearn />;
+    default:
+      return <Home />;
+  }
 };
 
 export default PrivatePage;

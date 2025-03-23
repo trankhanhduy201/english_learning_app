@@ -2,7 +2,6 @@ import { Link, useLoaderData } from 'react-router-dom';
 
 const Topics = () => {
   const { topics } = useLoaderData();
-  console.log('Render Topics');
 
   return (
       <div className="table-responsive">

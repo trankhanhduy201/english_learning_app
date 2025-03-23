@@ -7,3 +7,5 @@ Loader data + Non critical data (Suspend + Await + Error Boundaries)
 
 Get-ExecutionPolicy
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+5. Check history stack when navigate to login 

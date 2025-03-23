@@ -7,11 +7,7 @@ import * as transAction from './actions/transAction';
 import Error from "../pages/Error";
 import Login from "../pages/Login";
 import Layout from "../pages/Layout";
-import Home from "../pages/Home";
-import Topics from "../pages/Topics";
-import Topic from "../pages/Topic";
-import TopicLearn from "../pages/TopicLearn";
-import Vocab from "../pages/Vocab";
+import PrivatePage from '../components/PrivatePage';
 
 const defaultShouldRevalidate = ({ formData, actionResult }) => 
   !(formData?.has('_not_revalidate') || (actionResult?.status === 'error'));
@@ -29,23 +25,23 @@ const routes = createBrowserRouter([
       {
         index: true,
         path: '/',
-        element: <Home />
+        element: <PrivatePage pageName='Home' />,
       },
       {
         path: '/topics',
-        element: <Topics />,
+        element: <PrivatePage pageName='Topics' />,
         loader: topicsLoader.getTopics,
       },
       {
         path: '/topic/:topicId/:action?',
-        element: <Topic />,
+        element: <PrivatePage pageName='Topic' />,
         loader: topicsLoader.getTopic,
         action: topicsAction.editTopic,
         shouldRevalidate: defaultShouldRevalidate
       },
       {
         path: '/topic/:topicId/vocab/:vocabId/:action?',
-        element: <Vocab />,
+        element: <PrivatePage pageName='Vocab' />,
         loader: vocabsLoader.getVocab,
         action: vocabsAction.editVocab,
         shouldRevalidate: defaultShouldRevalidate
@@ -57,7 +53,7 @@ const routes = createBrowserRouter([
       },
       {
         path: '/topic/:topicId/learn',
-        element: <TopicLearn />,
+        element: <PrivatePage pageName='TopicLearn' />,
         loader: topicsLoader.getTopic,
       }
     ]
