@@ -1,14 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import { Await, useLoaderData } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '../stores/slices/alertSlice';
 import Flashcard, { EMPTY_VOCAB } from '../components/Flashcard';
 import * as alertConfigs from "../configs/alertConfigs";
 import _ from "lodash";
+import LoadingOverlay from "../components/LoadingOverlay"
 
 const Topic = () => {
   const dispatch = useDispatch();
-  const { topic, vocabs: vocabsPromise } = useLoaderData();
+  const { topicPromise, vocabsPromise } = useLoaderData();
   const [ originVocabs, setOriginVocabs ] = useState([]);
   const [ vocabs, setVocabs ] = useState([]);
   const [ isReverse, setIsReverse ] = useState(false);
@@ -38,8 +39,8 @@ const Topic = () => {
   useEffect(() => {
     const getVocabs = async () => {
       try {
-        const results = await vocabsPromise;
-        const newVocabs = results.data.map(item => {
+        const datas = await vocabsPromise;
+        const newVocabs = datas.map(item => {
           item.translations = _.groupBy(item.translations, 'language');
           return item;
         }, []);
@@ -62,9 +63,18 @@ const Topic = () => {
   };
 
   return (
-    <>
-      <Flashcard vocabs={vocabs} onReverseVocabs={onReverseVocabs}/>
-    </>
+    <Suspense fallback={
+      <>
+        <Flashcard />
+        <LoadingOverlay />
+      </>
+    }>
+      <Await resolve={vocabsPromise}>
+        {(data) => (
+          <Flashcard vocabs={vocabs} onReverseVocabs={onReverseVocabs}/>
+        )}
+      </Await>
+    </Suspense>
   );
 };
 

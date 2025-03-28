@@ -33,9 +33,12 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet):
 	serializer_class = TopicSerializer
 	search_fields = ['name']
 
-	# def list(self, request, *args, **kwargs):
-	# 	raise EnvironmentError('Test')
-	# 	return super(TopicViewSet, self).list(request, *args, **kwargs)
+	def list(self, request, *args, **kwargs):
+		import time
+		time.sleep(6)
+		
+		raise EnvironmentError('Test')
+		return super(TopicViewSet, self).list(request, *args, **kwargs)
 
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 	queryset = Vocabulary.objects.all()

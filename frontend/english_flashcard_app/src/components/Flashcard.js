@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { getRandomIntWithExceptions } from '../utils/commons';
 
@@ -7,7 +7,7 @@ export const EMPTY_VOCAB = {
   translations: []
 }
 
-function Flashcard({ vocabs = [], onReverseVocabs }) {
+function Flashcard({ vocabs = [], onReverseVocabs = null }) {
   const [ vocab, setVocab ] = useState(EMPTY_VOCAB);
   const [ isOpen, setIsOpen ] = useState(false);
 
