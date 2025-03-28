@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '../../../stores/slices/alertSlice';
 import * as alertConfigs from "../../../configs/alertConfigs";
 
-const TopicDetail = ({ topicId, isNew = false }) => {
+const TopicDetail = ({ topicId = '', isNew = false }) => {
 	const topic = useAsyncValue();
   const editTopicFetcher = useFetcher();
   const delTopicFetcher = useFetcher();
@@ -50,7 +50,7 @@ const TopicDetail = ({ topicId, isNew = false }) => {
 			<input type="hidden" name="_not_revalidate" defaultValue={'1'}/>
 			<div className="mb-3">
 				<label htmlFor="name" className="form-label">Name</label>
-				<input type="text" className="form-control" name="name" defaultValue={topic.name}/>
+				<input type="text" className="form-control" name="name" defaultValue={topic?.name}/>
 			</div>
 			{editTopicFetcher.data?.errors?.name && (
 				<ul>

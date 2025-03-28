@@ -15,7 +15,12 @@ const Topic = () => {
       <div className="row">
         <div className="col-lg-6 text-start mb-4">
           <h2>Topic info</h2>
-          <Suspense fallback={<LoadingOverlay />}>
+          <Suspense fallback={
+            <>
+              <TopicDetail isNew={true} />
+              <LoadingOverlay />
+            </>
+          }>
             <Await resolve={topicPromise}>
               <TopicDetail topicId={topicId} isNew={isNew()} />
             </Await>
