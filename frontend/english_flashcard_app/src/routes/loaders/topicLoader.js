@@ -4,8 +4,7 @@ import * as vocabApi from "../../services/vocabApi";
 
 export const getTopics = async () => {
   try {
-    const resp = await topicApi.getTopics();
-    return { topics: resp.data };
+    return { topicsPromise: topicApi.getTopics().then(resp => resp.data) };
   } catch (error) {
     throw new Response('', { status: 500 });
   }
@@ -13,19 +12,17 @@ export const getTopics = async () => {
 
 export const getTopic = async ({ request, params }) => {
   try {
-    let topicResp = null;
-    let vocabResp = null;
+    let topicPromise = null;
+    let vocabsPromise = null;
     if (params.topicId !== 'new') {
       const url = new URL(request.url);
-      topicResp = await topicApi.getTopicById(params.topicId);
-      vocabResp = vocabApi.getVocabs(
-        params.topicId,
-        url.searchParams.get('lang') || langConfigs.DEFAULT_LANG
-      );
+      const lang = url.searchParams.get('lang') || langConfigs.DEFAULT_LANG;
+      topicPromise = topicApi.getTopicById(params.topicId).then(resp => resp.data);
+      vocabsPromise = vocabApi.getVocabs(params.topicId, lang).then(resp => resp.data);
     }
     return {
-      topic: topicResp ? topicResp.data : topicResp,
-      vocabs: vocabResp
+      topicPromise,
+      vocabsPromise
     };
   } catch (error) {
     throw new Response('', { status: 404 });

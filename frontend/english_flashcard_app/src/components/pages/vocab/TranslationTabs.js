@@ -1,0 +1,216 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Tab, Tabs } from "react-bootstrap";
+import _ from "lodash";
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors
+} from '@dnd-kit/core';
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import { SortableTr } from '../../../components/SortableTr';
+import * as utils from '../../../utils/commons';
+
+const EVENT_KEY_NEW_TAB = 'new';
+
+const TranslationTabs = ({ data }) => {
+	const textRef = useRef(null);
+	const languageRef = useRef(null);
+	const [ activeTab, setActiveTab ] = useState('en');
+	const [ translations, setTranslations ] = useState(
+		_.groupBy(data.map((v, i) => ({ ...v, idx: i })), 'language')
+	);
+
+	useEffect(() => {
+		const langs = Object.keys(translations);
+		setActiveTab(langs.length > 0 ? langs[0] : EVENT_KEY_NEW_TAB);
+	}, []);
+
+	const handleDelTrans = (idx, lang) => {
+		setTranslations(oldState => ({
+			...oldState,
+			[lang]: oldState[lang].filter((v) => v.idx !== idx)
+		}));
+	}
+
+	const handleAddTrans = (lang) => {
+		setTranslations(oldState => {
+			const newId = utils.getNextMaxId(oldState[lang], 'idx');
+			return {
+				...oldState,
+				[lang]: [...oldState[lang], { translation: '', language: lang, idx: newId }]
+			};
+		});
+	}
+
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates
+		})
+	);
+
+	const handleDragEnd = (event, lang) => {
+		const { active, over } = event;
+
+		if (active.id !== over.id) {
+			setTranslations(oldState => {
+				const oldItems = oldState[lang];
+				const oldIndex = oldItems.findIndex(item => item.idx === active.id);
+				const newIndex = oldItems.findIndex(item => item.idx === over.id);
+				const newItems = arrayMove(oldItems, oldIndex, newIndex);
+				return {
+					...oldState,
+					[lang]: newItems
+				};
+			});
+		}
+	};
+
+	const handleAddLang = () => {
+		const nWord = textRef.current.value;
+		const sLang = languageRef.current.value;
+		if (!nWord || !sLang) {
+			textRef.current.style.borderColor = !nWord ? 'red' : '';
+			languageRef.current.style.borderColor = !sLang ? 'red' : '';
+			return;
+		}
+
+		setTranslations(oldState => {
+			let newVocab = {
+				translation: nWord,
+				language: sLang,
+				idx: 0
+			}
+
+			if (!oldState[sLang]) {
+				return { ...oldState, [sLang]: [newVocab] };
+			}
+
+			newVocab.idx = Math.max(...oldState[sLang].map(t => t.idx)) + 1;
+			return { ...oldState, [sLang]: [...oldState[sLang], newVocab] };
+		});
+
+		// Reset input fields
+		textRef.current.value = "";
+		languageRef.current.value = "";
+		textRef.current.style.borderColor = '';
+		languageRef.current.style.borderColor = '';
+		setActiveTab(sLang);
+	};
+
+	return (
+		<Tabs activeKey={activeTab} onSelect={k => setActiveTab(k)} id="my-tabs" className="mb-3">
+			{Object.keys(translations).map((lang, index) =>
+				<Tab key={index} eventKey={lang} title={lang}>
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragEnd={(event) => handleDragEnd(event, lang)}
+					>
+						<SortableContext
+							items={translations[lang].map(item => item.idx)}
+							strategy={verticalListSortingStrategy}
+						>
+							<div className="table-responsive" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+								<table className="table table-striped">
+									<thead style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+										<tr>
+											<th>#</th>
+											<th>Translation</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										{translations[lang].length > 0 ? (
+											<>
+												{translations[lang].map((item, index) => (
+													<SortableTr key={item.idx} id={item.idx}>
+														<td className="align-middle">{index + 1}</td>
+														<td>
+															<input
+																type="text"
+																className="form-control"
+																name={`translations[${lang}][${item.idx}][translation]`}
+																defaultValue={item.translation}
+															/>
+															<input
+																type="hidden"
+																className="form-control"
+																name={`translations[${lang}][${item.idx}][language]`}
+																defaultValue={lang}
+															/>
+															{item.id && (
+																<input
+																	type="hidden"
+																	className="form-control"
+																	name={`translations[${lang}][${item.idx}][id]`}
+																	defaultValue={item.id}
+																/>
+															)}
+														</td>
+														<td className="align-middle">
+															<div className='d-flex justify-content-center'>
+																<button
+																	type="button"
+																	className="btn btn-link p-0"
+																	onClick={(e) => handleDelTrans(item.idx, item.language)}
+																>
+																	<i className="bi bi-trash text-dark"></i>
+																</button>
+															</div>
+														</td>
+													</SortableTr>
+												))}
+											</>
+										) : (
+											<tr>
+												<td className='text-center' colSpan="3">No translation found</td>
+											</tr>
+										)}
+										<tr>
+											<td className='text-end' colSpan="3">
+												<button type="button" className='btn btn-secondary' onClick={() => handleAddTrans(lang)}>
+													<i className="bi bi-plus-circle"></i> Add
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</SortableContext>
+					</DndContext>
+				</Tab>
+			)}
+			<Tab key={Object.keys(translations).length + 1} eventKey={EVENT_KEY_NEW_TAB} title={'＋'}>
+				<div className="mb-3">
+					<label htmlFor="textInput" className="form-label">Enter word</label>
+					<input type="text" className="form-control" id="textInput" placeholder="Type something..." ref={textRef} />
+				</div>
+				<div className="mb-3">
+					<label htmlFor="languageSelect" className="form-label">Select Language</label>
+					<select className="form-select" id="languageSelect" ref={languageRef}>
+						<option value="">-- No choice --</option>
+						<option value="en">English</option>
+						<option value="ja">Japanese (日本語)</option>
+						<option value="vn">Vietnamese (Tiếng Việt)</option>
+					</select>
+				</div>
+				<div className="mb-3 text-end">
+					<button type="button" className='btn btn-secondary' onClick={() => handleAddLang()}>
+						<i className="bi bi-plus-circle"></i> Add
+					</button>
+				</div>
+			</Tab>
+		</Tabs>
+	);
+};
+
+export default TranslationTabs;

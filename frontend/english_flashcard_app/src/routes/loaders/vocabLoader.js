@@ -3,13 +3,12 @@ import * as topicApi from "../../services/topicApi";
 
 export const getVocab = async ({ request, params }) => {
   try {
-    let vocab = null;
-    const topics = topicApi.getTopics();
+    let vocabPromise = null;
+    const topicsPromise = topicApi.getTopics().then(data => data.data);
     if (params.vocabId !== 'new') {
-      const vocabResp = await vocabApi.getVocab(params.vocabId);
-      vocab = vocabResp.data;
+      vocabPromise = vocabApi.getVocab(params.vocabId).then(data => data.data);
     }
-    return { vocab, topics };
+    return { vocabPromise, topicsPromise };
   } catch (error) {
     throw new Response('', { status: 404 });
   }

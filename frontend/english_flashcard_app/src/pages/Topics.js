@@ -1,8 +1,11 @@
-import React from 'react';
-import { default as ListTopic } from '../components/Topics';
-import { Link } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import ListTopic from '../components/pages/topics/ListTopic';
+import { Link, useLoaderData, Await } from 'react-router-dom';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const Topics = () => {
+  const { topicsPromise } = useLoaderData();
+
   return (
     <>
       <h1 className='text-start'>Topics</h1>
@@ -15,7 +18,11 @@ const Topics = () => {
           <i className="bi bi-trash text-white"></i> Delete all
         </Link>
       </div>
-      <ListTopic />
+      <Suspense fallback={<LoadingOverlay />}>
+        <Await resolve={topicsPromise}>
+          <ListTopic />
+        </Await>
+      </Suspense>
     </>
   );
 };

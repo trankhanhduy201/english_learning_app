@@ -1,7 +1,7 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useAsyncValue } from 'react-router-dom';
 
 const Topics = () => {
-  const { topics } = useLoaderData();
+  const topics = useAsyncValue();
 
   return (
       <div className="table-responsive">
