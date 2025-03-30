@@ -1,13 +1,43 @@
 import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { Await, useLoaderData } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setAlert } from '../stores/slices/alertSlice';
 import Flashcard, { EMPTY_VOCAB } from '../components/Flashcard';
 import * as alertConfigs from "../configs/alertConfigs";
+import LoadingOverlay from "../components/LoadingOverlay";
 import _ from "lodash";
-import LoadingOverlay from "../components/LoadingOverlay"
+
+const getOriginDatas = (vocabs) => {
+  const newOriginDatas = vocabs.reduce((newVocabs, vocab) => {
+    newVocabs = [
+      ...newVocabs,
+      ...(vocab?.translations.map(v => ({
+         ...vocab, 
+         language: v.language, 
+         translations: [v] 
+        })))
+    ];
+    return newVocabs;
+  }, []);
+
+  // Group data by language field
+  return _.groupBy(newOriginDatas, 'language');
+}
+
+// Convert translations to vocabs
+const trans2Vocabs = (vocab) => {
+  return vocab.translations.reduce((newTrans, trans) => {
+    newTrans.push({
+      ...EMPTY_VOCAB,
+      word: trans.translation,
+      translations: [{ translation: vocab.word }]
+    });
+    return newTrans;
+  }, []);
+}
 
 const Topic = () => {
+  const lang = useSelector((state) => state.lang);
   const dispatch = useDispatch();
   const { topicPromise, vocabsPromise } = useLoaderData();
   const [ originVocabs, setOriginVocabs ] = useState([]);
@@ -16,22 +46,10 @@ const Topic = () => {
   
   let reverseVocabs = useMemo(() => {
     return vocabs.reduce((newVocabs, vocab) => {
-      // Convert translations to vocabs
-      const trans2Vocabs = () => {
-        return vocab.translations['en'].reduce((newTrans, trans) => {
-          newTrans.push({
-            ...EMPTY_VOCAB,
-            word: trans.translation,
-            translations: {en: [{ trans: vocab.word }]}
-          });
-          return newTrans;
-        }, []);
-      }
-
       // Merge to new vocabs
       return [
         ...newVocabs, 
-        ...trans2Vocabs()
+        ...trans2Vocabs(vocab)
       ];
     }, []);
   }, [originVocabs]);
@@ -39,13 +57,9 @@ const Topic = () => {
   useEffect(() => {
     const getVocabs = async () => {
       try {
-        const datas = await vocabsPromise;
-        const newVocabs = datas.map(item => {
-          item.translations = _.groupBy(item.translations, 'language');
-          return item;
-        }, []);
-        setVocabs(newVocabs);
-        setOriginVocabs(newVocabs);
+        const originDatas = getOriginDatas(await vocabsPromise);
+        setOriginVocabs(originDatas);
+        setVocabs(originDatas[lang] ?? []);
       } catch(error) {
         dispatch(setAlert({
           type: alertConfigs.ERROR_TYPE,
@@ -53,12 +67,11 @@ const Topic = () => {
         }));
       }
     }
-
     getVocabs();
   }, []);
 
   const onReverseVocabs = () => {
-    setVocabs(isReverse ? originVocabs : reverseVocabs);
+    setVocabs(isReverse ? (originVocabs[lang] ?? []) : reverseVocabs);
     setIsReverse(isReverse => !isReverse)
   };
 

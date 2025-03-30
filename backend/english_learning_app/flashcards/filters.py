@@ -4,13 +4,12 @@ from .models import Translation
 
 
 class VocabularyFilter(django_filters.FilterSet):
-    topic_id = django_filters.NumberFilter(field_name='topic__id')
-    lang = django_filters.CharFilter(method='filter_has_translation')
-
-    def filter_has_translation(self, queryset, name, value):
-        lang = self.request.GET.get('lang')
-        if lang:
-            queryset = queryset.filter(
-                Exists(Translation.objects.filter(vocabulary=OuterRef('pk'), language=value))
-            )
-        return queryset
+	topic_id = django_filters.NumberFilter(field_name='topic__id')
+	lang = django_filters.CharFilter(method='filter_has_translation')
+	
+	def filter_has_translation(self, queryset, name, value):
+		lang = self.request.GET.get('lang', 'en')
+		if lang:
+			sub_query = Exists(Translation.objects.filter(vocabulary=OuterRef('pk'), language=value))
+			queryset = queryset.filter(sub_query)
+		return queryset

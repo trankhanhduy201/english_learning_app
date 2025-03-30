@@ -54,21 +54,25 @@ function Flashcard({ vocabs = [], onReverseVocabs = null }) {
             <div className="card-body d-flex">
               <div className="flashcard mx-3" onClick={onOpenCard}>
                 <h2 className="flashcard-header">{vocab.word}</h2>
-                {isOpen && (
-                  <div className="flashcard-content">
-                    <hr />
-                    {vocab.translations['en'] && vocab.translations['en'].map((item, index) => (
-                      <>{item.translation + (index < vocab.translations['en'].length - 1 ? ', ' : '')}</>
-                    ))}
-                    <div className="text-start mt-2">
-                      Examples:
-                      <ul className="text-start">
-                        <li>I bought ticket at that theater</li>
-                        <li>That theater is so famous</li>
-                      </ul>
-                    </div>
-                  </div>
-                )}
+                <div className="flashcard-content">
+                  <hr />
+                  {isOpen ? (
+                    <>
+                      {vocab.translations && vocab.translations.map((item) => (
+                        <>{ item.translation }</>
+                      ))}
+                      <div className="text-start mt-2">
+                        Examples:
+                        <ul className="text-start">
+                          <li>I bought ticket at that theater</li>
+                          <li>That theater is so famous</li>
+                        </ul>
+                      </div>
+                    </>
+                  ) : (
+                    <p className='text-center'>Click here to show translation...</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

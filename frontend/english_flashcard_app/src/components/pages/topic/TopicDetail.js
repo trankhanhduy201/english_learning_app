@@ -73,6 +73,11 @@ const TopicDetail = ({ topicId = '', isNew = false }) => {
 			<Link to={`/topics`} className="btn btn-secondary me-2">
 				<i className="bi bi-arrow-left"></i> List topic
 			</Link>
+      {!isNew && (
+				<Link to={`/topic/${topicId}/learn`} className='btn btn-success me-2'>
+          <i className="bi bi-clipboard-pulse text-white"></i> Learn
+        </Link>
+			)}
 			<button type="submit" className="btn btn-primary me-2" disabled={editTopicFetcher.state === "submitting"}>
 				<i className="bi bi-pencil-square text-white"></i> {editTopicFetcher.state === "submitting" ? "Saving..." : "Save"}
 			</button>

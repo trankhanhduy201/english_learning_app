@@ -1,0 +1,1 @@
+export const setLangReducer = (state, action) => [...state, ...[ action.payload ]];
