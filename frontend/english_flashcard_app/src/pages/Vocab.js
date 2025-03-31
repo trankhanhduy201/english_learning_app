@@ -1,13 +1,13 @@
 import React, { Suspense, useEffect } from 'react';
 import { Await, Link, useFetcher, useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Form } from "react-bootstrap";
 import _ from "lodash";
 import * as alertConfigs from "../configs/alertConfigs";
 import { setAlert } from '../stores/slices/alertSlice';
 import TranslationTabs from '../components/pages/vocab/TranslationTabs';
 import LoadingOverlay from '../components/LoadingOverlay';
 import VocabDetail from '../components/pages/vocab/VocabDetail';
+import ErrorBoundary from '../components/errors/ErrorBoundary';
 
 const Vocab = () => {
   const navigate = useNavigate();

@@ -17,6 +17,7 @@ import {
 } from '@dnd-kit/sortable';
 import { SortableTr } from '../../../components/SortableTr';
 import * as utils from '../../../utils/commons';
+import * as tranTypes from '../../../enums/transTypes'
 
 const EVENT_KEY_NEW_TAB = 'new';
 
@@ -125,6 +126,8 @@ const TranslationTabs = ({ data }) => {
 										<tr>
 											<th>#</th>
 											<th>Translation</th>
+											<th>Type</th>
+											<th>Note</th>
 											<th></th>
 										</tr>
 									</thead>
@@ -140,6 +143,7 @@ const TranslationTabs = ({ data }) => {
 																className="form-control"
 																name={`translations[${lang}][${item.idx}][translation]`}
 																defaultValue={item.translation}
+																placeholder='Translation...'
 															/>
 															<input
 																type="hidden"
@@ -155,6 +159,21 @@ const TranslationTabs = ({ data }) => {
 																	defaultValue={item.id}
 																/>
 															)}
+														</td>
+														<td>
+															<select 
+																className="form-control" 
+																name={`translations[${lang}][${item.idx}][type]`} 
+																defaultValue={item.type}
+															>
+																<option></option>
+																{tranTypes.getDatas().map(v => (
+																	<option value={v.key}>{v.text}</option>
+																))}
+															</select>
+														</td>
+														<td>
+															<textarea placeholder='Examples...' className="form-control" rows={1} name={`translations[${lang}][${item.idx}][note]`} defaultValue={item.note}></textarea>
 														</td>
 														<td className="align-middle">
 															<div className='d-flex justify-content-center'>
@@ -172,11 +191,11 @@ const TranslationTabs = ({ data }) => {
 											</>
 										) : (
 											<tr>
-												<td className='text-center' colSpan="3">No translation found</td>
+												<td className='text-center' colSpan="5">No translation found</td>
 											</tr>
 										)}
 										<tr>
-											<td className='text-end' colSpan="3">
+											<td className='text-end' colSpan="5">
 												<button type="button" className='btn btn-secondary' onClick={() => handleAddTrans(lang)}>
 													<i className="bi bi-plus-circle"></i> Add
 												</button>
@@ -191,17 +210,34 @@ const TranslationTabs = ({ data }) => {
 			)}
 			<Tab key={Object.keys(translations).length + 1} eventKey={EVENT_KEY_NEW_TAB} title={'＋'}>
 				<div className="mb-3">
-					<label htmlFor="textInput" className="form-label">Enter word</label>
-					<input type="text" className="form-control" id="textInput" placeholder="Type something..." ref={textRef} />
+					<label htmlFor="textInput" className="form-label">Translation</label>
+					<input type="text" className="form-control" id="textInput" placeholder="Translation..." ref={textRef} />
 				</div>
 				<div className="mb-3">
-					<label htmlFor="languageSelect" className="form-label">Select Language</label>
-					<select className="form-select" id="languageSelect" ref={languageRef}>
-						<option value="">-- No choice --</option>
-						<option value="en">English</option>
-						<option value="ja">Japanese (日本語)</option>
-						<option value="vn">Vietnamese (Tiếng Việt)</option>
-					</select>
+					<div className='row'>
+						<div className='col-6'>
+							<label htmlFor="languageSelect" className="form-label">Select Language</label>
+							<select className="form-select" id="languageSelect" ref={languageRef}>
+								<option value="">-- No choice --</option>
+								<option value="en">English</option>
+								<option value="ja">Japanese (日本語)</option>
+								<option value="vn">Vietnamese (Tiếng Việt)</option>
+							</select>
+						</div>
+						<div className='col-6'>
+							<label htmlFor="type" className="form-label">Type</label>
+							<select id='type' className="form-control">
+								<option>-- No choice --</option>
+								{tranTypes.getDatas().map(v => (
+									<option value={v.key}>{v.text}</option>
+								))}
+							</select>
+						</div>
+					</div>
+				</div>
+				<div className="mb-3">
+					<label htmlFor="note" className="form-label">Note</label>
+					<textarea className='form-control' rows={4} placeholder='Examples...'></textarea>
 				</div>
 				<div className="mb-3 text-end">
 					<button type="button" className='btn btn-secondary' onClick={() => handleAddLang()}>

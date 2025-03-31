@@ -14,6 +14,7 @@ const getOriginDatas = (vocabs) => {
       ...(vocab?.translations.map(v => ({
          ...vocab, 
          language: v.language, 
+         type: v.type, 
          translations: [v] 
         })))
     ];
@@ -30,7 +31,11 @@ const trans2Vocabs = (vocab) => {
     newTrans.push({
       ...EMPTY_VOCAB,
       word: trans.translation,
-      translations: [{ translation: vocab.word }]
+      type: trans.type,
+      translations: [{
+        ...trans,
+        translation: vocab.word
+      }]
     });
     return newTrans;
   }, []);
@@ -70,10 +75,22 @@ const Topic = () => {
     getVocabs();
   }, []);
 
-  const onReverseVocabs = () => {
-    setVocabs(isReverse ? (originVocabs[lang] ?? []) : reverseVocabs);
-    setIsReverse(isReverse => !isReverse)
+  const getFilterVocabs = (types, reverse) => {
+    let filterVocabs = !reverse ? (originVocabs[lang] ?? []) : reverseVocabs;
+    if (Object.keys(types).length > 0) {
+      filterVocabs = filterVocabs.filter(v => v.type in types);
+    }
+    return filterVocabs;
+  }
+
+  const onReverseVocabs = (types) => {
+    setVocabs(getFilterVocabs(types, !isReverse));
+    setIsReverse(!isReverse);
   };
+
+  const onFilterVocabsByTypes = (types) => {
+    setVocabs(getFilterVocabs(types, isReverse));
+  }
 
   return (
     <Suspense fallback={
@@ -84,7 +101,11 @@ const Topic = () => {
     }>
       <Await resolve={vocabsPromise}>
         {(data) => (
-          <Flashcard vocabs={vocabs} onReverseVocabs={onReverseVocabs}/>
+          <Flashcard 
+            vocabs={vocabs} 
+            onReverseVocabs={onReverseVocabs}
+            onFilterVocabsByTypes={onFilterVocabsByTypes}
+          />
         )}
       </Await>
     </Suspense>

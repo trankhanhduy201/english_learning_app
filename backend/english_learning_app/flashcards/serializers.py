@@ -11,7 +11,7 @@ class TopicSerializer(serializers.ModelSerializer):
 class TranslationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Translation
-        fields = ['id', 'translation', 'language', 'created_by']
+        fields = ['id', 'translation', 'language', 'type', 'note', 'created_by']
 
 
 class VocabularySerializer(serializers.ModelSerializer):
@@ -27,7 +27,7 @@ class VocabularySerializer(serializers.ModelSerializer):
             translation_ids = [item['id'] for item in self.data.get('translations') if 'id' in item]
 
             # For update existed item
-            update_fields = ['translation', 'language']
+            update_fields = ['translation', 'language', 'type', 'note']
             updated_ids = []
             update_translations = Translation.objects.filter(pk__in=translation_ids, vocabulary=instance)
             if len(update_translations) > 0:

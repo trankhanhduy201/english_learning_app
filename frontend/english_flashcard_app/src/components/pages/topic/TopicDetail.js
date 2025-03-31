@@ -50,7 +50,7 @@ const TopicDetail = ({ topicId = '', isNew = false }) => {
 			<input type="hidden" name="_not_revalidate" defaultValue={'1'}/>
 			<div className="mb-3">
 				<label htmlFor="name" className="form-label">Name</label>
-				<input type="text" className="form-control" name="name" defaultValue={topic?.name}/>
+				<input type="text" className="form-control" name="name" defaultValue={topic?.name} placeholder='Name...'/>
 			</div>
 			{editTopicFetcher.data?.errors?.name && (
 				<ul>
@@ -61,7 +61,7 @@ const TopicDetail = ({ topicId = '', isNew = false }) => {
 			)}
 			<div className="mb-3">
 				<label htmlFor="descriptions" className="form-label">Descriptions</label>
-				<textarea rows={5} className="form-control" name="descriptions" defaultValue={topic?.descriptions}></textarea>
+				<textarea rows={5} className="form-control" name="descriptions" defaultValue={topic?.descriptions} placeholder='Description...'></textarea>
 			</div>
 			{editTopicFetcher.data?.errors?.descriptions && (
 				<ul>

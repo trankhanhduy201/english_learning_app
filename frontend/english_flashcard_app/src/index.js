@@ -7,6 +7,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './stores/store';
 import { Provider } from 'react-redux';
+import ErrorBoundary from './components/errors/ErrorBoundary';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

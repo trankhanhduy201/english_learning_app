@@ -33,7 +33,7 @@ export const callApi = async (endpoint, options = {}) => {
 
     if (throwEx && !resp.ok) {
       const error = new Error(`HTTP error! status: ${resp.status}`);
-      error.details = dataJson
+      error.details = dataJson;
       throw error;
     }
     return dataJson;

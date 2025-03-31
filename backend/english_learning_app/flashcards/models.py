@@ -37,10 +37,20 @@ class Translation(CreatedBy):
 		EN = ('en', _('English'))
 		VN = ('vn', _('Vietnamese'))
 		JA = ('ja', _('Japanese'))
+		
+	class TranslationTypeEnums(models.TextChoices):
+		N = ('n', _('Noun'))
+		V = ('v', _('Verb'))
+		ADJ = ('adj', _('Adj'))
+		ADV = ('adv', _('Adv'))
+		PREP = ('prep', _('Prep'))
+		
 
 	vocabulary = models.ForeignKey(Vocabulary, related_name='translations', on_delete=models.SET_NULL, null=True)
 	translation = models.CharField(max_length=200)
 	language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
+	type = models.CharField(max_length=10, choices=TranslationTypeEnums.choices, default=None, null=True, blank=True)
+	note = models.TextField(blank=True, null=True)
 
 	def __str__(self):
 		return f"{self.translation} ({self.language})"

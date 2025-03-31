@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { getRandomIntWithExceptions } from '../utils/commons';
+import * as transTypeEnums from '../enums/transTypes';
 
 export const EMPTY_VOCAB = {
-  word: '', 
+  word: '',
+  type: '',
+  language: '',
   translations: []
 }
 
-function Flashcard({ vocabs = [], onReverseVocabs = null }) {
+function Flashcard({ vocabs = [], onReverseVocabs = null, onFilterVocabsByTypes = null }) {
   const [ vocab, setVocab ] = useState(EMPTY_VOCAB);
   const [ isOpen, setIsOpen ] = useState(false);
+  const [ filterTypes, setFilterTypes ] = useState([]);
 
   useEffect(() => {
     let newVocab = pickVocab(0);
@@ -35,12 +39,23 @@ function Flashcard({ vocabs = [], onReverseVocabs = null }) {
     return newVocab;
   }
 
+  const pickFilterType = key => {
+    let newFilter = { ...filterTypes };
+    if (key in newFilter) {
+      delete newFilter[key];
+    } else {
+      newFilter = { ...newFilter, [key]: true };
+    }
+    setFilterTypes(newFilter);
+    onFilterVocabsByTypes(newFilter);
+  }
+
   return (
     <div className="row justify-content-center">
       <div className="col-12 col-md-6">
         <div className="d-flex align-items-center">
           <div className="mb-auto">
-            <button className="btn btn-secondary d-block" onClick={onReverseVocabs}>
+            <button className="btn btn-secondary d-block" onClick={() => onReverseVocabs(filterTypes)}>
               <i className="bi bi-arrow-repeat text-light"></i>
             </button>
             <button className="btn btn-secondary d-block mt-1" onClick={onOpenCard}>
@@ -53,21 +68,25 @@ function Flashcard({ vocabs = [], onReverseVocabs = null }) {
           <div className="card flex-fill ms-3 me-3">
             <div className="card-body d-flex">
               <div className="flashcard mx-3" onClick={onOpenCard}>
-                <h2 className="flashcard-header">{vocab.word}</h2>
+                <h2 className="flashcard-header">
+                  {vocab.word}
+                  {vocab?.type ? ` (${vocab.type})` : ''}
+                </h2>
                 <div className="flashcard-content">
                   <hr />
                   {isOpen ? (
                     <>
                       {vocab.translations && vocab.translations.map((item) => (
-                        <>{ item.translation }</>
+                        <>
+                          {item.translation}
+                          {item?.note && (
+                            <div className="text-start mt-2">
+                              Examples:<br />
+                              <p style={{ whiteSpace: "pre-wrap" }}>{item.note}</p>
+                            </div>
+                          )}
+                        </>
                       ))}
-                      <div className="text-start mt-2">
-                        Examples:
-                        <ul className="text-start">
-                          <li>I bought ticket at that theater</li>
-                          <li>That theater is so famous</li>
-                        </ul>
-                      </div>
                     </>
                   ) : (
                     <p className='text-center'>Click here to show translation...</p>
@@ -84,6 +103,17 @@ function Flashcard({ vocabs = [], onReverseVocabs = null }) {
               <i className="bi bi-arrow-right-circle-fill"></i>
             </button>
           </div>
+        </div>
+        <div className='col-12 mt-3'>
+          {transTypeEnums.getDatas().map(v => (
+            <button
+              key={v.key}
+              className={`btn ${ v.key in filterTypes ? 'btn-secondary' : 'btn-outline-secondary' } d-inline-block ms-2`}
+              onClick={() => pickFilterType(v.key)}
+            >
+              {v.text}
+            </button>
+          ))}
         </div>
       </div>
     </div>

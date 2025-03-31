@@ -12,8 +12,7 @@ export const getTopics = async () => {
 
 export const getTopic = async ({ request, params }) => {
   try {
-    let topicPromise = null;
-    let vocabsPromise = null;
+    let topicPromise, vocabsPromise = null;
     if (params.topicId !== 'new') {
       const url = new URL(request.url);
       const lang = url.searchParams.get('lang') || langConfigs.DEFAULT_LANG;

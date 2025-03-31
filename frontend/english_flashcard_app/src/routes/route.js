@@ -4,7 +4,7 @@ import * as vocabsLoader from './loaders/vocabLoader';
 import * as topicsAction from './actions/topicAction';
 import * as vocabsAction from './actions/vocabAction';
 import * as transAction from './actions/transAction';
-import Error from "../pages/Error";
+import Error from "../components/errors/Error";
 import Login from "../pages/Login";
 import Layout from "../pages/Layout";
 import PrivatePage from '../components/PrivatePage';
@@ -20,43 +20,45 @@ const routes = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    // errorElement: <Error />,
-    children: [
-      {
-        index: true,
-        path: '/',
-        element: <PrivatePage pageName='Home' />,
-      },
-      {
-        path: '/topics',
-        element: <PrivatePage pageName='Topics' />,
-        loader: topicsLoader.getTopics,
-      },
-      {
-        path: '/topic/:topicId/:action?',
-        element: <PrivatePage pageName='Topic' />,
-        loader: topicsLoader.getTopic,
-        action: topicsAction.editTopic,
-        shouldRevalidate: defaultShouldRevalidate
-      },
-      {
-        path: '/topic/:topicId/vocab/:vocabId/:action?',
-        element: <PrivatePage pageName='Vocab' />,
-        loader: vocabsLoader.getVocab,
-        action: vocabsAction.editVocab,
-        shouldRevalidate: defaultShouldRevalidate
-      },
-      {
-        path: '/translation/:transId',
-        action: transAction.editTrans,
-        shouldRevalidate: defaultShouldRevalidate
-      },
-      {
-        path: '/topic/:topicId/learn',
-        element: <PrivatePage pageName='TopicLearn' />,
-        loader: topicsLoader.getTopic,
-      }
-    ]
+    children: [{
+      errorElement: <Error />,
+      children: [
+        {
+          index: true,
+          path: '/',
+          element: <PrivatePage pageName='Home' />,
+        },
+        {
+          path: '/topics',
+          element: <PrivatePage pageName='Topics' />,
+          loader: topicsLoader.getTopics,
+        },
+        {
+          path: '/topic/:topicId/:action?',
+          element: <PrivatePage pageName='Topic' />,
+          loader: topicsLoader.getTopic,
+          action: topicsAction.editTopic,
+          shouldRevalidate: defaultShouldRevalidate
+        },
+        {
+          path: '/topic/:topicId/vocab/:vocabId/:action?',
+          element: <PrivatePage pageName='Vocab' />,
+          loader: vocabsLoader.getVocab,
+          action: vocabsAction.editVocab,
+          shouldRevalidate: defaultShouldRevalidate
+        },
+        {
+          path: '/translation/:transId',
+          action: transAction.editTrans,
+          shouldRevalidate: defaultShouldRevalidate
+        },
+        {
+          path: '/topic/:topicId/learn',
+          element: <PrivatePage pageName='TopicLearn' />,
+          loader: topicsLoader.getTopic,
+        }
+      ]
+    }]
   }
 ], {
   future: {

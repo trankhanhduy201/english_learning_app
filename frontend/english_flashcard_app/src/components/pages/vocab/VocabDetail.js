@@ -10,7 +10,7 @@ const VocabDetail = ({ topicId = '', data = {}, errors = {} }) => {
 		<>
 			<div className="mb-3">
 				<label htmlFor="word" className="form-label">Name</label>
-				<input type="text" className="form-control" name="word" defaultValue={data?.word} />
+				<input type="text" className="form-control" name="word" defaultValue={data?.word} placeholder='Word...' />
 			</div>
 			{errors?.word && (
 				<ul>
@@ -51,7 +51,7 @@ const VocabDetail = ({ topicId = '', data = {}, errors = {} }) => {
 			)}
 			<div className="mb-3">
 				<label htmlFor="descriptions" className="form-label">Descriptions</label>
-				<textarea rows={5} className="form-control" name="descriptions" defaultValue={data?.descriptions}></textarea>
+				<textarea rows={5} className="form-control" name="descriptions" defaultValue={data?.descriptions} placeholder='Description...'></textarea>
 			</div>
 			{errors?.descriptions && (
 				<ul>
