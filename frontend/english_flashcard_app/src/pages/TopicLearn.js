@@ -11,11 +11,11 @@ const getOriginDatas = (vocabs) => {
   const newOriginDatas = vocabs.reduce((newVocabs, vocab) => {
     newVocabs = [
       ...newVocabs,
-      ...(vocab?.translations.map(v => ({
-         ...vocab, 
-         language: v.language, 
-         type: v.type, 
-         translations: [v] 
+      ...(vocab?.translations.map((v, i) => ({
+          ...vocab, 
+          language: v.language, 
+          type: v.type, 
+          translations: [v] 
         })))
     ];
     return newVocabs;
@@ -64,7 +64,6 @@ const Topic = () => {
       try {
         const originDatas = getOriginDatas(await vocabsPromise);
         setOriginVocabs(originDatas);
-        setVocabs(originDatas[lang] ?? []);
       } catch(error) {
         dispatch(setAlert({
           type: alertConfigs.ERROR_TYPE,
@@ -75,12 +74,16 @@ const Topic = () => {
     getVocabs();
   }, []);
 
+  useEffect(() => {
+    setVocabs(getFilterVocabs([], isReverse));
+  }, [originVocabs]);
+
   const getFilterVocabs = (types, reverse) => {
     let filterVocabs = !reverse ? (originVocabs[lang] ?? []) : reverseVocabs;
     if (Object.keys(types).length > 0) {
       filterVocabs = filterVocabs.filter(v => v.type in types);
     }
-    return filterVocabs;
+    return filterVocabs.map((v, i) => ({ ...v, idx: i }));
   }
 
   const onReverseVocabs = (types) => {
