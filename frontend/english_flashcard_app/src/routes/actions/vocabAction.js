@@ -15,6 +15,13 @@ export const editVocab = async ({ request, params }) => {
   const formData = await request.formData();
   const updateVocab = qs.parse(Object.fromEntries(formData));
 
+  if (params.vocabId === 'import') {
+    return await vocabApi.importVocabs({
+      ...updateVocab,
+      topic_id: params.topicId
+    });
+  }
+
   if (params.vocabId === 'new') {
     return await vocabApi.createVocab({
       ...updateVocab,

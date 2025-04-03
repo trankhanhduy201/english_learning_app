@@ -5,10 +5,15 @@ from rest_framework.permissions import IsAuthenticated
 
 from flashcards.mixins import OwnerListModelMixin
 from flashcards.queryset_utils import get_translation_prefetch_related
-from flashcards.serializers import TopicSerializer, VocabularySerializer
+from flashcards.serializers import TopicSerializer, VocabularySerializer, VocabularyImportSerializer
 from flashcards.models import Topic, Vocabulary, Translation
 from flashcards.filters import VocabularyFilter
 from flashcards.permissions import IsOwner
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+from django.db import transaction
+import re
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
@@ -33,6 +38,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet):
 	serializer_class = TopicSerializer
 	search_fields = ['name']
 
+
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 	queryset = Vocabulary.objects.all()
 	serializer_class = VocabularySerializer
@@ -44,6 +50,63 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 			get_translation_prefetch_related(self.request.GET.dict())
 		)
 		return qs
+	
+	@action(detail=False, methods=['post'], url_path='import')
+	def import_bulk(self, request, *args, **kwargs):
+		rq_serializer = VocabularyImportSerializer(data=request.data)
+		if not rq_serializer.is_valid():
+			return Response(rq_serializer.errors, status=400)
+		
+		import_type = rq_serializer.validated_data.get('import_type')
+		import_func = f'import_{import_type}'
+		data_import = getattr(self, import_func)(request, *args, **kwargs)
+		
+		serializer = self.get_serializer(data=data_import, many=True)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		
+	def import_text(self, request, *args, **kwargs):
+		language = request.data.get('lang', Translation.LanguageEnums.EN.value)
+		topic_id = request.data.get('topic_id')
+		text_data = request.data.get('text_data')
+		user_id = request.user.id
+		if not text_data:
+			return []
+		
+		vocab_entries = []
+		split_pattern = r"\s*(\(v\)|\(adj\)|\(a\)|\(adv\)|\(n\)|\(prep\))\s*"
+		
+		for line in text_data.strip().split("\n"):
+			line_parts = line.strip().split(":", 1)
+			if len(line_parts) != 2:
+				continue  # Skip invalid lines
+			
+			word, description = map(str.strip, line_parts)
+			translations_entries = []
+			for text in description.split("|"):
+				parts = re.split(split_pattern, text.strip())
+				parts = [part for part in parts if part != '']
+				translation_type = None if len(parts) == 1 else parts[0].strip('()')
+				translation_type = Translation.TranslationTypeEnums.ADJ.value if translation_type == 'a' else translation_type
+				translation_text = parts[0] if len(parts) == 1 else parts[1].strip(':').strip()
+				
+				translations_entries.append({
+					"translation": translation_text,
+					"language": language,
+					"type": translation_type,
+					"created_by": user_id
+				})
+
+			vocab_entries.append({
+				"word": word,
+				"topic": topic_id,
+				"translations": translations_entries,
+				"created_by": user_id
+			})
+		
+		return vocab_entries
 
 	# Below code for using simple filtering without defining filterset
 	# Note that using filterset_fields and filterset_class together is not supported.

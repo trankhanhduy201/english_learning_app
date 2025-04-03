@@ -29,6 +29,14 @@ export const createVocab = async (datas, options = {}) => {
   });
 }
 
+export const importVocabs = async (datas, options = {}) => {
+  return await callApi(`/vocabularies/import/`, {
+    method: 'POST',
+    body: JSON.stringify(datas),
+    ...options
+  });
+}
+
 export const deleteVocab = async (id, options = {}) => {
   return await callApi(`/vocabularies/${id}/`, {
     method: 'DELETE'
