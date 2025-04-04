@@ -34,7 +34,9 @@ const Topic = () => {
             <ErrorBoundary fallback={<p className='alert alert-danger'>Can not get data</p>}>
               <Suspense fallback={<p className='text-center'>Loading...</p>}>
                 <Await resolve={vocabsPromise}>
-                  <ListVocab lang={lang} topicId={topicId} />
+                  {(vocabDatas) => (
+                    <ListVocab vocabDatas={vocabDatas} topicId={topicId} lang={lang} />
+                  )}
                 </Await>
               </Suspense>
             </ErrorBoundary>

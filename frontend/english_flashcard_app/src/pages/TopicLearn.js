@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Await, useLoaderData } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAlert } from '../stores/slices/alertSlice';
@@ -42,21 +42,27 @@ const trans2Vocabs = (vocab) => {
 }
 
 const Topic = () => {
-  const lang = useSelector((state) => state.lang);
   const dispatch = useDispatch();
+  const lang = useSelector((state) => state.lang);
   const { topicPromise, vocabsPromise } = useLoaderData();
   const [ originVocabs, setOriginVocabs ] = useState([]);
   const [ vocabs, setVocabs ] = useState([]);
   const [ isReverse, setIsReverse ] = useState(false);
-  
+  const [ filterTypes, setFilterTypes ] = useState([]);
+  const getVocabsByLang = () => originVocabs[lang] ?? [];
+
   let reverseVocabs = useMemo(() => {
-    return vocabs.reduce((newVocabs, vocab) => {
-      // Merge to new vocabs
-      return [
-        ...newVocabs, 
-        ...trans2Vocabs(vocab)
-      ];
-    }, []);
+    return getVocabsByLang()
+      .reduce((newVocabs, vocab) => {
+        return [
+          ...newVocabs, 
+          ...trans2Vocabs(vocab)
+        ];
+      }, []);
+  }, [originVocabs]);
+
+  useEffect(() => {
+    setVocabs(getFilterVocabs([], isReverse));
   }, [originVocabs]);
   
   useEffect(() => {
@@ -74,26 +80,29 @@ const Topic = () => {
     getVocabs();
   }, []);
 
-  useEffect(() => {
-    setVocabs(getFilterVocabs([], isReverse));
-  }, [originVocabs]);
-
   const getFilterVocabs = (types, reverse) => {
-    let filterVocabs = !reverse ? (originVocabs[lang] ?? []) : reverseVocabs;
+    let filterVocabs = !reverse ? getVocabsByLang() : reverseVocabs;
     if (Object.keys(types).length > 0) {
       filterVocabs = filterVocabs.filter(v => v.type in types);
     }
     return filterVocabs.map((v, i) => ({ ...v, idx: i }));
   }
 
-  const onReverseVocabs = (types) => {
-    setVocabs(getFilterVocabs(types, !isReverse));
+  const onReverseVocabs = useCallback(() => {
+    setVocabs(getFilterVocabs(filterTypes, !isReverse));
     setIsReverse(!isReverse);
-  };
+  }, [vocabs]);
 
-  const onFilterVocabsByTypes = (types) => {
-    setVocabs(getFilterVocabs(types, isReverse));
-  }
+  const onFilterVocabsByTypes = useCallback(type => {
+    let newFilterTypes = { ...filterTypes };
+    if (type in newFilterTypes) {
+      delete newFilterTypes[type];
+    } else {
+      newFilterTypes = { ...newFilterTypes, [type]: true };
+    }
+    setFilterTypes(newFilterTypes);
+    setVocabs(getFilterVocabs(newFilterTypes, isReverse));
+  }, [vocabs]);
 
   return (
     <Suspense fallback={
@@ -104,8 +113,9 @@ const Topic = () => {
     }>
       <Await resolve={vocabsPromise}>
         {(data) => (
-          <Flashcard 
-            vocabs={vocabs} 
+          <Flashcard
+            vocabs={vocabs}
+            filterTypes={filterTypes}
             onReverseVocabs={onReverseVocabs}
             onFilterVocabsByTypes={onFilterVocabsByTypes}
           />

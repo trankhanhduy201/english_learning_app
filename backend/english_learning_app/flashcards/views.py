@@ -79,19 +79,28 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 		split_pattern = r"\s*(\(v\)|\(adj\)|\(a\)|\(adv\)|\(n\)|\(prep\))\s*"
 		
 		for line in text_data.strip().split("\n"):
-			line_parts = line.strip().split(":", 1)
+			line = line.strip()
+			if not line:
+				continue
+				
+			line_parts = line.split(":", 1)
 			if len(line_parts) != 2:
-				continue  # Skip invalid lines
-			
-			word, description = map(str.strip, line_parts)
+				word = description = line_parts[0]
+			else:
+				word, description = map(str.strip, line_parts)
+
 			translations_entries = []
+			if not description:
+				continue
+				
 			for text in description.split("|"):
 				parts = re.split(split_pattern, text.strip())
 				parts = [part for part in parts if part != '']
 				translation_type = None if len(parts) == 1 else parts[0].strip('()')
 				translation_type = Translation.TranslationTypeEnums.ADJ.value if translation_type == 'a' else translation_type
-				translation_text = parts[0] if len(parts) == 1 else parts[1].strip(':').strip()
-				
+				if translation_type not in Translation.TranslationTypeEnums.values:
+					translation_type = None
+				translation_text = parts[0] if len(parts) == 1 else ' '.join(parts)
 				translations_entries.append({
 					"translation": translation_text,
 					"language": language,

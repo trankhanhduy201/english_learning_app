@@ -173,7 +173,13 @@ const TranslationTabs = ({ data }) => {
 															</select>
 														</td>
 														<td>
-															<textarea placeholder='Examples...' className="form-control" rows={1} name={`translations[${lang}][${item.idx}][note]`} defaultValue={item.note}></textarea>
+															<textarea 
+																rows={1} 
+																placeholder='Examples...' 
+																className="form-control" 
+																name={`translations[${lang}][${item.idx}][note]`} 
+																defaultValue={item.note}>
+															</textarea>
 														</td>
 														<td className="align-middle">
 															<div className='d-flex justify-content-center'>

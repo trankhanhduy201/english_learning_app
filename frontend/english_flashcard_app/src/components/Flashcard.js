@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { getRandomIntWithExceptions } from '../utils/commons';
 import * as transTypeEnums from '../enums/transTypes';
@@ -11,11 +11,10 @@ export const EMPTY_VOCAB = {
   translations: []
 }
 
-function Flashcard({ vocabs = [], onReverseVocabs = null, onFilterVocabsByTypes = null }) {
+const Flashcard = memo(function Flashcard({ vocabs = [], filterTypes = [], onReverseVocabs = null, onFilterVocabsByTypes = null }) {
   const [ vocab, setVocab ] = useState(EMPTY_VOCAB);
   const [ isOpen, setIsOpen ] = useState(false);
   const [ isOrder, setIsOrder ] = useState(true);
-  const [ filterTypes, setFilterTypes ] = useState([]);
   const isActive = vocabs.length > 0;
 
   useEffect(() => {
@@ -54,23 +53,12 @@ function Flashcard({ vocabs = [], onReverseVocabs = null, onFilterVocabsByTypes 
 
   const pickVocab = index => vocabs[index] ?? EMPTY_VOCAB;
 
-  const pickFilterType = key => {
-    let newFilter = { ...filterTypes };
-    if (key in newFilter) {
-      delete newFilter[key];
-    } else {
-      newFilter = { ...newFilter, [key]: true };
-    }
-    setFilterTypes(newFilter);
-    onFilterVocabsByTypes(newFilter);
-  }
-
   return (
     <div className="row justify-content-center">
       <div className="col-12 col-md-6">
         <div className="d-flex align-items-center">
           <div className="mb-auto">
-            <button disabled={!isActive} className="btn btn-secondary d-block" onClick={() => onReverseVocabs(filterTypes)}>
+            <button disabled={!isActive} className="btn btn-secondary d-block" onClick={() => onReverseVocabs()}>
               <i className="bi bi-arrow-repeat text-light"></i>
             </button>
             <button disabled={!isActive} className="btn btn-secondary d-block mt-1" onClick={onOpenCard}>
@@ -147,7 +135,7 @@ function Flashcard({ vocabs = [], onReverseVocabs = null, onFilterVocabsByTypes 
             <button
               key={v.key}
               className={`btn ${ v.key in filterTypes ? 'btn-secondary' : 'btn-outline-secondary' } d-inline-block ms-2`}
-              onClick={() => pickFilterType(v.key)}
+              onClick={() => onFilterVocabsByTypes(v.key)}
             >
               {v.text}
             </button>
@@ -156,6 +144,6 @@ function Flashcard({ vocabs = [], onReverseVocabs = null, onFilterVocabsByTypes 
       </div>
     </div>
   );
-}
+});
 
 export default Flashcard;

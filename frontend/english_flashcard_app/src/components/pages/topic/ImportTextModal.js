@@ -1,19 +1,18 @@
-import React, { useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import { useFetcher } from "react-router-dom";
 
-const ImportTextModal = ({ topicId, lang, show, setVocabs, onClose }) => {
+const ImportTextModal = memo(function ImportTextModal({ topicId, lang, onClose }) {
   const fetcher = useFetcher();
 
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data?.status === "success") {
-			setVocabs(oldVocabs => [...oldVocabs, ...fetcher.data.data]);
       onClose(); // Close modal when import is successful
     }
-  }, [fetcher.state, fetcher.data, onClose]);
+  }, [fetcher.state, fetcher.data]);
 
   return (
     <div
-      className={`modal fade ${show ? "show d-block" : ""}`}
+      className={`modal fade show d-block`}
       tabIndex="-1"
       role="dialog"
       style={{ background: "rgba(0, 0, 0, 0.5)" }}
@@ -57,6 +56,6 @@ const ImportTextModal = ({ topicId, lang, show, setVocabs, onClose }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ImportTextModal;
