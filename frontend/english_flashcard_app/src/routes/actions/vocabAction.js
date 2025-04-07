@@ -1,4 +1,3 @@
-import { data } from "react-router-dom";
 import * as vocabApi from "../../services/vocabApi";
 import qs from "qs";
 

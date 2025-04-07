@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { useLoaderData, Await, useParams } from 'react-router-dom';
+import { useLoaderData, Await, useParams, Outlet } from 'react-router-dom';
 import { ErrorBoundary } from "react-error-boundary";
 import TopicDetail from '../components/pages/topic/TopicDetail';
 import ListVocab from '../components/pages/topic/ListVocab';
@@ -35,11 +35,18 @@ const Topic = () => {
               <Suspense fallback={<p className='text-center'>Loading...</p>}>
                 <Await resolve={vocabsPromise}>
                   {(vocabDatas) => (
-                    <ListVocab vocabDatas={vocabDatas} topicId={topicId} lang={lang} />
+                    <>
+                      <ListVocab 
+                        vocabDatas={vocabDatas} 
+                        topicId={topicId} 
+                        lang={lang} 
+                      />
+                    </>
                   )}
                 </Await>
               </Suspense>
             </ErrorBoundary>
+            <Outlet />
           </div>
         )}
       </div>

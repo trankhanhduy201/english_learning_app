@@ -1,27 +1,19 @@
-import React, { memo, use, useCallback, useEffect, useState } from "react";
+import React, { memo, use, useCallback, useEffect, useState, useTransition } from "react";
 import { Link, useFetcher } from "react-router-dom";
 import ImportTextModal from "../topic/ImportTextModal";
 import ListVocabTable from "./ListVocabTable";
-import { set } from "lodash";
-
-const ListVocabLoadding = () => {
-  return (
-    <div className="listVocabLoading-overlay">
-      <div className="spinner-border text-primary" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </div>
-    </div>
-  );
-};
+import { debounce } from "lodash";
+import LoadingOverlay from "../../LoadingOverlay";
 
 const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
   const [ vocabs, setVocabs ] = useState(vocabDatas);
 	const [ showImportTextModal, setShowImportTextModal ] = useState(false);
+  const [ isSearching, transition ] = useTransition();
   const delVocabFetcher = useFetcher();
 
   const onCloseImportTextModal = useCallback(() => {
     setShowImportTextModal(false);
-  }, []);
+  }, [vocabDatas, topicId, lang]);
 
   const onDeleteVocab = useCallback((vocabId) => {
     const formData = new FormData();
@@ -31,7 +23,19 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
       method: 'delete'
     });
     setVocabs((prevVocabs) => prevVocabs.filter(vocab => vocab.id !== vocabId));
-  }, [topicId, lang, delVocabFetcher]);
+  }, [vocabDatas, topicId, lang]);
+
+  const onSearchVocab = useCallback(
+    debounce((searchText) => {
+      transition(() => {
+        const filteredVocabs = vocabDatas.filter(vocab => vocab.word.toLowerCase().includes(searchText.toLowerCase()));
+        transition(() => {
+          setVocabs(filteredVocabs);
+        });
+      });
+    }, 300), 
+    [vocabDatas, topicId, lang]
+  );
 
   useEffect(() => {
     if (delVocabFetcher.data?.status === "success") {
@@ -41,11 +45,13 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
 
   return (
     <div className="position-relative">
-      {delVocabFetcher.state === "submitting" && <ListVocabLoadding />}
+      {delVocabFetcher.state === "submitting" && <LoadingOverlay position="absolute" background="white" />}
       <ListVocabTable 
         vocabs={vocabs}
         topicId={topicId} 
-        onDeleteVocab={onDeleteVocab} 
+        isSearching={isSearching}
+        onDeleteVocab={onDeleteVocab}
+        onSearchVocab={onSearchVocab}
       />
       <div className="d-flex justify-content-end mt-2">
         <Link to={`/topic/${topicId}/vocab/export`} className="btn btn-secondary me-2">

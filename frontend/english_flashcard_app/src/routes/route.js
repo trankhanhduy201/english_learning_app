@@ -8,6 +8,7 @@ import Error from "../components/errors/Error";
 import Login from "../pages/Login";
 import Layout from "../pages/Layout";
 import PrivatePage from '../components/PrivatePage';
+import VocabModal from "../pages/VocabModal";
 
 const defaultShouldRevalidate = ({ formData, actionResult }) => 
   !(formData?.has('_not_revalidate') || (actionResult?.status === 'error'));
@@ -38,14 +39,23 @@ const routes = createBrowserRouter([
           element: <PrivatePage pageName='Topic' />,
           loader: topicsLoader.getTopic,
           action: topicsAction.editTopic,
-          shouldRevalidate: defaultShouldRevalidate
-        },
-        {
-          path: '/topic/:topicId/vocab/:vocabId/:action?',
-          element: <PrivatePage pageName='Vocab' />,
-          loader: vocabsLoader.getVocab,
-          action: vocabsAction.editVocab,
-          shouldRevalidate: defaultShouldRevalidate
+          shouldRevalidate: ({ currentUrl, nextUrl }) => {
+            const isLeavingVocab = currentUrl.pathname.includes('/vocab/') && !nextUrl.pathname.includes('/vocab/');
+            const isEnteringVocab = !currentUrl.pathname.includes('/vocab/') && nextUrl.pathname.includes('/vocab/');
+            if (isLeavingVocab || isEnteringVocab) {
+              return false;
+            }
+            return currentUrl.pathname !== nextUrl.pathname;
+          },
+          children: [
+            {
+              path: 'vocab/:vocabId/:action?',
+              element: <VocabModal />,
+              loader: vocabsLoader.getVocab,
+              action: vocabsAction.editVocab,
+              shouldRevalidate: defaultShouldRevalidate
+            }
+          ]
         },
         {
           path: '/translation/:transId',

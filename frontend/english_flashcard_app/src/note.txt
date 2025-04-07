@@ -11,3 +11,13 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 5. Check history stack when navigate to login
 6. Can utilize use or useasyncvalue to get data from promise that is returned from loader, and trigger suspend fallback
 https://www.freecodecamp.org/news/how-to-avoid-breaking-your-react-app-in-production/
+
+
+for filter
+7. debounce
+8. useTransition 
+9. npm install react-window
+10. Web Workers (Advanced)
+
+
+Fix col width for table 

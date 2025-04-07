@@ -7,7 +7,6 @@ import { setAlert } from '../stores/slices/alertSlice';
 import TranslationTabs from '../components/pages/vocab/TranslationTabs';
 import LoadingOverlay from '../components/LoadingOverlay';
 import VocabDetail from '../components/pages/vocab/VocabDetail';
-import ErrorBoundary from '../components/errors/ErrorBoundary';
 
 const Vocab = () => {
   const navigate = useNavigate();
