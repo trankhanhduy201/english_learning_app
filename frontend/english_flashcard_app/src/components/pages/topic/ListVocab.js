@@ -1,4 +1,4 @@
-import React, { memo, use, useCallback, useEffect, useState, useTransition } from "react";
+import React, { memo, useCallback, useEffect, useState, useTransition } from "react";
 import { Link, useFetcher } from "react-router-dom";
 import ImportTextModal from "../topic/ImportTextModal";
 import ListVocabTable from "./ListVocabTable";
@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import LoadingOverlay from "../../LoadingOverlay";
 
 const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
-  const [ vocabs, setVocabs ] = useState(vocabDatas);
+  const [ vocabs, setVocabs ] = useState([]);
 	const [ showImportTextModal, setShowImportTextModal ] = useState(false);
   const [ isSearching, transition ] = useTransition();
   const delVocabFetcher = useFetcher();
@@ -42,6 +42,10 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
       setVocabs((prevVocabs) => prevVocabs.filter(vocab => vocab.id !== delVocabFetcher.data.data.id));
     }
   }, [delVocabFetcher.data]);
+
+  useEffect(() => {
+    setVocabs(vocabDatas);
+  }, [vocabDatas, topicId, lang])
 
   return (
     <div className="position-relative">

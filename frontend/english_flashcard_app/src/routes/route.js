@@ -10,8 +10,32 @@ import Layout from "../pages/Layout";
 import PrivatePage from '../components/PrivatePage';
 import VocabModal from "../pages/VocabModal";
 
-const defaultShouldRevalidate = ({ formData, actionResult }) => 
-  !(formData?.has('_not_revalidate') || (actionResult?.status === 'error'));
+const defaultShouldRevalidate = ({ formData, actionResult }) => {
+  return !(formData?.has('_not_revalidate') || (actionResult?.status === 'error'));
+}
+
+const topicShouldRevalidate = ({ formData, actionResult, currentUrl, nextUrl }) => {
+  if (!formData) {
+    return false;
+  }
+  
+  if (formData?.has('_not_revalidate') || 
+      actionResult?.status === 'error') {
+    return false;
+  }
+  
+  if (!currentUrl.pathname.includes('/vocab/') && 
+      nextUrl.pathname.includes('/vocab/')) {
+    return false;
+  }
+  
+  if (currentUrl.pathname.includes('/vocab/') && 
+      !nextUrl.pathname.includes('/vocab/')) {
+    return true;
+  }
+
+  return true;
+}
 
 const routes = createBrowserRouter([
   {
@@ -39,14 +63,7 @@ const routes = createBrowserRouter([
           element: <PrivatePage pageName='Topic' />,
           loader: topicsLoader.getTopic,
           action: topicsAction.editTopic,
-          shouldRevalidate: ({ currentUrl, nextUrl }) => {
-            const isLeavingVocab = currentUrl.pathname.includes('/vocab/') && !nextUrl.pathname.includes('/vocab/');
-            const isEnteringVocab = !currentUrl.pathname.includes('/vocab/') && nextUrl.pathname.includes('/vocab/');
-            if (isLeavingVocab || isEnteringVocab) {
-              return false;
-            }
-            return currentUrl.pathname !== nextUrl.pathname;
-          },
+          shouldRevalidate: topicShouldRevalidate,
           children: [
             {
               path: 'vocab/:vocabId/:action?',

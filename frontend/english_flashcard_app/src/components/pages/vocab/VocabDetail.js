@@ -1,10 +1,9 @@
-import React, { Suspense } from 'react';
+import React, { memo, Suspense } from 'react';
 import { Await, useLoaderData } from 'react-router-dom';
 import { Form } from "react-bootstrap";
 import _ from "lodash";
 
-const VocabDetail = ({ topicId = '', data = {}, errors = {} }) => {
-	const { topicsPromise } = useLoaderData();
+const VocabDetail = memo(({ topicId = '', data = {}, errors = {}, topicsPromise = null }) => {
 
 	return (
 		<>
@@ -21,26 +20,28 @@ const VocabDetail = ({ topicId = '', data = {}, errors = {} }) => {
 			)}
 			<div className="mb-3">
 				<label htmlFor="topic" className="form-label">Topic</label>
-				<Suspense fallback={<option>Loading...</option>}>
-					<Await resolve={topicsPromise}>
-						{(dataTopic) =>
-							<>
-								<Form.Select
-									className='form-control'
-									name='topic'
-									defaultValue={topicId}
-								>
-									<option value=''>-- No choice --</option>
-									{dataTopic && (
-										dataTopic.map((item, index) => (
-											<option key={index} value={item.id}>{item.name}</option>
-										))
-									)}
-								</Form.Select>
-							</>
-						}
-					</Await>
-				</Suspense>
+				{topicsPromise && (
+					<Suspense fallback={<option>Loading...</option>}>
+						<Await resolve={topicsPromise}>
+							{(dataTopic) =>
+								<>
+									<Form.Select
+										className='form-control'
+										name='topic'
+										defaultValue={topicId}
+									>
+										<option value=''>-- No choice --</option>
+										{dataTopic && (
+											dataTopic.map((item, index) => (
+												<option key={index} value={item.id}>{item.name}</option>
+											))
+										)}
+									</Form.Select>
+								</>
+							}
+						</Await>
+					</Suspense>
+				)}
 			</div>
 			{errors?.topic && (
 				<ul>
@@ -62,6 +63,6 @@ const VocabDetail = ({ topicId = '', data = {}, errors = {} }) => {
 			)}
 		</>
 	);
-};
+});
 
 export default VocabDetail;

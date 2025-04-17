@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useLoaderData, Await, useParams, Outlet } from 'react-router-dom';
 import { ErrorBoundary } from "react-error-boundary";
 import TopicDetail from '../components/pages/topic/TopicDetail';

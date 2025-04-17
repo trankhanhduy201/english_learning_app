@@ -14,7 +14,7 @@ const Vocab = () => {
   const vocabFetcher = useFetcher();
   const delVocabFetcher = useFetcher();
   const { topicId, vocabId } = useParams();
-  const { vocabPromise } = useLoaderData();
+  const { topicsPromise, vocabPromise } = useLoaderData();
   const isNew = () => vocabId === 'new';
 
   useEffect(() => {
@@ -44,9 +44,7 @@ const Vocab = () => {
   }, [delVocabFetcher.data]);
 
   const handleDelVocab = () => {
-    const formData = new FormData();
-    formData.append('_not_revalidate', '1');
-    delVocabFetcher.submit(formData, {
+    delVocabFetcher.submit(null, {
       action: `/topic/${topicId}/vocab/${vocabId}/delete`,
       method: 'delete'
     });
@@ -58,7 +56,6 @@ const Vocab = () => {
         <div className="row">
           <div className="col-lg-6 text-start mb-4">
             <h1 className='text-start'>Vocab info</h1>
-            <input type="hidden" name="_not_revalidate" defaultValue={'1'} />
             <Suspense fallback={
               <>
                 <VocabDetail />
@@ -71,6 +68,7 @@ const Vocab = () => {
                     topicId={topicId}
                     data={data}
                     errors={vocabFetcher.data?.errors ?? {}}
+                    topicsPromise={topicsPromise}
                   />
                 )}
               </Await>

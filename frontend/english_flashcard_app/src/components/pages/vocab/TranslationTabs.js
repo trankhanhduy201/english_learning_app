@@ -166,9 +166,9 @@ const TranslationTabs = ({ data }) => {
 																name={`translations[${lang}][${item.idx}][type]`} 
 																defaultValue={item.type}
 															>
-																<option></option>
-																{tranTypes.getDatas().map(v => (
-																	<option value={v.key}>{v.text}</option>
+																<option key={0}></option>
+																{tranTypes.getDatas().map((v, i) => (
+																	<option key={i} value={v.key}>{v.text}</option>
 																))}
 															</select>
 														</td>
@@ -233,9 +233,9 @@ const TranslationTabs = ({ data }) => {
 						<div className='col-6'>
 							<label htmlFor="type" className="form-label">Type</label>
 							<select id='type' className="form-control">
-								<option>-- No choice --</option>
-								{tranTypes.getDatas().map(v => (
-									<option value={v.key}>{v.text}</option>
+								<option key={0}>-- No choice --</option>
+								{tranTypes.getDatas().map((v, i) => (
+									<option key={i + 1} value={v.key}>{v.text}</option>
 								))}
 							</select>
 						</div>
