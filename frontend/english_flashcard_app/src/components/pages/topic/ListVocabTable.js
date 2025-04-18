@@ -2,7 +2,6 @@ import React, { memo, useRef } from "react";
 import { Link } from "react-router-dom";
 
 const ListVocabTable = memo(({ vocabs, topicId, isSearching, onDeleteVocab, onSearchVocab }) => {
-  const inputRef = useRef(null);
 
   return (
     <div className="table-responsive" style={{ maxHeight: "265px", overflowY: "auto" }}>
@@ -24,7 +23,6 @@ const ListVocabTable = memo(({ vocabs, topicId, isSearching, onDeleteVocab, onSe
             <th colSpan="4">
               <div className="input-group mb-3">
                 <input 
-                  ref={inputRef} 
                   type="text" 
                   className="form-control" 
                   placeholder="Search word, description..." 

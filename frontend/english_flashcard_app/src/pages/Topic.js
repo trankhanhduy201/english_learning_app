@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { useLoaderData, Await, useParams, Outlet } from 'react-router-dom';
 import { ErrorBoundary } from "react-error-boundary";
 import TopicDetail from '../components/pages/topic/TopicDetail';
@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 const Topic = () => {
   const lang = useSelector((state) => state.lang);
   const { topicId } = useParams();
-  const { topicPromise, vocabsPromise } = useLoaderData();
+  const { topicData, vocabsPromise } = useLoaderData();
   const isNew = () => topicId === 'new';
 
   return (
@@ -17,16 +17,30 @@ const Topic = () => {
       <div className="row">
         <div className="col-lg-6 text-start mb-4">
           <h2>Topic info</h2>
-          <Suspense fallback={
-            <>
-              <TopicDetail isNew={true} />
-              <LoadingOverlay />
-            </>
-          }>
-            <Await resolve={topicPromise}>
-              <TopicDetail topicId={topicId} isNew={isNew()} />
-            </Await>
-          </Suspense>
+          {topicData && topicData instanceof Promise ? (
+            <Suspense fallback={
+              <>
+                <TopicDetail isNew={true} />
+                <LoadingOverlay />
+              </>
+            }>
+              <Await resolve={topicData}>
+                {(topic) => (
+                  <TopicDetail 
+                    topic={topic}
+                    topicId={topicId} 
+                    isNew={isNew()} 
+                  />
+                )}
+              </Await>
+            </Suspense>
+          ) : (
+            <TopicDetail 
+              topic={topicData}
+              topicId={topicId} 
+              isNew={isNew()} 
+            />
+          )}
         </div>
         {!isNew() && (
           <div className="col-lg-6 text-start">

@@ -21,3 +21,5 @@ for filter
 
 
 Fix col width for table 
+truthy or falsy
+check bundle request (console log)

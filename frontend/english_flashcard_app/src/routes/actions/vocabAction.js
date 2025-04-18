@@ -63,7 +63,7 @@ export const editVocab = async ({ request, params }) => {
   const formData = await request.formData();
   const updateVocab = qs.parse(Object.fromEntries(formData));
   const resp = await doAction(params, updateVocab);
-  if (resp.status === 'error') {
+  if (resp.status === 'error' || params.vocabId === 'import') {
     return resp;
   }
   const alertData = getAlertData(resp, params.vocabId);

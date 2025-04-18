@@ -32,6 +32,7 @@ const ImportTextModal = memo(function ImportTextModal({ topicId, lang, onClose }
                 rows="15"
                 placeholder="Paste vocabularies here..."
                 required
+                disabled={fetcher.state === "submitting"}
               ></textarea>
               <div className="mt-3 text-end">
                 <button

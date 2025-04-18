@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
-import { useFetcher, Link, useNavigate, useAsyncValue } from 'react-router-dom';
+import React, { memo, useEffect } from 'react';
+import { useFetcher, Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '../../../stores/slices/alertSlice';
 import * as alertConfigs from "../../../configs/alertConfigs";
 
-const TopicDetail = ({ topicId = '', isNew = false }) => {
-	const topic = useAsyncValue();
+const TopicDetail = memo(({ topic = null, topicId = '', isNew = false }) => {
   const editTopicFetcher = useFetcher();
   const delTopicFetcher = useFetcher();
   const dispatch = useDispatch();
@@ -88,6 +87,6 @@ const TopicDetail = ({ topicId = '', isNew = false }) => {
 			)}
 		</editTopicFetcher.Form>
   );
-};
+});
 
 export default TopicDetail;

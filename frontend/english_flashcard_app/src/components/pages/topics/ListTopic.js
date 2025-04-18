@@ -1,8 +1,7 @@
-import { Link, useAsyncValue } from 'react-router-dom';
+import { memo } from 'react';
+import { Link } from 'react-router-dom';
 
-const Topics = () => {
-  const topics = useAsyncValue();
-
+const Topics = memo(({ topics }) => {
   return (
       <div className="table-responsive">
         <table className="table table-striped table-bordered">
@@ -37,6 +36,6 @@ const Topics = () => {
         </table>
     </div>
   );
-};
+});
 
 export default Topics;
