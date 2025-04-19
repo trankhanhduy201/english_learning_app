@@ -1,9 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as topicApi from "../../services/topicApi";
 import { setTopics, setTopic, clearTopic } from "../slices/topicsSlice";
+import { setAlert } from "../slices/alertSlice";
+import * as alertConfigs from "../../configs/alertConfigs";
+
+const dispatchSuccessAlert = (dispatch, message) => {
+	dispatch(setAlert({type: alertConfigs.SUCCESS_TYPE, message}));
+}
 
 export const getTopicsThunk = createAsyncThunk(
-	'topics/getTopics',
+	'topics/get',
 	async (_, { dispatch, rejectWithValue }) => {
 		try {
 			const response = await topicApi.getTopics();
@@ -19,53 +25,56 @@ export const getTopicsThunk = createAsyncThunk(
 );
 
 export const createTopicThunk = createAsyncThunk(
-  'topics/create',
+  'topic/create',
   async ({ data }, { dispatch, rejectWithValue }) => {
-    try {
-      const response = await topicApi.createTopic(data, { throwEx: false });
-      if (response.status === 'error') {
+	try {
+	  const response = await topicApi.createTopic(data, { throwEx: false });
+	  if (response.status === 'error') {
 				return rejectWithValue(response);
 			}
 			dispatch(setTopic(response.data));
+			dispatchSuccessAlert(dispatch, "Topic is created successfully");
 			return response;
-    } catch (err) {
-      return rejectWithValue({ status: 'error' });
-    }
+	} catch (err) {
+	  return rejectWithValue({ status: 'error' });
+	}
   }
 );
 
 export const updateTopicThunk = createAsyncThunk(
-  'topics/update',
+  'topic/update',
   async ({ topicId, data }, { dispatch, rejectWithValue }) => {
-    try {
-      const response = await topicApi.updateTopic(topicId, data, { throwEx: false });
-      if (response.status === 'error') {
+	try {
+	  const response = await topicApi.updateTopic(topicId, data, { throwEx: false });
+	  if (response.status === 'error') {
 				return rejectWithValue(response);
 			}
 			dispatch(setTopic(response.data));
+			dispatchSuccessAlert(dispatch, "Topic is updated successfully");
 			return response;
-    } catch (err) {
-      return rejectWithValue({ status: 'error' });
-    }
+	} catch (err) {
+	  return rejectWithValue({ status: 'error' });
+	}
   }
 );
 
 export const deleteTopicThunk = createAsyncThunk(
-  'topics/delete',
-  async ({ topicId, data }, { dispatch, rejectWithValue }) => {
+  'topic/delete',
+  async ({ topicId }, { dispatch, rejectWithValue }) => {
 		const params = { id: topicId };
-    try {
-      await topicApi.updateTopic(topicId, data, { throwEx: false });
-			dispatch(clearTopic(params));
-      return { 
-				status: 'success',
-				data: params
-			}
-    } catch (err) {
-      return rejectWithValue({ 
-				status: 'error',
-				data: params
-			});
-    }
+	try {
+	  await topicApi.deleteTopic(topicId);
+		dispatch(clearTopic(params));
+		dispatchSuccessAlert(dispatch, "Topic is deleted successfully");
+	  return { 
+			status: 'success',
+			data: params
+		}
+	} catch (err) {
+	  return rejectWithValue({ 
+			status: 'error',
+			data: params
+		});
+	}
   }
 );

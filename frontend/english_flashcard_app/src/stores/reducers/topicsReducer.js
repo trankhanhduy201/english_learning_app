@@ -18,5 +18,8 @@ export const setTopicReducer = (state, action) => {
 
 export const clearTopicReducer = (state, action) => {
 	const topicData = action.payload;
-	return state.data.filter(topic => parseInt(topic.id) !== parseInt(topicData.id));
+	return {
+		...state,
+		data: state.data.filter(topic => parseInt(topic.id) !== parseInt(topicData.id))
+	}
 };

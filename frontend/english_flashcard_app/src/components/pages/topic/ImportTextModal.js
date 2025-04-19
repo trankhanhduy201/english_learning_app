@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useRef } from "react";
 import { useFetcher } from "react-router-dom";
 
-const ImportTextModal = memo(function ImportTextModal({ topicId, lang, onClose }) {
+const ImportTextModal = memo(({ topicId, lang, onClose }) => {
   const fetcher = useFetcher();
 
   useEffect(() => {
@@ -24,6 +24,7 @@ const ImportTextModal = memo(function ImportTextModal({ topicId, lang, onClose }
           </div>
           <div className="modal-body">
             <fetcher.Form method="post" action={`/topic/${topicId}/vocab/import`}>
+              <input type="hidden" name="_form_name" value="importing_vocab" />
 							<input type="hidden" name="import_type" value="text" />
 							<input type="hidden" name="lang" value={lang} />
               <textarea

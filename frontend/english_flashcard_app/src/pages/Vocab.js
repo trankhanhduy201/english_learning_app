@@ -1,50 +1,21 @@
-import React, { Suspense, useEffect } from 'react';
-import { Await, Link, useFetcher, useLoaderData, useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { Suspense } from 'react';
+import { Await, Link, useFetcher, useLoaderData, useParams } from 'react-router-dom';
 import _ from "lodash";
-import * as alertConfigs from "../configs/alertConfigs";
-import { setAlert } from '../stores/slices/alertSlice';
 import TranslationTabs from '../components/pages/vocab/TranslationTabs';
 import LoadingOverlay from '../components/LoadingOverlay';
 import VocabDetail from '../components/pages/vocab/VocabDetail';
 
 const Vocab = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const vocabFetcher = useFetcher();
   const delVocabFetcher = useFetcher();
   const { topicId, vocabId } = useParams();
   const { topicsPromise, vocabPromise } = useLoaderData();
   const isNew = () => vocabId === 'new';
 
-  useEffect(() => {
-    if (vocabFetcher.data?.status === "success") {
-      dispatch(setAlert({
-        type: alertConfigs.SUCCESS_TYPE,
-        message: `Vocab is ${vocabId === 'new' ? 'created' : 'updated'} successfully`
-      }));
-      if (vocabId === 'new') {
-        if (vocabFetcher.data.data?.id) {
-          navigate(`/topic/${topicId}/vocab/${vocabFetcher.data.data.id}`);
-        } else {
-          navigate(`/topic/${topicId}`);
-        }
-      }
-    }
-  }, [vocabFetcher.data]);
-
-  useEffect(() => {
-    if (delVocabFetcher.data?.status === "success") {
-      dispatch(setAlert({
-        type: alertConfigs.SUCCESS_TYPE,
-        message: "Vocab deleted successfully"
-      }));
-      navigate(`/topic/${topicId}`);
-    }
-  }, [delVocabFetcher.data]);
-
   const handleDelVocab = () => {
-    delVocabFetcher.submit(null, {
+    const formData = new FormData();
+    formData.append('_form_name', 'deleting_vocab');
+    delVocabFetcher.submit(formData, {
       action: `/topic/${topicId}/vocab/${vocabId}/delete`,
       method: 'delete'
     });
@@ -52,7 +23,8 @@ const Vocab = () => {
 
   return (
     <div className="container mt-4">
-      <vocabFetcher.Form action={`/topic/${topicId}/vocab/${vocabId}`} method={vocabId === 'new' ? 'POST' : 'PUT'}>
+      <vocabFetcher.Form action={`/topic/${topicId}/vocab/${vocabId}`} method={isNew() ? 'POST' : 'PUT'}>
+        <input type='hidden' name='_form_name' value={`${isNew() ? 'creating' : 'updating'}_vocab`} />
         <div className="row">
           <div className="col-lg-6 text-start mb-4">
             <h1 className='text-start'>Vocab info</h1>

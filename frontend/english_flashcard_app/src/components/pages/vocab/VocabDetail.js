@@ -1,10 +1,9 @@
 import React, { memo, Suspense } from 'react';
-import { Await, useLoaderData } from 'react-router-dom';
+import { Await } from 'react-router-dom';
 import { Form } from "react-bootstrap";
 import _ from "lodash";
 
 const VocabDetail = memo(({ topicId = '', data = {}, errors = {}, topicsPromise = null }) => {
-
 	return (
 		<>
 			<div className="mb-3">

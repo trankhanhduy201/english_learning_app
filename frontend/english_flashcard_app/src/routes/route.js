@@ -10,31 +10,25 @@ import Layout from "../pages/Layout";
 import PrivatePage from '../components/PrivatePage';
 import VocabModal from "../pages/VocabModal";
 
+const isShouldRevalidate = (formData, actionResult) => {
+  return formData?.has('_not_revalidate') || (actionResult?.status === 'error');
+}
+
 const defaultShouldRevalidate = ({ formData, actionResult }) => {
-  return !(formData?.has('_not_revalidate') || (actionResult?.status === 'error'));
+  return !isShouldRevalidate(formData, actionResult);
 }
 
 const topicShouldRevalidate = ({ formData, actionResult, currentUrl, nextUrl }) => {
-  if (!formData) {
-    return false;
+  if (formData) {
+    if (isShouldRevalidate(formData, actionResult)) {
+      return false;
+    }
+    const formName = formData?.get('_form_name') ?? '';
+    if (formName.includes('vocab')) {
+      return true;
+    }
   }
-  
-  if (formData?.has('_not_revalidate') || 
-      actionResult?.status === 'error') {
-    return false;
-  }
-  
-  if (!currentUrl.pathname.includes('/vocab/') && 
-      nextUrl.pathname.includes('/vocab/')) {
-    return false;
-  }
-  
-  if (currentUrl.pathname.includes('/vocab/') && 
-      !nextUrl.pathname.includes('/vocab/')) {
-    return true;
-  }
-
-  return true;
+  return false;
 }
 
 const routes = createBrowserRouter([
@@ -65,6 +59,10 @@ const routes = createBrowserRouter([
           action: topicsAction.editTopic,
           shouldRevalidate: topicShouldRevalidate,
           children: [
+            {
+              path: 'vocab/import',
+              action: vocabsAction.importVocab
+            },
             {
               path: 'vocab/:vocabId/:action?',
               element: <VocabModal />,

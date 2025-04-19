@@ -45,21 +45,31 @@ const Topic = () => {
         {!isNew() && (
           <div className="col-lg-6 text-start">
             <h2>Vocabularies</h2>
-            <ErrorBoundary fallback={<p className='alert alert-danger'>Can not get data</p>}>
-              <Suspense fallback={<p className='text-center'>Loading...</p>}>
-                <Await resolve={vocabsPromise}>
-                  {(vocabDatas) => (
-                    <>
-                      <ListVocab 
-                        vocabDatas={vocabDatas} 
-                        topicId={topicId} 
-                        lang={lang} 
-                      />
-                    </>
-                  )}
-                </Await>
-              </Suspense>
-            </ErrorBoundary>
+            {vocabsPromise && vocabsPromise instanceof Promise ? (
+              <>
+                <ErrorBoundary fallback={<p className='alert alert-danger'>Can not get data</p>}>
+                  <Suspense fallback={<p className='text-center'>Loading...</p>}>
+                    <Await resolve={vocabsPromise}>
+                      {(vocabDatas) => (
+                        <>
+                          <ListVocab 
+                            vocabDatas={vocabDatas} 
+                            topicId={topicId} 
+                            lang={lang} 
+                          />
+                        </>
+                      )}
+                    </Await>
+                  </Suspense>
+                </ErrorBoundary>
+              </>
+            ) : (
+              <ListVocab 
+                vocabDatas={[]} 
+                topicId={topicId} 
+                lang={lang} 
+              />
+            )}
             <Outlet />
           </div>
         )}

@@ -1,39 +1,9 @@
-import React, { memo, useEffect } from 'react';
-import { useFetcher, Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setAlert } from '../../../stores/slices/alertSlice';
-import * as alertConfigs from "../../../configs/alertConfigs";
+import React, { memo } from 'react';
+import { useFetcher, Link } from 'react-router-dom';
 
 const TopicDetail = memo(({ topic = null, topicId = '', isNew = false }) => {
   const editTopicFetcher = useFetcher();
   const delTopicFetcher = useFetcher();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (editTopicFetcher.data?.status === "success") {
-      dispatch(setAlert({
-        type: alertConfigs.SUCCESS_TYPE,
-        message: isNew
-          ? "Topic created successfully"
-          : "Topic updated successfully"
-      }));
-      if (isNew) {
-        const newId = editTopicFetcher.data?.data.id;
-        navigate(`/topic/${newId}`);
-      }
-    }
-  }, [editTopicFetcher.data]);
-
-  useEffect(() => {
-    if (delTopicFetcher.data?.status === "success") {
-      navigate(`/topics`);
-      dispatch(setAlert({
-        type: alertConfigs.SUCCESS_TYPE,
-        message: "Topic deleted successfully"
-      }));
-    }
-  }, [delTopicFetcher.data]);
 
   const handleDelTopic = () => {
     const formData = new FormData();
