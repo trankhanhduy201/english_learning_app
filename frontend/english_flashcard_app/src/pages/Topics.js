@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect } from 'react';
 import ListTopic from '../components/pages/topics/ListTopic';
-import { Link, useLoaderData, Await } from 'react-router-dom';
+import { Link, useLoaderData, Await, Outlet } from 'react-router-dom';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { setTopics, setIsFetched } from '../stores/slices/topicsSlice';
 import { useDispatch } from 'react-redux';
@@ -23,7 +23,7 @@ const Topics = () => {
       <h1 className='text-start'>Topics</h1>
       <hr />
       <div className='d-flex justify-content-end mb-2'>
-        <Link className='btn btn-secondary me-2' to={'/topic/new'}>
+        <Link className='btn btn-secondary me-2' to={'/topics/new'}>
           <i className="bi bi-plus-circle"></i> New topic
         </Link>
         <Link className='btn btn-danger'>
@@ -41,6 +41,7 @@ const Topics = () => {
       ) : (
         <ListTopic topics={topicDatas} />
       )}
+      <Outlet />
     </>
   );
 };

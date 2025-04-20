@@ -1,3 +1,4 @@
+import { redirect } from "react-router-dom";
 import * as langConfigs from "../../configs/langConfigs";
 import * as topicApi from "../../services/topicApi";
 import * as vocabApi from "../../services/vocabApi";
@@ -32,27 +33,26 @@ export const getTopics = async () => {
     }
     return { topicDatas };
   } catch (error) {
-    throw new Response('', { status: 500 });
+    throw new Response('', { status: 400 });
   }
 }
 
 export const getTopic = async ({ request, params }) => {
-  try {
-    let topicData, vocabsPromise = null;
-    const { topicId } = params;
-    if (topicId !== 'new') {
-      vocabsPromise = vocabApi
-        .getVocabs(topicId, getLang(request))
-        .then(resp => resp.data);
+  const { topicId } = params;
+  if (isNaN(topicId)) {
+    return redirect('/topics');
+  }
 
-      topicData = getTopicFromStore(topicId);
-      if (!topicData) {
-        topicData = topicApi
-          .getTopicById(topicId)
-          .then(resp => resp.data);
-      } else {
-        
-      }
+  try {
+    const vocabsPromise = vocabApi
+      .getVocabs(topicId, getLang(request))
+      .then(resp => resp.data);
+
+    let topicData = getTopicFromStore(topicId);
+    if (!topicData) {
+      topicData = topicApi
+        .getTopicById(topicId)
+        .then(resp => resp.data);
     }
     return {
       topicData,

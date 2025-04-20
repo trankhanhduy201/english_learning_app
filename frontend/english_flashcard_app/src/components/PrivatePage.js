@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import LoadingOverlay from '../components/LoadingOverlay';
 import Home from '../pages/Home';
 import Topics from '../pages/Topics';

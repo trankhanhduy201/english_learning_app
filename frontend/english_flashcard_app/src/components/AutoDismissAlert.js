@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const AutoDismissAlert = ({ id, message, type = 'success', duration = 2000, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const handleCloseAlert = (id) => {
+  const handleCloseAlert = id => {
     setIsVisible(false);
     setTimeout(() => {
       onClose(id);

@@ -7,4 +7,3 @@ export const clearUserReducer = (state, action) => ({...state, userInfo: null});
 export const setAuthReducer = (state, action) => action.payload;
 
 export const clearAuthReducer = (state, action) => authInitialState;
-

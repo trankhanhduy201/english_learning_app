@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import Layout from "../pages/Layout";
 import PrivatePage from '../components/PrivatePage';
 import VocabModal from "../pages/VocabModal";
+import TopicModal from "../pages/TopicModal";
 
 const isShouldRevalidate = (formData, actionResult) => {
   return formData?.has('_not_revalidate') || (actionResult?.status === 'error');
@@ -51,6 +52,14 @@ const routes = createBrowserRouter([
           path: '/topics',
           element: <PrivatePage pageName='Topics' />,
           loader: topicsLoader.getTopics,
+          shouldRevalidate: defaultShouldRevalidate,
+          children: [
+            {
+              path: 'new',
+              element: <TopicModal />,
+              action: topicsAction.createTopic
+            }
+          ]
         },
         {
           path: '/topic/:topicId/:action?',
