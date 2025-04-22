@@ -112,13 +112,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
+# TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 USE_TZ = True
+USE_I18N = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -133,9 +131,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
@@ -155,10 +153,11 @@ INTERNAL_IPS = [
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1200),  # Access token lifetime
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Refresh token lifetime
-    'ROTATE_REFRESH_TOKENS': True,                   # Issue a new refresh token when refreshed
-    'BLACKLIST_AFTER_ROTATION': True,                # Blacklist old refresh tokens
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),  # Access token lifetime
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # DEFAULT_AUTHENTICATION_CLASSES Refresh token lifetime
+    'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
+    'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens
+    "SIGNING_KEY": SECRET_KEY,
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

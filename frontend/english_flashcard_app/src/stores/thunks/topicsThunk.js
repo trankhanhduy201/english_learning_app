@@ -78,3 +78,24 @@ export const deleteTopicThunk = createAsyncThunk(
 	}
   }
 );
+
+export const deleteTopicsThunk = createAsyncThunk(
+  'topics/delete',
+  async (_, { dispatch, rejectWithValue, getState }) => {
+		try {
+			const state = getState();
+			if (state.topics.data.length > 0) {
+				await topicApi.deleteTopics();
+				dispatch(setTopics([]));
+			}
+			dispatchSuccessAlert(dispatch, "Topics are deleted successfully");
+			return { 
+				status: 'success' 
+			}
+		} catch (err) {
+			return rejectWithValue({ 
+				status: 'error'
+			});
+		}
+	}
+);

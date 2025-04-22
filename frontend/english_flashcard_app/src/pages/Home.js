@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { memo } from "react";
 
-const Home = () => {
+const Home = memo(() => {
 	return (
 		<>
 			<h1>Home</h1>
 		</>
 	);
-};
+});
 
 export default Home;

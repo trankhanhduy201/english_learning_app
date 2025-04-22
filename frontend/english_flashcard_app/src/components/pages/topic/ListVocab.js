@@ -28,7 +28,9 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
   const onSearchVocab = useCallback(
     debounce((searchText) => {
       transition(() => {
-        const filteredVocabs = vocabDatas.filter(vocab => vocab.word.toLowerCase().includes(searchText.toLowerCase()));
+        const filteredVocabs = vocabDatas.filter(vocab => 
+          vocab.word.toLowerCase().includes(searchText.toLowerCase())
+        );
         transition(() => {
           setVocabs(filteredVocabs);
         });
@@ -39,7 +41,9 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
 
   useEffect(() => {
     if (delVocabFetcher.data?.status === "success") {
-      setVocabs((prevVocabs) => prevVocabs.filter(vocab => vocab.id !== delVocabFetcher.data.data.id));
+      setVocabs((prevVocabs) => 
+        prevVocabs.filter(vocab => vocab.id !== delVocabFetcher.data.data.id)
+      );
     }
   }, [delVocabFetcher.data]);
 
@@ -49,7 +53,9 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
 
   return (
     <div className="position-relative">
-      {delVocabFetcher.state === "submitting" && <LoadingOverlay position="absolute" background="white" />}
+      {delVocabFetcher.state === "submitting" && 
+        <LoadingOverlay position="absolute" background="white" />
+      }
       <ListVocabTable 
         vocabs={vocabs}
         topicId={topicId} 

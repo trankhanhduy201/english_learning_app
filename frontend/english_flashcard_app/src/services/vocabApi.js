@@ -14,7 +14,7 @@ export const getVocab = async (id) => {
 }
 
 export const updateVocab = async (id, datas, options = {}) => {
-  return await callApi(`/vocabularies/${id}/`, {
+  return await callApi(`vocabularies/${id}/`, {
     method: 'PUT',
     body: JSON.stringify(datas),
     ...options
@@ -22,7 +22,7 @@ export const updateVocab = async (id, datas, options = {}) => {
 }
 
 export const createVocab = async (datas, options = {}) => {
-  return await callApi(`/vocabularies/`, {
+  return await callApi(`vocabularies/`, {
     method: 'POST',
     body: JSON.stringify(datas),
     ...options
@@ -30,7 +30,7 @@ export const createVocab = async (datas, options = {}) => {
 }
 
 export const importVocabs = async (datas, options = {}) => {
-  return await callApi(`/vocabularies/import/`, {
+  return await callApi(`vocabularies/import/`, {
     method: 'POST',
     body: JSON.stringify(datas),
     ...options
@@ -38,7 +38,7 @@ export const importVocabs = async (datas, options = {}) => {
 }
 
 export const deleteVocab = async (id, options = {}) => {
-  return await callApi(`/vocabularies/${id}/`, {
+  return await callApi(`vocabularies/${id}/`, {
     method: 'DELETE'
   });
 }

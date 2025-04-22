@@ -1,2 +1,1 @@
 export const API_BASE_URL = 'http://127.0.0.1:8000';
-export const API_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDkzNDc0LCJpYXQiOjE3MzY0MjE0NzQsImp0aSI6IjEzN2Y5YWJmNjEzZjRmNzliOGZmYzA1ZDE5ODMyNjhmIiwidXNlcl9pZCI6MX0.-ojJi-n19vlQmhPPtww-82aHyLaSR72_TOr3bEq7k-I';

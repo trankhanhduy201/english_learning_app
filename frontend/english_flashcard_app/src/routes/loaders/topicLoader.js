@@ -2,34 +2,20 @@ import { redirect } from "react-router-dom";
 import * as langConfigs from "../../configs/langConfigs";
 import * as topicApi from "../../services/topicApi";
 import * as vocabApi from "../../services/vocabApi";
-import store from "../../stores/store";
+import * as topicCommon from "../../commons/topicCommon" ;
 
 const getLang = (request) => {
   const url = new URL(request.url);
   return url.searchParams.get('lang') || langConfigs.DEFAULT_LANG;
 }
 
-const getIsFetched = () => {
-  const state = store.getState();
-  return state?.topics?.isFetched ?? false;
-}
-
-const getTopicsFromStore = () => {
-  const state = store.getState();
-  return state?.topics?.data ?? [];
-}
-
-const getTopicFromStore = (topicId) => {
-  return getTopicsFromStore().find(topic => parseInt(topic.id) === parseInt(topicId)) ?? null;
-}
-
 export const getTopics = async () => {
   try {
     let topicDatas = null;
-    if (!getIsFetched()) {
+    if (!topicCommon.isFetchedToStore()) {
       topicDatas = topicApi.getTopics().then(resp => resp.data);
     } else {
-      topicDatas = getTopicsFromStore();
+      topicDatas = topicCommon.getTopicsFromStore();
     }
     return { topicDatas };
   } catch (error) {
@@ -48,7 +34,7 @@ export const getTopic = async ({ request, params }) => {
       .getVocabs(topicId, getLang(request))
       .then(resp => resp.data);
 
-    let topicData = getTopicFromStore(topicId);
+    let topicData = topicCommon.getTopicFromStore(topicId);
     if (!topicData) {
       topicData = topicApi
         .getTopicById(topicId)

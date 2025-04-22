@@ -17,7 +17,7 @@ import re
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
-	# permission_classes = [IsAuthenticated, IsOwner]
+	permission_classes = [IsAuthenticated, IsOwner]
 	filter_backends = [DjangoFilterBackend]
 
 	def perform_create(self, serializer):
@@ -37,6 +37,17 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet):
 	queryset = Topic.objects.all()
 	serializer_class = TopicSerializer
 	search_fields = ['name']
+	
+	@action(detail=False, methods=['post'], url_path='delete')
+	def bulk_delete(self, request, *args, **kwargs):
+		try:
+			self.get_queryset().delete()
+			return Response(status=status.HTTP_204_NO_CONTENT)
+		except Exception as e:
+			return Response(
+				{'detail': 'Unexpected error occurred.', 'error': str(e)},
+				status=status.HTTP_500_INTERNAL_SERVER_ERROR
+			)
 
 
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
@@ -50,9 +61,9 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 			get_translation_prefetch_related(self.request.GET.dict())
 		)
 		return qs
-	
+		
 	@action(detail=False, methods=['post'], url_path='import')
-	def import_bulk(self, request, *args, **kwargs):
+	def bulk_import(self, request, *args, **kwargs):
 		rq_serializer = VocabularyImportSerializer(data=request.data)
 		if not rq_serializer.is_valid():
 			return Response(rq_serializer.errors, status=400)

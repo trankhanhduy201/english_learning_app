@@ -21,7 +21,7 @@ class VocabularySerializer(serializers.ModelSerializer):
 		model = Vocabulary
 		fields = ['id', 'word', 'topic', 'translations', 'descriptions', 'created_by']
 	
-	def _create_or_update_translations(self, instance, translations, is_create = False):
+	def _create_or_update_translations(self, instance, translations, is_create=False):
 		if len(translations) > 0:
 			translations = self.initial_data.get('translations', []) if isinstance(self.initial_data, dict) else translations
 			translation_ids = [] if is_create else [item['id'] for item in self.data.get('translations', []) if 'id' in item]

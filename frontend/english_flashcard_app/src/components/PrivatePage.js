@@ -1,4 +1,4 @@
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import LoadingOverlay from '../components/LoadingOverlay';
 import Home from '../pages/Home';
 import Topics from '../pages/Topics';
@@ -6,8 +6,9 @@ import Topic from '../pages/Topic';
 import TopicLearn from '../pages/TopicLearn';
 import Vocab from '../pages/Vocab';
 import useCheckAuth from "../hooks/useCheckAuth";
+import { memo } from "react";
 
-const PrivatePage = ({ pageName }) => {
+const PrivatePage = memo(({ pageName }) => {
   const { isAuth } = useCheckAuth();
 
   if (isAuth === null) {
@@ -32,6 +33,6 @@ const PrivatePage = ({ pageName }) => {
     default:
       return <Home />;
   }
-};
+});
 
 export default PrivatePage;

@@ -8,6 +8,10 @@ export const setAuthTokens = (newToken, newRefresh, expireDays = 7) => {
   Cookies.set(REFRESH_TOKEN_KEY, newRefresh, { expires: expireDays, secure: true });
 };
 
+export const setAccessToken = (newToken, expireDays = 7) => {
+  Cookies.set(TOKEN_KEY, newToken, { expires: expireDays, secure: true });
+};
+
 export const getAuthTokens = () => {
   return {
     token: Cookies.get(TOKEN_KEY),

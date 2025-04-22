@@ -1,6 +1,11 @@
 import { redirect } from "react-router-dom";
 import store from "../../stores/store";
-import { updateTopicThunk, createTopicThunk, deleteTopicThunk } from "../../stores/thunks/topicsThunk";
+import { 
+  createTopicThunk, 
+  updateTopicThunk, 
+  deleteTopicThunk, 
+  deleteTopicsThunk 
+} from "../../stores/thunks/topicsThunk";
 
 const updateTopic = async (topicId, data) => {
   try {
@@ -37,6 +42,14 @@ export const createTopic = async ({ request }) => {
   try {
     const result = await store.dispatch(createTopicThunk({ data })).unwrap();
     return redirect(`/topic/${result.data.id}`);
+  } catch (err) {
+    return err;
+  }
+}
+
+export const deleteTopics = async () => {
+  try {
+    return await store.dispatch(deleteTopicsThunk()).unwrap();
   } catch (err) {
     return err;
   }

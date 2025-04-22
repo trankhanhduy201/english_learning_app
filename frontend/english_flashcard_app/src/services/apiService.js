@@ -1,13 +1,14 @@
 import * as apiConfigs from '../configs/apiConfigs';
+import * as cookieUtils from '../utils/cookies';
 
 const API_BASE_URL = apiConfigs.API_BASE_URL;
-const API_TOKEN = apiConfigs.API_TOKEN;
 
 const checkStatusNoContent = (status) => [204, 304].includes(status);
 
 export const callApi = async (endpoint, options = {}) => {
+  const { token } = cookieUtils.getAuthTokens();
   const headers = {
-    Authorization: `Bearer ${API_TOKEN}`,
+    Authorization: `Bearer ${token}`,
     ...options?.header,
     'Content-Type': 'application/json'
   }

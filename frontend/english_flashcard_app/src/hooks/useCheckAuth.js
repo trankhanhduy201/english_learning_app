@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import * as authApi from "../services/authApi";
 import * as cookies from "../utils/cookies";
+import * as jwtUtils from "../utils/jwt";
 
 const refreshNewToken = async (refresh) => {
   let newTokenData = {};
@@ -22,9 +23,28 @@ const verifyToken = async (token, refreshToken) => {
     return true;
   }
 
-  const { access, refresh } = await refreshNewToken(refreshToken, { throwEx: false });
+  const { access } = await refreshNewToken(refreshToken, { throwEx: false });
   if (access) {
-    cookies.setAuthTokens(access, refresh);
+    cookies.setAccessToken(access);
+    return true;
+  }
+
+  cookies.clearAuthTokens();
+  return false;
+}
+
+const localVerifyToken = async (token, refreshToken) => {
+  if (jwtUtils.checkTokenExpire(token)) {
+    return true;
+  }
+
+  if (!jwtUtils.checkTokenExpire(refreshToken)) {
+    return false;
+  }
+
+  const { access } = await refreshNewToken(refreshToken, { throwEx: false });
+  if (access) {
+    cookies.setAccessToken(access);
     return true;
   }
 
@@ -42,8 +62,17 @@ const useCheckAuth = () => {
       setIsAuth(verified);
     }
 
+    const verifyInterval = async () => {
+      const { token, refreshToken } = cookies.getAuthTokens();
+      const verified = await localVerifyToken(token, refreshToken);
+      setIsAuth(verified);
+    }
+
     setIsAuth(null);
     verify();
+
+    const interval = setInterval(() => verifyInterval(), 60000);
+    return () => clearInterval(interval);
   }, []);
 
   return { isAuth };
