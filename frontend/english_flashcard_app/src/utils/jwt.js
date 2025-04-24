@@ -9,8 +9,7 @@ export const getTokenExp = (token: string): number | null => {
   }
 }
 
-export const checkTokenExpire = token => {
+export const checkTokenExpired = token => {
   const expiresAt = getTokenExp(token);
-  return !(expiresAt && Date.now() >= expiresAt);
+  return expiresAt && Date.now() >= expiresAt;
 }
-

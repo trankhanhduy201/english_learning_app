@@ -1,81 +1,42 @@
 import { useEffect, useState } from "react";
-import * as authApi from "../services/authApi";
-import * as cookies from "../utils/cookies";
-import * as jwtUtils from "../utils/jwt";
+import * as cookieUtils from "../utils/cookies";
+import * as authCommon from "../commons/authCommon";
 
-const refreshNewToken = async (refresh) => {
-  let newTokenData = {};
-  if (!refresh) {
-    return newTokenData;
-  }
-  
-  const resp = await authApi.refreshToken(refresh, { throwEx: false });
-  if (resp.code == 200) {
-    newTokenData = resp.data;
-  }
+const useCheckAuth = ({ hasCheckExpired }) => {
+  const [ dataAuth, setDataAuth ] = useState({
+    isLogged: null,
+    isExpired: false
+  });
 
-  return newTokenData;
-}
-
-const verifyToken = async (token, refreshToken) => {
-  const resp = await authApi.verifyToken(token, { throwEx: false });
-  if (resp.code == 200) {
-    return true;
-  }
-
-  const { access } = await refreshNewToken(refreshToken, { throwEx: false });
-  if (access) {
-    cookies.setAccessToken(access);
-    return true;
-  }
-
-  cookies.clearAuthTokens();
-  return false;
-}
-
-const localVerifyToken = async (token, refreshToken) => {
-  if (jwtUtils.checkTokenExpire(token)) {
-    return true;
-  }
-
-  if (!jwtUtils.checkTokenExpire(refreshToken)) {
-    return false;
-  }
-
-  const { access } = await refreshNewToken(refreshToken, { throwEx: false });
-  if (access) {
-    cookies.setAccessToken(access);
-    return true;
-  }
-
-  cookies.clearAuthTokens();
-  return false;
-}
-
-const useCheckAuth = () => {
-  const [ isAuth, setIsAuth ] = useState(null);
+  const setIsLogged = isLogged => setDataAuth(state => ({ ...state, isLogged: isLogged }));
+  const setIsExpired = isExpired => setDataAuth(state => ({ ...state, isExpired: isExpired }));
 
   useEffect(() => {
     const verify = async () => {
-      const { token, refreshToken } = cookies.getAuthTokens();
-      const verified = await verifyToken(token, refreshToken);
-      setIsAuth(verified);
+      const { token, refreshToken } = cookieUtils.getAuthTokens();
+      const verified = await authCommon.verifyToken(token, refreshToken);
+      setIsLogged(verified);
     }
-
-    const verifyInterval = async () => {
-      const { token, refreshToken } = cookies.getAuthTokens();
-      const verified = await localVerifyToken(token, refreshToken);
-      setIsAuth(verified);
-    }
-
-    setIsAuth(null);
+    setIsLogged(null);
     verify();
 
-    const interval = setInterval(() => verifyInterval(), 60000);
-    return () => clearInterval(interval);
+    // For checking expiration
+    if (hasCheckExpired) {
+      const checkExpired = async () => {
+        const { token, refreshToken } = cookieUtils.getAuthTokens();
+        const verified = await authCommon.localVerifyToken(token, refreshToken);
+        setIsExpired(!verified);
+      }
+      const interval = setInterval(() => checkExpired(), 60000);
+      return () => clearInterval(interval);
+    }
   }, []);
 
-  return { isAuth };
+  return { 
+    ...dataAuth,
+    setIsLogged,
+    setIsExpired
+  };
 }
 
 export default useCheckAuth;

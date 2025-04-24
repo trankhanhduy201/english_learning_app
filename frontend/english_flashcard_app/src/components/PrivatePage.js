@@ -8,17 +8,7 @@ import Vocab from '../pages/Vocab';
 import useCheckAuth from "../hooks/useCheckAuth";
 import { memo } from "react";
 
-const PrivatePage = memo(({ pageName }) => {
-  const { isAuth } = useCheckAuth();
-
-  if (isAuth === null) {
-    return <LoadingOverlay />;
-  }
-
-  if (!isAuth) {
-    return <Navigate to='/login' />;
-  }
-
+const Page = memo(({ pageName }) => {
   switch (pageName) {
     case 'Home':
       return <Home />;
@@ -33,6 +23,22 @@ const PrivatePage = memo(({ pageName }) => {
     default:
       return <Home />;
   }
+});
+
+const PrivatePage = memo(({ pageName }) => {
+  const { isLogged } = useCheckAuth({
+    hasCheckExpired: false
+  });
+
+  if (isLogged === null) {
+    return <LoadingOverlay />;
+  }
+
+  if (!isLogged) {
+    return <Navigate to='/login' />;
+  }
+
+  return <Page pageName={pageName} />
 });
 
 export default PrivatePage;

@@ -1,7 +1,7 @@
 import { callApi } from "./apiService";
 
 export const getTopics = async () => {
-  return await callApi('topics', {
+  return await callApi('topics/', {
     method: 'GET'
   });
 }
