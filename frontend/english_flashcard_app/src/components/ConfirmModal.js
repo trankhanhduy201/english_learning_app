@@ -4,15 +4,15 @@ import LoadingSpinner from './LoadingSpinner';
 
 const ConfirmModal = ({ isShow, isSubmmiting, message, onClose, onSubmit }) => {
   return (
-    <Modal show={isShow} onHide={onClose} centered>
-      <Modal.Header closeButton>
+    <Modal show={isShow} /* onHide={onClose} */ centered>
+      <Modal.Header /* closeButton */>
         <Modal.Title>Confirm</Modal.Title>
       </Modal.Header>
       <Modal.Body>{message}</Modal.Body>
       <Modal.Footer>
         <Button 
           variant="primary" 
-          onClick={onSubmit} 
+          onClick={onSubmit}
           disabled={isSubmmiting}
         >
           {isSubmmiting && 

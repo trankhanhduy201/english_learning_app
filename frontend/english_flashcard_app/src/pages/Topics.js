@@ -11,21 +11,16 @@ const Topics = () => {
   const deleteFetcher = useFetcher();
   const { topicDatas } = useLoaderData();
   const dispatch = useDispatch();
-  const submitActionCallback = () => {
-    const formData = new FormData();
-    formData.append('_not_revalidate', '1');
-    deleteFetcher.submit(formData, {
-      action: `/topics/delete`, 
-      method: 'delete'
-    });
-  }
-  const { 
-    isShowModal, 
-    showConfirmModal,
-    hideConfirmModal,
-    onClickNo, 
-    onClickYes
-  } = useConfirmModal({ submitActionCallback });
+  const confirmDeleteModal = useConfirmModal({
+    submitActionCallback: async () => {
+      const formData = new FormData();
+      formData.append('_not_revalidate', '1');
+      return await deleteFetcher.submit(formData, {
+        action: `/topics/delete`, 
+        method: 'delete'
+      });
+    }
+  });
 
   useEffect(() => {
     if (topicDatas && topicDatas instanceof Promise) {
@@ -36,12 +31,6 @@ const Topics = () => {
     }
   }, [topicDatas, dispatch]);
 
-  useEffect(() => {
-    if (deleteFetcher.data?.status === 'success') {
-      hideConfirmModal();
-    }
-  }, [deleteFetcher]);
-
   return (
     <>
       <h1 className='text-start'>Topics</h1>
@@ -50,7 +39,7 @@ const Topics = () => {
         <Link className='btn btn-secondary me-2' to={'/topics/new'}>
           <i className="bi bi-plus-circle"></i> New topic
         </Link>
-        <Link className='btn btn-danger' onClick={() => showConfirmModal()}>
+        <Link className='btn btn-danger' onClick={() => confirmDeleteModal.showConfirmModal()}>
           <i className="bi bi-trash text-white"></i> Delete all
         </Link>
       </div>
@@ -65,13 +54,13 @@ const Topics = () => {
       ) : (
         <ListTopic topics={topicDatas} />
       )}
-      {isShowModal && (
+      {confirmDeleteModal.isShowModal && (
         <ConfirmModal
-          isShow={isShowModal}
-          isSubmmiting={deleteFetcher.state === 'submitting'}
           message="Are you sure you want to delete all topics?"
-          onClose={onClickNo}
-          onSubmit={onClickYes}
+          isShow={confirmDeleteModal.isShowModal}
+          isSubmmiting={confirmDeleteModal.isSubmmiting}
+          onClose={confirmDeleteModal.onClickNo}
+          onSubmit={confirmDeleteModal.onClickYes}
         />
       )}
       <Outlet />

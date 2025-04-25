@@ -3,16 +3,24 @@ import * as cookies from '../utils/cookies';
 import { useDispatch } from 'react-redux';
 import { initialState, setAuth } from '../stores/slices/authSlice';
 import { Dropdown, Nav } from "react-bootstrap";
+import useConfirmModal from "../hooks/useConfirmModal";
+import ConfirmModal from './ConfirmModal';
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const onLogout = () => {
-    cookies.clearAuthTokens();
-    dispatch(setAuth(initialState));
-    navigate('/login');
-  }
+  const confirmLogoutModal = useConfirmModal({
+    submitActionCallback: async () => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          cookies.clearAuthTokens();
+          dispatch(setAuth(initialState));
+          navigate('/login');
+          return resolve();
+        }, 3000);
+      })
+    }
+  });
 
   return (
     <header className="bg-light shadow-sm">
@@ -46,11 +54,24 @@ const Header = () => {
                     <Dropdown.Item href="/profile">Profile</Dropdown.Item>
                     <Dropdown.Item href="/settings">Settings</Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item onClick={onLogout}>Logout</Dropdown.Item>
+                    <Dropdown.Item 
+                      onClick={() => confirmLogoutModal.showConfirmModal()}
+                    >
+                      Logout
+                    </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </li>
             </ul>
+            {confirmLogoutModal.isShowModal && (
+              <ConfirmModal
+                message="Do you want to log out?"
+                isShow={confirmLogoutModal.isShowModal}
+                isSubmmiting={confirmLogoutModal.isSubmmiting}
+                onClose={confirmLogoutModal.onClickNo}
+                onSubmit={confirmLogoutModal.onClickYes}
+              />
+            )}
           </div>
         </nav>
       </div>

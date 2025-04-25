@@ -13,10 +13,12 @@ const Topic = () => {
   const loaderData = useLoaderData();
 
   return (
-    <div className="container mt-4">
+    <div className={`container ${!isNew() ? 'mt-4' : ''}`}>
       <div className="row">
         <div className={`${ isNew() ? 'col-12' : 'col-lg-6' } text-start mb-4`}>
-          <h2>Topic info</h2>
+          {!isNew() && (
+            <h2>Topic info</h2>
+          )}
           {loaderData?.topicData && loaderData.topicData instanceof Promise ? (
             <Suspense fallback={
               <>

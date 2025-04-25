@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Modal } from 'react-bootstrap';
 
 const CountdownLogoutModal = ({ seconds = 5, onFinish }) => {
   const [countdown, setCountdown] = useState(seconds);
@@ -19,29 +20,17 @@ const CountdownLogoutModal = ({ seconds = 5, onFinish }) => {
   }, [onFinish]);
 
   return (
-    <>
-      <div
-        className="modal fade show d-block"
-        tabIndex="-1"
-        role="dialog"
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-      >
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content text-start">
-            <div className="modal-header">
-              <h5 className="modal-title w-100">Notice</h5>
-            </div>
-            <div className="modal-body">
-              <p>
-                You will be logged out automatically in{' '}
-                <strong>{countdown}</strong> seconds.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="modal-backdrop fade show"></div>
-    </>
+    <Modal show={true} centered>
+      <Modal.Header>
+        <Modal.Title>Notice</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>
+          You will be logged out automatically in{' '}
+          <strong>{countdown}</strong> seconds.
+        </p>
+      </Modal.Body>
+    </Modal>
   );
 };
 
