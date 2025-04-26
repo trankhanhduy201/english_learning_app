@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useCallback, useEffect } from 'react';
 import ListTopic from '../components/pages/topics/ListTopic';
 import { Link, useLoaderData, Await, Outlet, useFetcher } from 'react-router-dom';
 import LoadingOverlay from '../components/LoadingOverlay';
@@ -8,14 +8,15 @@ import useConfirmModal from '../hooks/useConfirmModal';
 import ConfirmModal from '../components/ConfirmModal';
 
 const Topics = () => {
-  const deleteFetcher = useFetcher();
+  const deleteAllFetcher = useFetcher();
+  const deleteTopicFetcher = useFetcher();
   const { topicDatas } = useLoaderData();
   const dispatch = useDispatch();
   const confirmDeleteModal = useConfirmModal({
     submitActionCallback: async () => {
       const formData = new FormData();
       formData.append('_not_revalidate', '1');
-      return await deleteFetcher.submit(formData, {
+      return await deleteAllFetcher.submit(formData, {
         action: `/topics/delete`, 
         method: 'delete'
       });
@@ -30,6 +31,13 @@ const Topics = () => {
       });
     }
   }, [topicDatas, dispatch]);
+
+  const removeTopic = useCallback(async (topicId) => {
+    return await deleteTopicFetcher.submit(null, {
+      action: `/topic/${topicId}/delete`,
+      method: 'delete'
+    });
+  });
 
   return (
     <>
@@ -47,12 +55,18 @@ const Topics = () => {
         <Suspense fallback={<LoadingOverlay />}>
           <Await resolve={topicDatas}>
             {(topics) => (
-              <ListTopic topics={topics} />
+              <ListTopic 
+                topics={topics} 
+                removeTopic={removeTopic}
+              />
             )}
           </Await>
         </Suspense>
       ) : (
-        <ListTopic topics={topicDatas} />
+        <ListTopic
+          topics={topicDatas} 
+          removeTopic={removeTopic}
+        />
       )}
       {confirmDeleteModal.isShowModal && (
         <ConfirmModal

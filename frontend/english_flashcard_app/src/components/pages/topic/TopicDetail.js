@@ -9,7 +9,7 @@ const TopicDetail = memo(({ topic = null, topicId = '', isNew = false }) => {
 		const formData = new FormData();
 		formData.append('_not_revalidate', '1');
 		delTopicFetcher.submit(formData, {
-			action: `/topic/${topicId}/delete`, 
+			action: `/topic/${topicId}/delete?redirectTo=topics`, 
 			method: 'delete'
 		});
 	}

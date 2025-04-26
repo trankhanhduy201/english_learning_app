@@ -15,10 +15,10 @@ const updateTopic = async (topicId, data) => {
   }
 }
 
-const deleteTopic = async (topicId) => {
+const deleteTopic = async (topicId, redirectTo = null) => {
   try {
-    await store.dispatch(deleteTopicThunk({ topicId })).unwrap();
-    return redirect('/topics');
+    const data = await store.dispatch(deleteTopicThunk({ topicId })).unwrap();
+    return redirectTo ? redirect(`/${redirectTo}`) : data;
   } catch (err) {
     return err;
   }
@@ -29,7 +29,9 @@ export const editTopic = async ({ request, params }) => {
   const updateData = Object.fromEntries(formData);
 
   if (params.action === 'delete') {
-    return deleteTopic(params.topicId);
+    const url = new URL(request.url);
+    const redirectTo = url.searchParams.get('redirectTo');
+    return deleteTopic(params.topicId, redirectTo);
   }
 
 	return await updateTopic(params.topicId, updateData);
