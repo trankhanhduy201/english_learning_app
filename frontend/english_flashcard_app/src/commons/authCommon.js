@@ -47,6 +47,7 @@ export const localVerifyToken = async (token, refreshToken) => {
 
   const { access } = await refreshNewToken(refreshToken, { throwEx: false });
   if (access) {
+    console.log(access);
     cookieUtils.setAccessToken(access);
     return true;
   }

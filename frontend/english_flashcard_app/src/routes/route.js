@@ -4,6 +4,7 @@ import * as vocabsLoader from './loaders/vocabLoader';
 import * as topicsAction from './actions/topicAction';
 import * as vocabsAction from './actions/vocabAction';
 import * as transAction from './actions/transAction';
+import * as loginAction from './actions/loginAction';
 import Error from "../components/errors/Error";
 import Login from "../pages/Login";
 import Layout from "../pages/Layout";
@@ -35,7 +36,8 @@ const topicShouldRevalidate = ({ formData, actionResult, currentUrl, nextUrl }) 
 const routes = createBrowserRouter([
   {
     path: '/login',
-    element: <Login />
+    element: <Login />,
+    action: loginAction.login
   },
   {
     path: "/",

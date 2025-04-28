@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { setAuthReducer, clearAuthReducer } from '../reducers/authReducer';
+import { setAuthReducer, clearAuthReducer, setUserInfoReducer } from '../reducers/authReducer';
 
 export const initialState = {
   userInfo: null
@@ -10,9 +10,10 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     setAuth: setAuthReducer,
-    clearAuth: clearAuthReducer
+    clearAuth: clearAuthReducer,
+    setUserInfo: setUserInfoReducer
   },
 });
 
-export const { setAuth, clearAuth } = authSlice.actions;
+export const { setAuth, clearAuth, setUserInfo } = authSlice.actions;
 export default authSlice.reducer;

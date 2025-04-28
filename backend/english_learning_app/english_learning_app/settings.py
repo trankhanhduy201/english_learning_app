@@ -153,7 +153,7 @@ INTERNAL_IPS = [
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),  # Access token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),  # Access token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # DEFAULT_AUTHENTICATION_CLASSES Refresh token lifetime
     'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
     'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens

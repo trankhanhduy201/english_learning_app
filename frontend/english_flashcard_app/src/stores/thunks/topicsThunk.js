@@ -1,7 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import * as topicApi from "../../services/topicApi";
 import { setTopics, setTopic, clearTopic } from "../slices/topicsSlice";
 import { setAlert } from "../slices/alertSlice";
+import * as vocabApi from "../../services/vocabApi";
+import * as topicApi from "../../services/topicApi";
 import * as alertConfigs from "../../configs/alertConfigs";
 
 const dispatchSuccessAlert = (dispatch, message) => {
@@ -17,7 +18,31 @@ export const getTopicsThunk = createAsyncThunk(
 				return rejectWithValue(response);
 			}
 			dispatch(setTopics(response.data));
-			return response;
+			return response.data;
+		} catch (err) {
+			return rejectWithValue({ status: 'error' });
+		}
+	}
+);
+
+export const getTopicThunk = createAsyncThunk(
+	'topic/get',
+	async ({ topicId, lang, cachedTopic=false }, { rejectWithValue }) => {
+		try {
+			let topicPromise = null;
+			if (!cachedTopic) {
+				topicPromise = topicApi
+					.getTopicById(topicId)
+					.then(resp => resp.data);
+			}
+			const vocabsPromise = vocabApi
+				.getVocabs(topicId, lang)
+				.then(resp => resp.data);
+
+			return {
+				topicPromise,
+				vocabsPromise
+			};
 		} catch (err) {
 			return rejectWithValue({ status: 'error' });
 		}
