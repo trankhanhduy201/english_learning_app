@@ -12,8 +12,8 @@ const store = configureStore({
     topics: topicsReducers,
     auth: authReducers
   },
-  middleware: (getDefaultMiddleware) => 
-    getDefaultMiddleware().concat(verifyTokenMiddleware),
+  // middleware: (getDefaultMiddleware) => 
+  //   getDefaultMiddleware().concat(verifyTokenMiddleware),
 });
 
 export default store;

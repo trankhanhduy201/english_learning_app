@@ -2,18 +2,21 @@ import * as authApi from "../services/authApi";
 import * as jwtUtils from "../utils/jwt";
 import * as cookieUtils from "../utils/cookies";
 
-export const refreshNewToken = async (refresh) => {
-  let newTokenData = {};
-  if (!refresh) {
-    return newTokenData;
+export const refreshNewToken = async (refreshToken) => {
+  if (!refreshToken) {
+    cookieUtils.clearAuthTokens();
+    return false;
   }
   
-  const resp = await authApi.refreshToken(refresh, { throwEx: false });
-  if (resp.code == 200) {
-    newTokenData = resp.data;
+  const resp = await authApi.refreshToken(refreshToken, { throwEx: false });
+  if (resp.status === 'error') {
+    cookieUtils.clearAuthTokens();
+    return false;
   }
 
-  return newTokenData;
+  const accessToken = resp.data.access;
+  cookieUtils.setAccessToken(accessToken);
+  return accessToken;
 }
 
 export const verifyToken = async (token, refreshToken) => {
@@ -24,34 +27,19 @@ export const verifyToken = async (token, refreshToken) => {
     }
   }
 
-  if (refreshToken) {
-    const { access } = await refreshNewToken(refreshToken, { throwEx: false });
-    if (access) {
-      cookieUtils.setAccessToken(access);
-      return true;
-    }
-  }
-
-  cookieUtils.clearAuthTokens();
-  return false;
+  const accessToken = refreshNewToken(refreshToken);
+  return !!accessToken;
 }
 
 export const localVerifyToken = async (token, refreshToken) => {
-  if (token && !jwtUtils.checkTokenExpired(token)) {
+  if (token && !jwtUtils.checkTokenExpired(token, 120)) {
     return true;
   }
 
-  if (!refreshToken || jwtUtils.checkTokenExpired(refreshToken)) {
+  if (!refreshToken || jwtUtils.checkTokenExpired(refreshToken, 300)) {
     return false;
   }
 
-  const { access } = await refreshNewToken(refreshToken, { throwEx: false });
-  if (access) {
-    console.log(access);
-    cookieUtils.setAccessToken(access);
-    return true;
-  }
-
-  cookieUtils.clearAuthTokens();
-  return false;
+  const accessToken = refreshNewToken(refreshToken);
+  return !!accessToken;
 }

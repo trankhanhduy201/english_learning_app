@@ -7,7 +7,6 @@ const checkStatusNoContent = (status) => [204, 304].includes(status);
 
 export const callApi = async (endpoint, options = {}) => {
   const { token } = cookieUtils.getAuthTokens();
-  console.log(token);
   const headers = {
     Authorization: `Bearer ${token}`,
     ...options?.header,
