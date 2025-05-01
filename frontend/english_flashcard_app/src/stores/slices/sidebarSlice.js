@@ -1,10 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { setToggleSidebarReducer } from '../reducers/sidebarReducer';
+import { createSlice } from "@reduxjs/toolkit";
+import { setToggleSidebarReducer } from "../reducers/sidebarReducer";
 
 const sidebarSlice = createSlice({
-  name: 'sidebar',
+  name: "sidebar",
   initialState: {
-    isOpen: false
+    isOpen: false,
   },
   reducers: {
     toggleSidebar: setToggleSidebarReducer,

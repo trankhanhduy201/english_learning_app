@@ -8,10 +8,10 @@ export const getValue = (key, defaultValue) => {
     console.error(`Error reading ${key} from localStorage`, err);
     return defaultValue;
   }
-}
+};
 
 export const setValue = (key, value) => localStorage.setItem(key, value);
 
-export const getLang = () => getValue('lang', DEFAULT_LANG);
+export const getLang = () => getValue("lang", DEFAULT_LANG);
 
-export const setLang = value => setValue('lang', value);
+export const setLang = (value) => setValue("lang", value);

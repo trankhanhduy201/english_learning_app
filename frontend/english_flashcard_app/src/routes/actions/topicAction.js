@@ -1,10 +1,10 @@
 import { redirect } from "react-router-dom";
 import store from "../../stores/store";
-import { 
-  createTopicThunk, 
-  updateTopicThunk, 
-  deleteTopicThunk, 
-  deleteTopicsThunk 
+import {
+  createTopicThunk,
+  updateTopicThunk,
+  deleteTopicThunk,
+  deleteTopicsThunk,
 } from "../../stores/thunks/topicsThunk";
 
 const updateTopic = async (topicId, data) => {
@@ -13,7 +13,7 @@ const updateTopic = async (topicId, data) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 const deleteTopic = async (topicId, redirectTo = null) => {
   try {
@@ -22,20 +22,20 @@ const deleteTopic = async (topicId, redirectTo = null) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 export const editTopic = async ({ request, params }) => {
   const formData = await request.formData();
   const updateData = Object.fromEntries(formData);
 
-  if (params.action === 'delete') {
+  if (params.action === "delete") {
     const url = new URL(request.url);
-    const redirectTo = url.searchParams.get('redirectTo');
+    const redirectTo = url.searchParams.get("redirectTo");
     return deleteTopic(params.topicId, redirectTo);
   }
 
-	return await updateTopic(params.topicId, updateData);
-}
+  return await updateTopic(params.topicId, updateData);
+};
 
 export const createTopic = async ({ request }) => {
   const formData = await request.formData();
@@ -47,7 +47,7 @@ export const createTopic = async ({ request }) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 export const deleteTopics = async () => {
   try {
@@ -55,4 +55,4 @@ export const deleteTopics = async () => {
   } catch (err) {
     return err;
   }
-}
+};

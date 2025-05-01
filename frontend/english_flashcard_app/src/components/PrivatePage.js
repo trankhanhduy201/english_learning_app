@@ -1,24 +1,24 @@
 import { Navigate } from "react-router-dom";
-import LoadingOverlay from '../components/LoadingOverlay';
-import Dashboard from '../pages/Dashboard';
-import Topics from '../pages/Topics';
-import Topic from '../pages/Topic';
-import TopicLearn from '../pages/TopicLearn';
-import Vocab from '../pages/Vocab';
+import LoadingOverlay from "../components/LoadingOverlay";
+import Dashboard from "../pages/Dashboard";
+import Topics from "../pages/Topics";
+import Topic from "../pages/Topic";
+import TopicLearn from "../pages/TopicLearn";
+import Vocab from "../pages/Vocab";
 import useCheckAuth from "../hooks/useCheckAuth";
 import { memo } from "react";
 
 const Page = memo(({ pageName }) => {
   switch (pageName) {
-    case 'Dashboard':
+    case "Dashboard":
       return <Dashboard />;
-    case 'Topics':
+    case "Topics":
       return <Topics />;
-    case 'Topic':
+    case "Topic":
       return <Topic />;
-    case 'Vocab':
+    case "Vocab":
       return <Vocab />;
-    case 'TopicLearn':
+    case "TopicLearn":
       return <TopicLearn />;
     default:
       return <Dashboard />;
@@ -27,7 +27,7 @@ const Page = memo(({ pageName }) => {
 
 const PrivatePage = memo(({ pageName }) => {
   const { isLogged } = useCheckAuth({
-    hasCheckExpired: false
+    hasCheckExpired: false,
   });
 
   if (isLogged === null) {
@@ -35,10 +35,10 @@ const PrivatePage = memo(({ pageName }) => {
   }
 
   if (!isLogged) {
-    return <Navigate to='/login' />;
+    return <Navigate to="/login" />;
   }
 
-  return <Page pageName={pageName} />
+  return <Page pageName={pageName} />;
 });
 
 export default PrivatePage;

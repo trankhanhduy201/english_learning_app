@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Modal } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
 
 const CountdownLogoutModal = ({ seconds = 5, onFinish }) => {
   const [countdown, setCountdown] = useState(seconds);
@@ -26,8 +26,8 @@ const CountdownLogoutModal = ({ seconds = 5, onFinish }) => {
       </Modal.Header>
       <Modal.Body>
         <p>
-          You will be logged out automatically in{' '}
-          <strong>{countdown}</strong> seconds.
+          You will be logged out automatically in <strong>{countdown}</strong>{" "}
+          seconds.
         </p>
       </Modal.Body>
     </Modal>

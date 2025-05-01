@@ -23,10 +23,13 @@ const ImportTextModal = memo(({ topicId, lang, onClose }) => {
             <h5 className="modal-title">Import Vocabulary</h5>
           </div>
           <div className="modal-body">
-            <fetcher.Form method="post" action={`/topic/${topicId}/vocab/import`}>
+            <fetcher.Form
+              method="post"
+              action={`/topic/${topicId}/vocab/import`}
+            >
               <input type="hidden" name="_form_name" value="importing_vocab" />
-							<input type="hidden" name="import_type" value="text" />
-							<input type="hidden" name="lang" value={lang} />
+              <input type="hidden" name="import_type" value="text" />
+              <input type="hidden" name="lang" value={lang} />
               <textarea
                 name="text_data"
                 className="form-control"
@@ -40,7 +43,7 @@ const ImportTextModal = memo(({ topicId, lang, onClose }) => {
                   type="button"
                   className="btn btn-secondary me-2"
                   onClick={onClose}
-									disabled={fetcher.state === "submitting"}
+                  disabled={fetcher.state === "submitting"}
                 >
                   Cancel
                 </button>

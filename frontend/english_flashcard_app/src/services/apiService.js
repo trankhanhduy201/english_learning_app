@@ -1,5 +1,5 @@
-import * as apiConfigs from '../configs/apiConfigs';
-import * as cookieUtils from '../utils/cookies';
+import * as apiConfigs from "../configs/apiConfigs";
+import * as cookieUtils from "../utils/cookies";
 
 const API_BASE_URL = apiConfigs.API_BASE_URL;
 
@@ -10,8 +10,8 @@ export const callApi = async (endpoint, options = {}) => {
   const headers = {
     Authorization: `Bearer ${token}`,
     ...options?.header,
-    'Content-Type': 'application/json'
-  }
+    "Content-Type": "application/json",
+  };
 
   let throwEx = true;
   if (options.throwEx !== undefined) {
@@ -23,12 +23,16 @@ export const callApi = async (endpoint, options = {}) => {
     let dataJson = {};
     const resp = await fetch(`${API_BASE_URL}/${endpoint}`, {
       ...options,
-      headers
+      headers,
     });
-    
-    const contentType = resp.headers.get('Content-Type');
+
+    const contentType = resp.headers.get("Content-Type");
     //const contentLength = resp.headers.get('Content-Length');
-    if (!checkStatusNoContent(resp.status) && contentType && contentType.includes('application/json')) {
+    if (
+      !checkStatusNoContent(resp.status) &&
+      contentType &&
+      contentType.includes("application/json")
+    ) {
       dataJson = await resp.json();
     }
 
@@ -39,7 +43,7 @@ export const callApi = async (endpoint, options = {}) => {
     }
     return dataJson;
   } catch (error) {
-    console.error('API Fetch Error:', error);
+    console.error("API Fetch Error:", error);
     throw error;
   }
-}
+};

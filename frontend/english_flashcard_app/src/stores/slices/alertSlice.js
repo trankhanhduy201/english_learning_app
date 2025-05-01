@@ -1,12 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { setAlertReducer, clearAlertReducer } from '../reducers/alertReducer';
+import { createSlice } from "@reduxjs/toolkit";
+import { setAlertReducer, clearAlertReducer } from "../reducers/alertReducer";
 
 const alertSlice = createSlice({
-  name: 'alerts',
+  name: "alerts",
   initialState: [],
   reducers: {
     setAlert: setAlertReducer,
-    clearAlert: clearAlertReducer
+    clearAlert: clearAlertReducer,
   },
 });
 

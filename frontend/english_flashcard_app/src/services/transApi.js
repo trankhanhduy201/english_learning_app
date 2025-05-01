@@ -2,8 +2,8 @@ import { callApi } from "./apiService";
 
 export const updateTrans = async (id, datas, options = {}) => {
   return await callApi(`/translations/${id}/`, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(datas),
-    ...options
+    ...options,
   });
-}
+};

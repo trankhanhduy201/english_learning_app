@@ -7,9 +7,9 @@ export const refreshNewToken = async (refreshToken) => {
     cookieUtils.clearAuthTokens();
     return false;
   }
-  
+
   const resp = await authApi.refreshToken(refreshToken, { throwEx: false });
-  if (resp.status === 'error') {
+  if (resp.status === "error") {
     cookieUtils.clearAuthTokens();
     return false;
   }
@@ -17,7 +17,7 @@ export const refreshNewToken = async (refreshToken) => {
   const accessToken = resp.data.access;
   cookieUtils.setAccessToken(accessToken);
   return accessToken;
-}
+};
 
 export const verifyToken = async (token, refreshToken) => {
   if (token) {
@@ -29,7 +29,7 @@ export const verifyToken = async (token, refreshToken) => {
 
   const accessToken = refreshNewToken(refreshToken);
   return !!accessToken;
-}
+};
 
 export const localVerifyToken = async (token, refreshToken) => {
   if (token && !jwtUtils.checkTokenExpired(token, 120)) {
@@ -42,4 +42,4 @@ export const localVerifyToken = async (token, refreshToken) => {
 
   const accessToken = refreshNewToken(refreshToken);
   return !!accessToken;
-}
+};

@@ -1,16 +1,21 @@
 import { redirect } from "react-router-dom";
 import store from "../../stores/store";
 import qs from "qs";
-import { createVocabThunk, deleteVocabThunk, importVocabThunk, updateVocabThunk } from "../../stores/thunks/vocabsThunk";
+import {
+  createVocabThunk,
+  deleteVocabThunk,
+  importVocabThunk,
+  updateVocabThunk,
+} from "../../stores/thunks/vocabsThunk";
 
-const getTrans = trans => {
+const getTrans = (trans) => {
   if (!trans) {
     return [];
   }
   return Object.keys(trans).reduce((n, v) => {
-    return [...n, ...trans[v].map(v1 => v1)];
+    return [...n, ...trans[v].map((v1) => v1)];
   }, []);
-}
+};
 
 const createVocab = async (topicId, data) => {
   try {
@@ -19,7 +24,7 @@ const createVocab = async (topicId, data) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 const updateVocab = async (topicId, vocabId, data) => {
   try {
@@ -28,7 +33,7 @@ const updateVocab = async (topicId, vocabId, data) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 const deleteVocab = async (topicId, vocabId, params = {}) => {
   try {
@@ -37,7 +42,7 @@ const deleteVocab = async (topicId, vocabId, params = {}) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 const doImportVocab = async (data) => {
   try {
@@ -45,35 +50,32 @@ const doImportVocab = async (data) => {
   } catch (err) {
     return err;
   }
-}
+};
 
 export const editVocab = async ({ request, params }) => {
   const formData = await request.formData();
   const updateData = qs.parse(Object.fromEntries(formData));
-  
-  if (params.vocabId === 'new') {
+
+  if (params.vocabId === "new") {
     return await createVocab(params.topicId, {
       ...updateData,
-      translations: getTrans(updateData?.translations)
+      translations: getTrans(updateData?.translations),
     });
-  } 
-  
-  if (params.action === 'delete') {
+  }
+
+  if (params.action === "delete") {
     return await deleteVocab(params.topicId, params.vocabId, updateData);
   }
-  
-  return await updateVocab(
-    params.topicId,
-    params.vocabId, 
-    { ...updateData, 
-      id: params.vocabId, 
-      translations: getTrans(updateData?.translations) 
-    }
-  );
-}
+
+  return await updateVocab(params.topicId, params.vocabId, {
+    ...updateData,
+    id: params.vocabId,
+    translations: getTrans(updateData?.translations),
+  });
+};
 
 export const importVocab = async ({ request, params }) => {
   const formData = await request.formData();
   const importData = qs.parse(Object.fromEntries(formData));
   return await doImportVocab({ ...importData, topic_id: params.topicId });
-}
+};

@@ -1,44 +1,44 @@
 import { callApi } from "./apiService";
 
-export const getVocabs = async (topicId, lang = 'en') => {
+export const getVocabs = async (topicId, lang = "en") => {
   const searchParams = new URLSearchParams({ topic_id: topicId, lang });
-  return await callApi('vocabularies?' + searchParams.toString(), {
-    method: 'GET'
+  return await callApi("vocabularies?" + searchParams.toString(), {
+    method: "GET",
   });
-}
+};
 
 export const getVocab = async (id) => {
   return await callApi(`vocabularies/${id}/`, {
-    method: 'GET'
+    method: "GET",
   });
-}
+};
 
 export const updateVocab = async (id, datas, options = {}) => {
   return await callApi(`vocabularies/${id}/`, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(datas),
-    ...options
+    ...options,
   });
-}
+};
 
 export const createVocab = async (datas, options = {}) => {
   return await callApi(`vocabularies/`, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(datas),
-    ...options
+    ...options,
   });
-}
+};
 
 export const importVocabs = async (datas, options = {}) => {
   return await callApi(`vocabularies/import/`, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(datas),
-    ...options
+    ...options,
   });
-}
+};
 
 export const deleteVocab = async (id, options = {}) => {
   return await callApi(`vocabularies/${id}/`, {
-    method: 'DELETE'
+    method: "DELETE",
   });
-}
+};

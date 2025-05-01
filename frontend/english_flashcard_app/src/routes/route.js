@@ -1,112 +1,122 @@
 import { createBrowserRouter } from "react-router-dom";
-import * as topicsLoader from './loaders/topicLoader';
-import * as vocabsLoader from './loaders/vocabLoader';
-import * as topicsAction from './actions/topicAction';
-import * as vocabsAction from './actions/vocabAction';
-import * as transAction from './actions/transAction';
-import * as loginAction from './actions/loginAction';
+import * as topicsLoader from "./loaders/topicLoader";
+import * as vocabsLoader from "./loaders/vocabLoader";
+import * as topicsAction from "./actions/topicAction";
+import * as vocabsAction from "./actions/vocabAction";
+import * as transAction from "./actions/transAction";
+import * as loginAction from "./actions/loginAction";
 import Error from "../components/errors/Error";
 import Login from "../pages/Login";
 import Layout from "../pages/Layout";
-import PrivatePage from '../components/PrivatePage';
+import PrivatePage from "../components/PrivatePage";
 import VocabModal from "../pages/VocabModal";
 import TopicModal from "../pages/TopicModal";
 import Test from "../pages/Test";
 
 const isShouldRevalidate = (formData, actionResult) => {
-  return formData?.has('_not_revalidate') || (actionResult?.status === 'error');
-}
+  return formData?.has("_not_revalidate") || actionResult?.status === "error";
+};
 
 const defaultShouldRevalidate = ({ formData, actionResult }) => {
   return !isShouldRevalidate(formData, actionResult);
-}
+};
 
-const topicShouldRevalidate = ({ formData, actionResult, currentUrl, nextUrl }) => {
+const topicShouldRevalidate = ({
+  formData,
+  actionResult,
+  currentUrl,
+  nextUrl,
+}) => {
   if (formData) {
     if (isShouldRevalidate(formData, actionResult)) {
       return false;
     }
-    const formName = formData?.get('_form_name') ?? '';
-    if (formName.includes('vocab')) {
+    const formName = formData?.get("_form_name") ?? "";
+    if (formName.includes("vocab")) {
       return true;
     }
   }
   return false;
-}
+};
 
-const routes = createBrowserRouter([
-  {
-    path: '/test',
-    element: <Test />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-    action: loginAction.login
-  },
-  {
-    path: "/",
-    element: <Layout />,
-    children: [{
-      errorElement: <Error />,
+const routes = createBrowserRouter(
+  [
+    {
+      path: "/test",
+      element: <Test />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+      action: loginAction.login,
+    },
+    {
+      path: "/",
+      element: <Layout />,
       children: [
         {
-          index: true,
-          path: '/dashboard',
-          element: <PrivatePage pageName='Dashboard' />,
-        },
-        {
-          path: '/topics',
-          element: <PrivatePage pageName='Topics' />,
-          loader: topicsLoader.getTopics,
+          errorElement: <Error />,
           children: [
             {
-              path: 'new',
-              element: <TopicModal />,
-              action: topicsAction.createTopic
+              index: true,
+              path: "/dashboard",
+              element: <PrivatePage pageName="Dashboard" />,
             },
             {
-              path: 'delete',
-              action: topicsAction.deleteTopics
-            }
-          ]
-        },
-        {
-          path: '/topic/:topicId/:action?',
-          element: <PrivatePage pageName='Topic' />,
-          loader: topicsLoader.getTopic,
-          action: topicsAction.editTopic,
-          shouldRevalidate: topicShouldRevalidate,
-          children: [
-            {
-              path: 'vocab/import',
-              action: vocabsAction.importVocab
+              path: "/topics",
+              element: <PrivatePage pageName="Topics" />,
+              loader: topicsLoader.getTopics,
+              children: [
+                {
+                  path: "new",
+                  element: <TopicModal />,
+                  action: topicsAction.createTopic,
+                },
+                {
+                  path: "delete",
+                  action: topicsAction.deleteTopics,
+                },
+              ],
             },
             {
-              path: 'vocab/:vocabId/:action?',
-              element: <VocabModal />,
-              loader: vocabsLoader.getVocab,
-              action: vocabsAction.editVocab,
-              shouldRevalidate: defaultShouldRevalidate
-            }
-          ]
+              path: "/topic/:topicId/:action?",
+              element: <PrivatePage pageName="Topic" />,
+              loader: topicsLoader.getTopic,
+              action: topicsAction.editTopic,
+              shouldRevalidate: topicShouldRevalidate,
+              children: [
+                {
+                  path: "vocab/import",
+                  action: vocabsAction.importVocab,
+                },
+                {
+                  path: "vocab/:vocabId/:action?",
+                  element: <VocabModal />,
+                  loader: vocabsLoader.getVocab,
+                  action: vocabsAction.editVocab,
+                  shouldRevalidate: defaultShouldRevalidate,
+                },
+              ],
+            },
+            {
+              path: "/translation/:transId",
+              action: transAction.editTrans,
+              shouldRevalidate: defaultShouldRevalidate,
+            },
+            {
+              path: "/topic/:topicId/learn",
+              element: <PrivatePage pageName="TopicLearn" />,
+              loader: topicsLoader.getTopic,
+            },
+          ],
         },
-        {
-          path: '/translation/:transId',
-          action: transAction.editTrans,
-          shouldRevalidate: defaultShouldRevalidate
-        },
-        {
-          path: '/topic/:topicId/learn',
-          element: <PrivatePage pageName='TopicLearn' />,
-          loader: topicsLoader.getTopic,
-        }
-      ]
-    }]
-  }
-], {
-  future: {
-    v7_skipActionErrorRevalidation: true
+      ],
+    },
+  ],
+  {
+    future: {
+      v7_skipActionErrorRevalidation: true,
+    },
   },
-});
+);
 export default routes;

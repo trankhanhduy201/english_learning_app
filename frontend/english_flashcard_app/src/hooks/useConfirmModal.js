@@ -1,8 +1,8 @@
 import { useEffect, useOptimistic, useState } from "react";
 
 const useConfirmModal = ({ submitActionCallback }) => {
-  const [ isShowModal, setIsShowModal ] = useState(false);
-  const [ isSubmmiting, setIsSubmmiting ] = useState(false);
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [isSubmmiting, setIsSubmmiting] = useState(false);
   // const [ isSubmmiting, setIsSubmmiting ] = useOptimistic(false, (prev, next) => next);
   const showConfirmModal = () => setIsShowModal(true);
   const hideConfirmModal = () => setIsShowModal(false);
@@ -13,7 +13,7 @@ const useConfirmModal = ({ submitActionCallback }) => {
     }
     setIsSubmmiting(false);
     hideConfirmModal();
-  }
+  };
 
   return {
     isShowModal,
@@ -21,7 +21,7 @@ const useConfirmModal = ({ submitActionCallback }) => {
     showConfirmModal,
     hideConfirmModal,
     onClickNo: hideConfirmModal,
-    onClickYes
-  }
-}
-export default useConfirmModal
+    onClickYes,
+  };
+};
+export default useConfirmModal;

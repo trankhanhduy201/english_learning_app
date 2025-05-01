@@ -1,6 +1,6 @@
-import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import LoadingSpinner from './LoadingSpinner';
+import React from "react";
+import { Modal, Button } from "react-bootstrap";
+import LoadingSpinner from "./LoadingSpinner";
 
 const ConfirmModal = ({ isShow, isSubmmiting, message, onClose, onSubmit }) => {
   return (
@@ -10,20 +10,10 @@ const ConfirmModal = ({ isShow, isSubmmiting, message, onClose, onSubmit }) => {
       </Modal.Header>
       <Modal.Body>{message}</Modal.Body>
       <Modal.Footer>
-        <Button 
-          variant="primary" 
-          onClick={onSubmit}
-          disabled={isSubmmiting}
-        >
-          {isSubmmiting && 
-            <LoadingSpinner color={'light'} size={'sm'} />
-          } Yes
+        <Button variant="primary" onClick={onSubmit} disabled={isSubmmiting}>
+          {isSubmmiting && <LoadingSpinner color={"light"} size={"sm"} />} Yes
         </Button>
-        <Button 
-          variant="secondary" 
-          onClick={onClose} 
-          disabled={isSubmmiting}
-        >
+        <Button variant="secondary" onClick={onClose} disabled={isSubmmiting}>
           No
         </Button>
       </Modal.Footer>

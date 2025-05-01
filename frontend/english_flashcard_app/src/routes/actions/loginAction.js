@@ -16,4 +16,4 @@ export const login = async ({ request, param }) => {
   } catch (err) {
     return err;
   }
-}
+};

@@ -1,20 +1,25 @@
-import React, { memo, useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { getRandomIntWithExceptions } from '../utils/commons';
-import * as transTypeEnums from '../enums/transTypes';
+import React, { memo, useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { getRandomIntWithExceptions } from "../utils/commons";
+import * as transTypeEnums from "../enums/transTypes";
 
 export const EMPTY_VOCAB = {
-  idx: '',
-  word: '',
-  type: '',
-  language: '',
-  translations: []
-}
+  idx: "",
+  word: "",
+  type: "",
+  language: "",
+  translations: [],
+};
 
-const Flashcard = memo(function Flashcard({ vocabs = [], filterTypes = [], onReverseVocabs = null, onFilterVocabsByTypes = null }) {
-  const [ vocab, setVocab ] = useState(EMPTY_VOCAB);
-  const [ isOpen, setIsOpen ] = useState(false);
-  const [ isOrder, setIsOrder ] = useState(true);
+const Flashcard = memo(function Flashcard({
+  vocabs = [],
+  filterTypes = [],
+  onReverseVocabs = null,
+  onFilterVocabsByTypes = null,
+}) {
+  const [vocab, setVocab] = useState(EMPTY_VOCAB);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOrder, setIsOrder] = useState(true);
   const isActive = vocabs.length > 0;
 
   useEffect(() => {
@@ -23,48 +28,63 @@ const Flashcard = memo(function Flashcard({ vocabs = [], filterTypes = [], onRev
   }, [vocabs]);
 
   const onOpenCard = () => {
-    setIsOpen(state => !state);
+    setIsOpen((state) => !state);
   };
 
   const onChangeOrder = () => {
-    setIsOrder(state => !state);
-  }
+    setIsOrder((state) => !state);
+  };
 
-  const onPickVocab = (direction = '') => {
-    setVocab(oldVocab => {
-      if (direction == '') {
-        const randomIndex = getRandomIntWithExceptions(0, vocabs.length - 1, [oldVocab.index]);
+  const onPickVocab = (direction = "") => {
+    setVocab((oldVocab) => {
+      if (direction == "") {
+        const randomIndex = getRandomIntWithExceptions(0, vocabs.length - 1, [
+          oldVocab.index,
+        ]);
         return pickVocab(randomIndex);
       }
 
-      if (direction == 'next') {
+      if (direction == "next") {
         const nextIndex = oldVocab.idx + 1;
         return nextIndex < vocabs.length ? vocabs[nextIndex] : oldVocab;
       }
 
-      if (direction == 'prev') {
+      if (direction == "prev") {
         const prevIndex = oldVocab.idx - 1;
         return prevIndex >= 0 ? vocabs[prevIndex] : oldVocab;
       }
 
       return oldVocab;
     });
-  }
+  };
 
-  const pickVocab = index => vocabs[index] ?? EMPTY_VOCAB;
+  const pickVocab = (index) => vocabs[index] ?? EMPTY_VOCAB;
 
   return (
     <div className="row justify-content-center">
       <div className="col-12 col-md-6">
         <div className="d-flex align-items-center">
           <div className="mb-auto">
-            <button disabled={!isActive} className="btn btn-secondary d-block" onClick={() => onReverseVocabs()}>
+            <button
+              disabled={!isActive}
+              className="btn btn-secondary d-block"
+              onClick={() => onReverseVocabs()}
+            >
               <i className="bi bi-arrow-repeat text-light"></i>
             </button>
-            <button disabled={!isActive} className="btn btn-secondary d-block mt-1" onClick={onOpenCard}>
-              <i className={`bi ${isOpen ? 'bi-lightbulb-fill' : 'bi-lightbulb-off-fill'} text-light`}></i>
+            <button
+              disabled={!isActive}
+              className="btn btn-secondary d-block mt-1"
+              onClick={onOpenCard}
+            >
+              <i
+                className={`bi ${isOpen ? "bi-lightbulb-fill" : "bi-lightbulb-off-fill"} text-light`}
+              ></i>
             </button>
-            <button disabled={!isActive} className="btn btn-secondary d-block mt-1">
+            <button
+              disabled={!isActive}
+              className="btn btn-secondary d-block mt-1"
+            >
               <i className="bi bi-youtube"></i>
             </button>
           </div>
@@ -74,26 +94,30 @@ const Flashcard = memo(function Flashcard({ vocabs = [], filterTypes = [], onRev
                 <div className="flashcard mx-3" onClick={onOpenCard}>
                   <h2 className="flashcard-header">
                     {vocab.word}
-                    {vocab?.type ? ` (${vocab.type})` : ''}
+                    {vocab?.type ? ` (${vocab.type})` : ""}
                   </h2>
                   <div className="flashcard-content">
                     <hr />
                     {isOpen ? (
                       <>
-                        {vocab.translations && vocab.translations.map((item) => (
-                          <>
-                            {item.translation}
-                            {item?.note && (
-                              <div className="text-start mt-2">
-                                Examples:<br />
-                                <p style={{ whiteSpace: "pre-wrap" }}>{item.note}</p>
-                              </div>
-                            )}
-                          </>
-                        ))}
+                        {vocab.translations &&
+                          vocab.translations.map((item) => (
+                            <>
+                              {item.translation}
+                              {item?.note && (
+                                <div className="text-start mt-2">
+                                  Examples:
+                                  <br />
+                                  <p style={{ whiteSpace: "pre-wrap" }}>
+                                    {item.note}
+                                  </p>
+                                </div>
+                              )}
+                            </>
+                          ))}
                       </>
                     ) : (
-                      <p className='text-center'>
+                      <p className="text-center">
                         Click here to show translation...
                       </p>
                     )}
@@ -107,34 +131,40 @@ const Flashcard = memo(function Flashcard({ vocabs = [], filterTypes = [], onRev
             </div>
           </div>
           <div className="mb-auto">
-            <button 
-              disabled={!isActive || (isOrder && vocab.idx == 0)} 
-              className="btn btn-secondary d-block text-light" 
-              onClick={() => onPickVocab(isOrder ? 'prev' : '')}
+            <button
+              disabled={!isActive || (isOrder && vocab.idx == 0)}
+              className="btn btn-secondary d-block text-light"
+              onClick={() => onPickVocab(isOrder ? "prev" : "")}
             >
               <i className="bi bi-arrow-left-circle-fill"></i>
             </button>
-            <button 
-              disabled={!isActive || (isOrder && vocab.idx == vocabs.length - 1)} 
-              className="btn btn-secondary d-block mt-1 text-light" 
-              onClick={() => onPickVocab(isOrder ? 'next' : '')}
+            <button
+              disabled={
+                !isActive || (isOrder && vocab.idx == vocabs.length - 1)
+              }
+              className="btn btn-secondary d-block mt-1 text-light"
+              onClick={() => onPickVocab(isOrder ? "next" : "")}
             >
               <i className="bi bi-arrow-right-circle-fill"></i>
             </button>
-            <button 
-              disabled={!isActive} 
-              className="btn btn-secondary d-block mt-1" 
+            <button
+              disabled={!isActive}
+              className="btn btn-secondary d-block mt-1"
               onClick={onChangeOrder}
             >
-              {isOrder ? <i className="bi bi-list-ol"></i> : <i className="bi bi-shuffle"></i>}
+              {isOrder ? (
+                <i className="bi bi-list-ol"></i>
+              ) : (
+                <i className="bi bi-shuffle"></i>
+              )}
             </button>
           </div>
         </div>
-        <div className='col-12 mt-3'>
-          {transTypeEnums.getDatas().map(v => (
+        <div className="col-12 mt-3">
+          {transTypeEnums.getDatas().map((v) => (
             <button
               key={v.key}
-              className={`btn ${ v.key in filterTypes ? 'btn-secondary' : 'btn-outline-secondary' } d-inline-block ms-2`}
+              className={`btn ${v.key in filterTypes ? "btn-secondary" : "btn-outline-secondary"} d-inline-block ms-2`}
               onClick={() => onFilterVocabsByTypes(v.key)}
             >
               {v.text}

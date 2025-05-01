@@ -1,32 +1,32 @@
 import { callApi } from "./apiService";
 
 export const getToken = async (username, password, options = {}) => {
-  return await callApi('token', {
-    method: 'POST',
+  return await callApi("token", {
+    method: "POST",
     body: JSON.stringify({ username, password }),
-    ...options
+    ...options,
   });
-}
+};
 
 export const verifyToken = async (token, options = {}) => {
-  return await callApi('token/verify', {
-    method: 'POST',
+  return await callApi("token/verify", {
+    method: "POST",
     body: JSON.stringify({ token }),
-    ...options
+    ...options,
   });
 };
 
 export const refreshToken = async (refresh, options = {}) => {
-  return await callApi('token/refresh', {
-    method: 'POST',
+  return await callApi("token/refresh", {
+    method: "POST",
     body: JSON.stringify({ refresh }),
-    ...options
+    ...options,
   });
 };
 
 export const getUserInfo = async (token, options = {}) => {
-  return await callApi('user', {
-    method: 'GET',
-    ...options
+  return await callApi("user", {
+    method: "GET",
+    ...options,
   });
-}
+};

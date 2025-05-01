@@ -7,10 +7,12 @@ const Login = () => {
     <div className="d-flex align-items-center justify-content-center vh-100">
       <div className="card shadow p-4" style={{ width: "24rem" }}>
         <h3 className="text-center mb-4">Login</h3>
-        {loginFetcher.data?.status === 'error' && (
-          <div className="alert alert-danger text-center">Invalid email or password.</div>
+        {loginFetcher.data?.status === "error" && (
+          <div className="alert alert-danger text-center">
+            Invalid email or password.
+          </div>
         )}
-        <loginFetcher.Form action={'/login'} method={'post'}>
+        <loginFetcher.Form action={"/login"} method={"post"}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">
               User name
@@ -38,9 +40,9 @@ const Login = () => {
           <button
             type="submit"
             className="btn btn-primary w-100"
-            disabled={loginFetcher.state === 'submitting'}
+            disabled={loginFetcher.state === "submitting"}
           >
-            {loginFetcher.state === 'submitting' ? "Logging in..." : "Login"}
+            {loginFetcher.state === "submitting" ? "Logging in..." : "Login"}
           </button>
         </loginFetcher.Form>
         <div className="mt-3 text-center">
