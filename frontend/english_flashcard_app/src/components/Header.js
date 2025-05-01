@@ -1,10 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom';
-import * as cookies from '../utils/cookies';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { initialState, setAuth } from '../stores/slices/authSlice';
 import { Dropdown, Nav } from "react-bootstrap";
 import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from './ConfirmModal';
+import * as cookies from '../utils/cookies';
+import { toggleSidebar } from '../stores/slices/sidebarSlice';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -21,59 +22,56 @@ const Header = () => {
       })
     }
   });
-
+  
   return (
-    <header className="bg-light shadow-sm">
-      <div className="container">
-        <nav className="navbar navbar-expand-lg navbar-light">
-          <a className="navbar-brand" href="/">Flashcards</a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto align-items-center">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/topics">Topics</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/about">About</Link>
-              </li>
-              <li className="nav-item dropdown">
-                <Dropdown as={Nav.Item}>
-                  <Dropdown.Toggle as={Nav.Link} className="text-dark">
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu align="end">
-                    <Dropdown.Item href="/profile">Profile</Dropdown.Item>
-                    <Dropdown.Item href="/settings">Settings</Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item 
-                      onClick={() => confirmLogoutModal.showConfirmModal()}
-                    >
-                      Logout
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </li>
-            </ul>
-            {confirmLogoutModal.isShowModal && (
-              <ConfirmModal
-                message="Do you want to log out?"
-                isShow={confirmLogoutModal.isShowModal}
-                isSubmmiting={confirmLogoutModal.isSubmmiting}
-                onClose={confirmLogoutModal.onClickNo}
-                onSubmit={confirmLogoutModal.onClickYes}
-              />
-            )}
-          </div>
-        </nav>
+    <header className="navbar navbar-light bg-light border-bottom p-2 d-flex justify-content-between align-items-center">
+      <button 
+        className="btn btn-outline-primary d-xl-none"
+        onClick={() => dispatch(toggleSidebar())}
+      >☰</button>
+      <h5 className="mb-0 ms-3 d-xl-block d-none">Flashcards</h5>
+      <div className="d-flex justify-content-end align-items-center">
+        <div className="input-group input-group-sm me-2" style={{ width: '200px' }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search..."
+          />
+          <span className="input-group-text bg-white">
+            <i className="bi bi-search"></i>
+          </span>
+        </div>
+        <div className="dropdown">
+          <Dropdown as={Nav.Item}>
+            <Dropdown.Toggle as={Nav.Link} className="text-dark">
+            <img
+              src="https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=30"
+              alt="User Avatar"
+              className="rounded-circle"
+              style={{ width: '30px', height: '30px' }}
+            />
+            </Dropdown.Toggle>
+            <Dropdown.Menu align="end">
+              <Dropdown.Item href="/profile">Profile</Dropdown.Item>
+              <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item 
+                onClick={() => confirmLogoutModal.showConfirmModal()}
+              >
+                Logout
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          {confirmLogoutModal.isShowModal && (
+            <ConfirmModal
+              message="Do you want to log out?"
+              isShow={confirmLogoutModal.isShowModal}
+              isSubmmiting={confirmLogoutModal.isSubmmiting}
+              onClose={confirmLogoutModal.onClickNo}
+              onSubmit={confirmLogoutModal.onClickYes}
+            />
+          )}
+        </div>
       </div>
     </header>
   );

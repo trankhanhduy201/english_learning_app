@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import LoadingOverlay from '../components/LoadingOverlay';
-import Home from '../pages/Home';
+import Dashboard from '../pages/Dashboard';
 import Topics from '../pages/Topics';
 import Topic from '../pages/Topic';
 import TopicLearn from '../pages/TopicLearn';
@@ -10,8 +10,8 @@ import { memo } from "react";
 
 const Page = memo(({ pageName }) => {
   switch (pageName) {
-    case 'Home':
-      return <Home />;
+    case 'Dashboard':
+      return <Dashboard />;
     case 'Topics':
       return <Topics />;
     case 'Topic':
@@ -21,7 +21,7 @@ const Page = memo(({ pageName }) => {
     case 'TopicLearn':
       return <TopicLearn />;
     default:
-      return <Home />;
+      return <Dashboard />;
   }
 });
 

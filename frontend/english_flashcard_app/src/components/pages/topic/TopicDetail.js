@@ -51,31 +51,33 @@ const TopicDetail = memo(({ topic = null, topicId = '', isNew = false }) => {
 					))}
 				</ul>
 			)}
-			<Link to={`/topics`} className="btn btn-secondary me-2">
-				<i className="bi bi-arrow-left"></i> List topic
-			</Link>
-			{!isNew && (
-				<Link to={`/topic/${topicId}/learn`} className='btn btn-success me-2'>
-					<i className="bi bi-clipboard-pulse text-white"></i> Learn
+			<div className="d-flex justify-content-end mt-2">
+				<Link to={`/topics`} className="btn btn-secondary me-2">
+					<i className="bi bi-arrow-left"></i> List topic
 				</Link>
-			)}
-			<button 
-				type="submit" 
-				className="btn btn-primary me-2" 
-				disabled={isDisableButton()}
-			>
-				<i className="bi bi-pencil-square text-white"></i> {editTopicFetcher.state === "submitting" ? "Saving..." : "Save"}
-			</button>
-			{!isNew && (
+				{!isNew && (
+					<Link to={`/topic/${topicId}/learn`} className='btn btn-success me-2'>
+						<i className="bi bi-clipboard-pulse text-white"></i> Learn
+					</Link>
+				)}
 				<button 
-					type="button" 
-					className="btn btn-danger" 
-					onClick={handleDelTopic} 
+					type="submit" 
+					className="btn btn-primary me-2" 
 					disabled={isDisableButton()}
 				>
-					<i className="bi bi-trash text-white"></i> {delTopicFetcher.state === "submitting" ? "Deleting..." : "Delete"}
+					<i className="bi bi-pencil-square text-white"></i> {editTopicFetcher.state === "submitting" ? "Saving..." : "Save"}
 				</button>
-			)}
+				{!isNew && (
+					<button 
+						type="button" 
+						className="btn btn-danger" 
+						onClick={handleDelTopic} 
+						disabled={isDisableButton()}
+					>
+						<i className="bi bi-trash text-white"></i> {delTopicFetcher.state === "submitting" ? "Deleting..." : "Delete"}
+					</button>
+				)}
+			</div>
 		</editTopicFetcher.Form>
 	);
 });

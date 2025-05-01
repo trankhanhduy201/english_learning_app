@@ -9,7 +9,7 @@ const TopicModal = memo(() => {
       role="dialog"
       style={{ background: "rgba(0, 0, 0, 0.5)" }}
     >
-      <div className="modal-dialog modal-md" role="document">
+      <div className="modal-dialog modal-xl" role="document">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">New topic</h5>

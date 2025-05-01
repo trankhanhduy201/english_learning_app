@@ -41,7 +41,7 @@ const Topics = () => {
 
   return (
     <>
-      <h1 className='text-start'>Topics</h1>
+      <h2 className='text-start'>Topics</h2>
       <hr />
       <div className='d-flex justify-content-end mb-2'>
         <Link className='btn btn-secondary me-2' to={'/topics/new'}>

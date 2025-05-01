@@ -12,7 +12,7 @@ export const login = async ({ request, param }) => {
     const resp = await store.dispatch(loginThunk(data)).unwrap();
     cookies.setAuthTokens(resp.data.access, resp.data.refresh);
     store.dispatch(setUserInfo(data.username));
-    return redirect(`/`);
+    return redirect(`/dashboard`);
   } catch (err) {
     return err;
   }

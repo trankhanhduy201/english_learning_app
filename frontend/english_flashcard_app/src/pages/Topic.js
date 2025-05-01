@@ -13,67 +13,69 @@ const Topic = () => {
   const loaderData = useLoaderData();
 
   return (
-    <div className={`container ${!isNew() ? 'mt-4' : ''}`}>
-      <div className="row">
-        <div className={`${ isNew() ? 'col-12' : 'col-lg-6' } text-start mb-4`}>
-          {!isNew() && (
-            <h2>Topic info</h2>
-          )}
-          {loaderData?.topicData && loaderData.topicData instanceof Promise ? (
-            <Suspense fallback={
-              <>
-                <TopicDetail isNew={true} />
-                <LoadingOverlay />
-              </>
-            }>
-              <Await resolve={loaderData.topicData}>
-                {(topic) => (
-                  <TopicDetail 
-                    topic={topic}
-                    topicId={topicId} 
-                    isNew={isNew()} 
-                  />
-                )}
-              </Await>
-            </Suspense>
-          ) : (
-            <TopicDetail 
-              topic={loaderData?.topicData}
-              topicId={topicId} 
-              isNew={isNew()} 
-            />
-          )}
-        </div>
+    <div className="row">
+      <div className={`${ isNew() ? 'col-12' : 'col-lg-12' } text-start mb-4`}>
         {!isNew() && (
-          <div className="col-lg-6 text-start">
-            <h2>Vocabularies</h2>
-            {loaderData?.vocabsPromise && loaderData.vocabsPromise instanceof Promise ? (
-              <ErrorBoundary fallback={<p className='alert alert-danger'>Can not get data</p>}>
-                <Suspense fallback={<p className='text-center'>Loading...</p>}>
-                  <Await resolve={loaderData.vocabsPromise}>
-                    {(vocabDatas) => (
-                      <>
-                        <ListVocab 
-                          vocabDatas={vocabDatas} 
-                          topicId={topicId} 
-                          lang={lang} 
-                        />
-                      </>
-                    )}
-                  </Await>
-                </Suspense>
-              </ErrorBoundary>
-            ) : (
-              <ListVocab 
-                vocabDatas={[]} 
-                topicId={topicId} 
-                lang={lang} 
-              />
-            )}
-            <Outlet />
-          </div>
+          <>
+            <h2>Topic info</h2>
+            <hr />
+          </>
+        )}
+        {loaderData?.topicData && loaderData.topicData instanceof Promise ? (
+          <Suspense fallback={
+            <>
+              <TopicDetail isNew={true} />
+              <LoadingOverlay />
+            </>
+          }>
+            <Await resolve={loaderData.topicData}>
+              {(topic) => (
+                <TopicDetail 
+                  topic={topic}
+                  topicId={topicId} 
+                  isNew={isNew()} 
+                />
+              )}
+            </Await>
+          </Suspense>
+        ) : (
+          <TopicDetail 
+            topic={loaderData?.topicData}
+            topicId={topicId} 
+            isNew={isNew()} 
+          />
         )}
       </div>
+      {!isNew() && (
+        <div className="col-lg-12 text-start">
+          <h2>Vocabularies</h2>
+          <hr />
+          {loaderData?.vocabsPromise && loaderData.vocabsPromise instanceof Promise ? (
+            <ErrorBoundary fallback={<p className='alert alert-danger'>Can not get data</p>}>
+              <Suspense fallback={<p className='text-center'>Loading...</p>}>
+                <Await resolve={loaderData.vocabsPromise}>
+                  {(vocabDatas) => (
+                    <>
+                      <ListVocab 
+                        vocabDatas={vocabDatas} 
+                        topicId={topicId} 
+                        lang={lang} 
+                      />
+                    </>
+                  )}
+                </Await>
+              </Suspense>
+            </ErrorBoundary>
+          ) : (
+            <ListVocab 
+              vocabDatas={[]} 
+              topicId={topicId} 
+              lang={lang} 
+            />
+          )}
+          <Outlet />
+        </div>
+      )}
     </div>
   );
 };
