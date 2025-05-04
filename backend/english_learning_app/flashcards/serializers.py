@@ -1,25 +1,97 @@
+from django.db import IntegrityError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import Topic, Vocabulary, Translation
 
 
-class TopicSerializer(serializers.ModelSerializer):
+class BaseListSerializer(serializers.ListSerializer):
+	def update(self, instances, validated_data):
+		instance_hash = {index: instance for index, instance in enumerate(instances)}
+		result = [
+			self.child.update(instance_hash[index], attrs)
+			for index, attrs in enumerate(validated_data)
+		]
+		
+		writable_fields = [
+			x for x in self.child.Meta.fields
+			if x not in self.child.Meta.read_only_fields
+		]
+		try:
+			self.child.Meta.model.objects.bulk_update(result, writable_fields)
+		except IntegrityError as e:
+			raise ValidationError(e)
+		
+		return result
+	
+	def create(self, validated_data):
+		model_class = self.child.Meta.model
+		instances = [model_class(**item) for item in validated_data]
+		model_class.objects.bulk_create(instances)
+		return instances
+	
+
+class VocabularyListSerializer(BaseListSerializer):
+	def create(self, validated_data):
+		validated_translations = [
+			{'word': item['word'], 'data': item.pop('translations', [])}
+			for item in validated_data
+		]
+		create_translations = []
+		vocab_instances = super().create(validated_data)
+		for translation in validated_translations:
+			parent_instance = None
+			for vocab in vocab_instances:
+				if vocab.word == translation['word']:
+					parent_instance = vocab
+					break
+			for data in translation['data']:
+				data.update({'vocabulary': parent_instance})
+				create_translations.append(Translation(**data))
+				
+		if len(create_translations) > 0:
+			Translation.objects.bulk_create(create_translations)
+		
+		vocab_ids = [v.id for v in vocab_instances]
+		return Vocabulary.objects\
+			.prefetch_related('translations')\
+			.filter(pk__in=vocab_ids).all()
+	
+	def to_internal_value(self, data):
+		topic_ids = {item.get('topic') for item in data}
+		topics = Topic.objects.in_bulk(topic_ids)  # Query only once
+		self._topic_map = topics  # Store for later
+		
+		# Now, replace topic ID with actual instance
+		for item in data:
+			item['topic'] = topics.get(item.get('topic'))
+		
+		return super().to_internal_value(data)
+	
+	
+class BaseSerializer(serializers.ModelSerializer):
 	class Meta:
+		list_serializer_class = BaseListSerializer
+
+
+class TopicSerializer(BaseSerializer):
+	class Meta(BaseSerializer.Meta):
 		model = Topic
 		fields = ['id', 'name', 'descriptions', 'created_by']
 
 
-class TranslationSerializer(serializers.ModelSerializer):
-	class Meta:
+class TranslationSerializer(BaseSerializer):
+	class Meta(BaseSerializer.Meta):
 		model = Translation
 		fields = ['id', 'translation', 'language', 'type', 'note', 'created_by']
 
 
-class VocabularySerializer(serializers.ModelSerializer):
+class VocabularySerializer(BaseSerializer):
 	translations = TranslationSerializer(many=True)
 	
-	class Meta:
+	class Meta(BaseSerializer.Meta):
 		model = Vocabulary
 		fields = ['id', 'word', 'topic', 'translations', 'descriptions', 'created_by']
+		list_serializer_class = VocabularyListSerializer
 	
 	def _create_or_update_translations(self, instance, translations, is_create=False):
 		if len(translations) > 0:

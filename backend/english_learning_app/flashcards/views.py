@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, prefetch_related_objects
+from django.db.models import Prefetch, prefetch_related_objects, Q
 from rest_framework import generics, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
@@ -13,11 +13,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
+from django_q.tasks import async_task
+from flashcards.tasks import generate_vocab_audio_binary
 import re
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
-	permission_classes = [IsAuthenticated, IsOwner]
+	# permission_classes = [IsAuthenticated, IsOwner]
 	filter_backends = [DjangoFilterBackend]
 
 	def perform_create(self, serializer):
@@ -61,6 +63,21 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 			get_translation_prefetch_related(self.request.GET.dict())
 		)
 		return qs
+	
+	@action(detail=False, methods=['post'], url_path='generate-audio')
+	def generate_audio(self, request, *args, **kwargs):
+		topic_id = request.GET.get('topic_id')
+		if topic_id:
+			chunk_size = 2
+			vocab_ids_qs = Vocabulary.objects.\
+				filter(Q(topic_id=topic_id) & Q(audio__isnull=True)).\
+				values_list('id', flat=True)
+			
+			vocab_ids = list(vocab_ids_qs)
+			vocab_ids = [vocab_ids[i:i + chunk_size] for i in range(0, len(vocab_ids_qs), chunk_size)]
+			for ids in vocab_ids:
+				async_task(generate_vocab_audio_binary, ids, hook=None)
+		return Response(status=status.HTTP_204_NO_CONTENT)
 		
 	@action(detail=False, methods=['post'], url_path='import')
 	def bulk_import(self, request, *args, **kwargs):

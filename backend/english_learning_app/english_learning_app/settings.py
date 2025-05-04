@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
-    'flashcards.apps.FlashcardsConfig'
+    'flashcards.apps.FlashcardsConfig',
+    'django_q'
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'english_learning_app.wsgi.application'
 
 
-# Database
+# DatabaseINSTALLED_APPS
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
@@ -168,3 +169,15 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_HEADERS = ['*']
 CORS_ALLOW_METHODS = ['*']
+
+Q_CLUSTER = {
+    'name': 'DjangoORM',  # Use 'redis' if you prefer Redis as a broker
+    'workers': 4,         # Number of worker processes
+    'timeout': 60,        # Time to wait before task is killed
+    'retry': 120,         # Time to retry the task if it fails
+    'catch_up': False,    # Disable "catch up" tasks from the past
+    'save_limit': 250,     # Max number of saved tasks in the database
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',  # <<< This tells Django Q to use the DB
+}
