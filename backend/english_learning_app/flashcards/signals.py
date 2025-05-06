@@ -1,0 +1,10 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from flashcards.models import Vocabulary
+from flashcards.task_utils import generate_vocab_audio_async
+
+
+@receiver(post_save, sender=Vocabulary)
+def on_vocab_saved(sender, instance, created, **kwargs):
+	if not instance.audio:
+		generate_vocab_audio_async([instance.pk])

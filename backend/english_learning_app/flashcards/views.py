@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
 from django_q.tasks import async_task
+
+from flashcards.task_utils import generate_vocab_audio_async
 from flashcards.tasks import generate_vocab_audio_binary
 import re
 
@@ -21,6 +23,17 @@ import re
 class BaseModelViewSet(viewsets.ModelViewSet):
 	# permission_classes = [IsAuthenticated, IsOwner]
 	filter_backends = [DjangoFilterBackend]
+	
+	def update(self, request, *args, **kwargs):
+		partial = kwargs.pop('partial', False)
+		instance = self.get_object()
+		serializer = self.get_serializer(instance, data=request.data, partial=partial)
+		serializer.is_valid(raise_exception=True)
+		self.perform_update(serializer)
+
+		instance = self.get_object()
+		serializer = self.get_serializer(instance)
+		return Response(serializer.data)
 
 	def perform_create(self, serializer):
 		self.perform_create_or_update(serializer)
@@ -68,15 +81,11 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 	def generate_audio(self, request, *args, **kwargs):
 		topic_id = request.GET.get('topic_id')
 		if topic_id:
-			chunk_size = 2
 			vocab_ids_qs = Vocabulary.objects.\
 				filter(Q(topic_id=topic_id) & Q(audio__isnull=True)).\
 				values_list('id', flat=True)
+			generate_vocab_audio_async(list(vocab_ids_qs))
 			
-			vocab_ids = list(vocab_ids_qs)
-			vocab_ids = [vocab_ids[i:i + chunk_size] for i in range(0, len(vocab_ids_qs), chunk_size)]
-			for ids in vocab_ids:
-				async_task(generate_vocab_audio_binary, ids, hook=None)
 		return Response(status=status.HTTP_204_NO_CONTENT)
 		
 	@action(detail=False, methods=['post'], url_path='import')
@@ -92,6 +101,8 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 		serializer = self.get_serializer(data=data_import, many=True)
 		if serializer.is_valid():
 			serializer.save()
+			vocab_ids = list(serializer.instance.values_list('id', flat=True))
+			generate_vocab_audio_async(vocab_ids)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		
