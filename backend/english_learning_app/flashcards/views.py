@@ -140,16 +140,16 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 				if translation_type not in Translation.TranslationTypeEnums.values:
 					translation_type = None
 				translation_text = parts[0] if len(parts) == 1 else ' '.join(parts)
-				translations_entries.append({
-					"translation": translation_text,
-					"language": language,
-					"type": translation_type,
-					"created_by": user_id
-				})
+				# translations_entries.append({
+				# 	"translation": translation_text,
+				# 	"language": language,
+				# 	"type": translation_type,
+				# 	"created_by": user_id
+				# })
 
 			vocab_entries.append({
 				"word": word,
-				"topic": topic_id,
+				"topic": int(topic_id),
 				"translations": translations_entries,
 				"created_by": user_id
 			})

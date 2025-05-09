@@ -5,6 +5,13 @@ from flashcards.queryset_utils import get_translation_prefetch_related
 from .models import Topic, Vocabulary, Translation
 
 
+class InstancePrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+	def to_internal_value(self, data):
+		if isinstance(data, self.queryset.model):
+			return data
+		return super().to_internal_value(data)
+
+
 class BaseListSerializer(serializers.ListSerializer):
 	def update(self, instances, validated_data):
 		instance_hash = {index: instance for index, instance in enumerate(instances)}
@@ -90,6 +97,11 @@ class VocabularyListSerializer(BaseListSerializer):
 
 class VocabularySerializer(BaseSerializer):
 	translations = TranslationSerializer(many=True)
+	topic = InstancePrimaryKeyRelatedField(
+		queryset=Topic.objects.all(),
+		allow_null=True,
+		required=False
+	)
 	
 	class Meta(BaseSerializer.Meta):
 		model = Vocabulary
@@ -145,8 +157,8 @@ class VocabularySerializer(BaseSerializer):
 		instance = super().update(instance, validated_data)
 		self._create_or_update_translations(instance, translations)
 		return instance
-	
-	
+
+
 class VocabularyImportSerializer(serializers.Serializer):
 	import_type = serializers.ChoiceField(choices=["text", "csv", "json"])
 	topic_id = serializers.IntegerField()

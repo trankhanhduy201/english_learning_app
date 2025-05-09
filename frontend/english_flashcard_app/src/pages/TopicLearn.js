@@ -49,7 +49,7 @@ const trans2Vocabs = (vocab) => {
   }, []);
 };
 
-const Topic = () => {
+const TopicLearn = () => {
   const dispatch = useDispatch();
   const lang = useSelector((state) => state.lang);
   const { topicPromise, vocabsPromise } = useLoaderData();
@@ -136,4 +136,4 @@ const Topic = () => {
   );
 };
 
-export default Topic;
+export default TopicLearn;

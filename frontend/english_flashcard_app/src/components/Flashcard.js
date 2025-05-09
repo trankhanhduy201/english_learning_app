@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getRandomIntWithExceptions } from "../utils/commons";
 import * as transTypeEnums from "../enums/transTypes";
@@ -9,18 +9,20 @@ export const EMPTY_VOCAB = {
   type: "",
   language: "",
   translations: [],
+  audio: "", // Added audio property to EMPTY_VOCAB
 };
 
-const Flashcard = memo(function Flashcard({
+const Flashcard = memo(({
   vocabs = [],
   filterTypes = [],
   onReverseVocabs = null,
   onFilterVocabsByTypes = null,
-}) {
+}) => {
   const [vocab, setVocab] = useState(EMPTY_VOCAB);
   const [isOpen, setIsOpen] = useState(false);
   const [isOrder, setIsOrder] = useState(true);
   const isActive = vocabs.length > 0;
+  const audioRef = useRef(null);
 
   useEffect(() => {
     let newVocab = pickVocab(0);
@@ -37,19 +39,19 @@ const Flashcard = memo(function Flashcard({
 
   const onPickVocab = (direction = "") => {
     setVocab((oldVocab) => {
-      if (direction == "") {
+      if (direction === "") {
         const randomIndex = getRandomIntWithExceptions(0, vocabs.length - 1, [
           oldVocab.index,
         ]);
         return pickVocab(randomIndex);
       }
 
-      if (direction == "next") {
+      if (direction === "next") {
         const nextIndex = oldVocab.idx + 1;
         return nextIndex < vocabs.length ? vocabs[nextIndex] : oldVocab;
       }
 
-      if (direction == "prev") {
+      if (direction === "prev") {
         const prevIndex = oldVocab.idx - 1;
         return prevIndex >= 0 ? vocabs[prevIndex] : oldVocab;
       }
@@ -59,6 +61,23 @@ const Flashcard = memo(function Flashcard({
   };
 
   const pickVocab = (index) => vocabs[index] ?? EMPTY_VOCAB;
+
+  const playAudio = () => {
+    if (!vocab.audio) {
+      console.error("Audio data is not available for this vocabulary.");
+      return;
+    }
+
+    // Convert the binary audio data (base64 encoded) to a playable audio URL
+    const audioBlob = new Blob([new Uint8Array(atob(vocab.audio).split("").map((char) => char.charCodeAt(0)))], {
+      type: "audio/mpeg",
+    });
+    const audioUrl = URL.createObjectURL(audioBlob);
+
+    // Set the audio source and play
+    audioRef.current.src = audioUrl;
+    audioRef.current.play();
+  };
 
   return (
     <div className="row justify-content-center">
@@ -87,6 +106,13 @@ const Flashcard = memo(function Flashcard({
             >
               <i className="bi bi-youtube"></i>
             </button>
+            <button
+              disabled={!isActive}
+              className="btn btn-secondary d-block mt-1"
+              onClick={playAudio}
+            >
+              <i className="bi bi-volume-up"></i>
+            </button>
           </div>
           <div className="card flex-fill ms-3 me-3">
             <div className="card-body d-flex">
@@ -101,8 +127,8 @@ const Flashcard = memo(function Flashcard({
                     {isOpen ? (
                       <>
                         {vocab.translations &&
-                          vocab.translations.map((item) => (
-                            <>
+                          vocab.translations.map((item, index) => (
+                            <div key={index}>
                               {item.translation}
                               {item?.note && (
                                 <div className="text-start mt-2">
@@ -113,7 +139,7 @@ const Flashcard = memo(function Flashcard({
                                   </p>
                                 </div>
                               )}
-                            </>
+                            </div>
                           ))}
                       </>
                     ) : (
@@ -132,7 +158,7 @@ const Flashcard = memo(function Flashcard({
           </div>
           <div className="mb-auto">
             <button
-              disabled={!isActive || (isOrder && vocab.idx == 0)}
+              disabled={!isActive || (isOrder && vocab.idx === 0)}
               className="btn btn-secondary d-block text-light"
               onClick={() => onPickVocab(isOrder ? "prev" : "")}
             >
@@ -140,7 +166,7 @@ const Flashcard = memo(function Flashcard({
             </button>
             <button
               disabled={
-                !isActive || (isOrder && vocab.idx == vocabs.length - 1)
+                !isActive || (isOrder && vocab.idx === vocabs.length - 1)
               }
               className="btn btn-secondary d-block mt-1 text-light"
               onClick={() => onPickVocab(isOrder ? "next" : "")}
@@ -172,6 +198,7 @@ const Flashcard = memo(function Flashcard({
           ))}
         </div>
       </div>
+      <audio ref={audioRef} />
     </div>
   );
 });
