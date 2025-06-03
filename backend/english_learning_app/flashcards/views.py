@@ -12,16 +12,12 @@ from flashcards.permissions import IsOwner
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from django.db import transaction
-from django_q.tasks import async_task
-
 from flashcards.task_utils import generate_vocab_audio_async
-from flashcards.tasks import generate_vocab_audio_binary
 import re
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
-	# permission_classes = [IsAuthenticated, IsOwner]
+	permission_classes = [IsAuthenticated, IsOwner]
 	filter_backends = [DjangoFilterBackend]
 	
 	def update(self, request, *args, **kwargs):
@@ -48,7 +44,24 @@ class BaseModelViewSet(viewsets.ModelViewSet):
 		serializer.save(**additional)
 
 
-class TopicViewSet(OwnerListModelMixin, BaseModelViewSet):
+class BulkDestroyModelMixin:
+	@action(detail=False, methods=['post'], url_path='delete')
+	def bulk_delete(self, request, *args, **kwargs):
+		try:
+			self.get_queryset().delete()
+			return Response(status=status.HTTP_204_NO_CONTENT)
+		except Exception as e:
+			return Response(
+				{'detail': 'Unexpected error occurred.', 'error': str(e)},
+				status=status.HTTP_500_INTERNAL_SERVER_ERROR
+			)
+
+
+class BulkModelMixin(BulkDestroyModelMixin):
+	pass
+
+
+class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 	queryset = Topic.objects.all()
 	serializer_class = TopicSerializer
 	search_fields = ['name']
@@ -65,7 +78,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet):
 			)
 
 
-class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
+class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 	queryset = Vocabulary.objects.all()
 	serializer_class = VocabularySerializer
 	filterset_class = VocabularyFilter
@@ -140,12 +153,12 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet):
 				if translation_type not in Translation.TranslationTypeEnums.values:
 					translation_type = None
 				translation_text = parts[0] if len(parts) == 1 else ' '.join(parts)
-				# translations_entries.append({
-				# 	"translation": translation_text,
-				# 	"language": language,
-				# 	"type": translation_type,
-				# 	"created_by": user_id
-				# })
+				translations_entries.append({
+					"translation": translation_text,
+					"language": language,
+					"type": translation_type,
+					"created_by": user_id
+				})
 
 			vocab_entries.append({
 				"word": word,

@@ -10,6 +10,7 @@ import ImportTextModal from "../topic/ImportTextModal";
 import ListVocabTable from "./ListVocabTable";
 import { debounce } from "lodash";
 import LoadingOverlay from "../../LoadingOverlay";
+import DeleteAllButton from "../../DeleteAllButton";
 
 const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
   const [vocabs, setVocabs] = useState([]);
@@ -87,9 +88,13 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
         >
           <i className="bi bi-upload"></i> Import
         </button>
-        <Link to={`/topic/${topicId}/vocab/new`} className="btn btn-secondary">
+        <Link to={`/topic/${topicId}/vocab/new`} className="btn btn-secondary me-2">
           <i className="bi bi-plus-circle"></i> New
         </Link>
+        <DeleteAllButton 
+          action={`/topic/${topicId}/vocab/delete`} 
+          formName={'deleting_all_vocab'}
+        />
       </div>
       {showImportTextModal && (
         <ImportTextModal

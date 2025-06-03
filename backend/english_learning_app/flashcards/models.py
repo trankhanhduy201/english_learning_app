@@ -25,7 +25,7 @@ class Topic(CreatedBy):
 
 class Vocabulary(CreatedBy):
 	word = models.CharField(max_length=100)
-	topic = models.ForeignKey(Topic, related_name='vocabularies', on_delete=models.SET_NULL, null=True)
+	topic = models.ForeignKey(Topic, related_name='vocabularies', on_delete=models.CASCADE, null=True)
 	audio = models.BinaryField(null=True)
 	descriptions = models.TextField(blank=True, null=True)
 

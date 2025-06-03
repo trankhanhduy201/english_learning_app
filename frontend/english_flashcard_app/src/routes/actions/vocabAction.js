@@ -3,10 +3,12 @@ import store from "../../stores/store";
 import qs from "qs";
 import {
   createVocabThunk,
+  deleteAllVocabThunk,
   deleteVocabThunk,
   importVocabThunk,
   updateVocabThunk,
 } from "../../stores/thunks/vocabsThunk";
+import { DEFAULT_LANG } from "../../configs/langConfigs";
 
 const getTrans = (trans) => {
   if (!trans) {
@@ -44,6 +46,17 @@ const deleteVocab = async (topicId, vocabId, params = {}) => {
   }
 };
 
+const doDeleteAllVocabs = async (topicId, lang) => {
+  try {
+    await store.dispatch(deleteAllVocabThunk({ topicId, lang })).unwrap();
+    return {
+      status: "success",
+    };
+  } catch (err) {
+    return err;
+  }
+};
+
 const doImportVocab = async (data) => {
   try {
     return await store.dispatch(importVocabThunk({ data })).unwrap();
@@ -74,8 +87,12 @@ export const editVocab = async ({ request, params }) => {
   });
 };
 
-export const importVocab = async ({ request, params }) => {
+export const importVocabs = async ({ request, params }) => {
   const formData = await request.formData();
   const importData = qs.parse(Object.fromEntries(formData));
   return await doImportVocab({ ...importData, topic_id: params.topicId });
+};
+
+export const deleteVocabs = async ({ request, params }) => {
+  return await doDeleteAllVocabs(params.topicId, DEFAULT_LANG);
 };

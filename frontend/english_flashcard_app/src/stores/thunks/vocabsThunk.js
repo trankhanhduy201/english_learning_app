@@ -78,3 +78,24 @@ export const deleteVocabThunk = createAsyncThunk(
     }
   },
 );
+
+export const deleteAllVocabThunk = createAsyncThunk(
+  "vocabs/delete",
+  async ({ topicId, lang, params }, { dispatch, rejectWithValue }) => {
+    const respParams = { topic_id: topicId };
+    try {
+      await vocabApi.deleteAllVocabs(topicId, lang);
+      dispatchSuccessAlert(dispatch, "All vocabs are deleted successfully");
+      return {
+        status: "success",
+        data: respParams,
+      };
+    } catch (err) {
+      return rejectWithValue({
+        status: "error",
+        data: respParams,
+      });
+    }
+  },
+);
+

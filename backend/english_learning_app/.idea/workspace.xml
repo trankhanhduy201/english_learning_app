@@ -2,15 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f228967d-d47c-40b6-91b2-1697015a03a7" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/english_learning_app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/english_learning_app.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/english_learning_app/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/english_learning_app/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/english_learning_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/english_learning_app/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flashcards/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcards/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flashcards/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcards/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flashcards/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcards/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flashcards/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcards/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/components/Flashcard.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/components/Flashcard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/pages/TopicLearn.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/pages/TopicLearn.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,101 +17,101 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/english_learning_app$django_q.coverage" NAME="django q Coverage Results" MODIFIED="1748915647521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/english_learning_app$qcluster.coverage" NAME="qcluster Coverage Results" MODIFIED="1746763641445" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="english_learning_app" />
+  </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="7" column="57" selection-start-line="7" selection-start-column="57" selection-end-line="7" selection-end-column="57" />
-              <folding>
-                <element signature="e#0#36#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
-              <caret line="498" column="71" selection-start-line="498" selection-start-column="71" selection-end-line="498" selection-end-column="71" />
-              <folding>
-                <element signature="e#445#462#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/english_learning_app/urls.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="35" column="75" selection-start-line="35" selection-start-column="75" selection-end-line="35" selection-end-column="75" />
-              <folding>
-                <element signature="e#659#691#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/english_learning_app/settings.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
-              <folding>
-                <element signature="e#321#345#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/relations.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="250" lean-forward="true" selection-start-line="250" selection-end-line="250" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/fields.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="277">
-              <caret line="578" column="8" selection-start-line="578" selection-start-column="8" selection-end-line="578" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flashcards/views.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="121">
-              <caret line="96" column="69" selection-start-line="96" selection-start-column="69" selection-end-line="96" selection-end-column="69" />
-              <folding>
-                <element signature="e#0#66#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flashcards/signals.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
-              <caret line="7" column="56" selection-start-line="7" selection-start-column="56" selection-end-line="7" selection-end-column="56" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.5">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/flashcards/views.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="198">
+                  <caret line="71" column="40" selection-start-line="71" selection-start-column="40" selection-end-line="71" selection-end-column="40" />
+                  <folding>
+                    <element signature="e#0#66#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/requirements.txt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="288">
+                  <caret line="12" column="19" lean-forward="true" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/flashcards/filters.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="144">
+                  <caret line="6" column="66" selection-start-line="6" selection-start-column="66" selection-end-line="6" selection-end-column="66" />
+                  <folding>
+                    <element signature="e#0#21#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/flashcards/mixins.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="336">
+                  <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+                  <folding>
+                    <element signature="e#0#43#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/rest_framework/viewsets.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="155">
+                  <caret line="224" column="7" selection-start-line="224" selection-start-column="7" selection-end-line="224" selection-end-column="7" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/flashcards/models.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="384">
+                  <caret line="31" column="22" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
+                  <folding>
+                    <element signature="e#0#32#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/rest_framework/mixins.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="477">
+                  <caret line="85" column="7" selection-start-line="85" selection-start-column="7" selection-end-line="85" selection-end-column="7" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -124,8 +122,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>token_refresh</find>
-      <find>DEFAULT_AUTHENTICATION_CLASSES</find>
       <find>AuthenticationMiddleware</find>
       <find>AUTH_TOKEN_CLASSES</find>
       <find>JWTAuthentication</find>
@@ -154,6 +150,8 @@
       <find>get_queryset</find>
       <find>self.get</find>
       <find>self.get_queryset()</find>
+      <find>language</find>
+      <find>generate_vocab_audio_binary</find>
     </findStrings>
     <replaceStrings>
       <replace>models.SET_NULL</replace>
@@ -178,23 +176,23 @@
         <option value="$PROJECT_DIR$/flashcards/filters.py" />
         <option value="$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/backends.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/flashcards/tasks.py" />
         <option value="$PROJECT_DIR$/flashcards/queryset_utils.py" />
         <option value="$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/mixins.py" />
-        <option value="$PROJECT_DIR$/flashcards/models.py" />
         <option value="$PROJECT_DIR$/flashcards/task_utils.py" />
         <option value="$PROJECT_DIR$/flashcards/signals.py" />
-        <option value="$PROJECT_DIR$/flashcards/views.py" />
         <option value="$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py" />
         <option value="$PROJECT_DIR$/english_learning_app/settings.py" />
-        <option value="$PROJECT_DIR$/english_learning_app/urls.py" />
         <option value="$PROJECT_DIR$/flashcards/serializers.py" />
+        <option value="$PROJECT_DIR$/english_learning_app/urls.py" />
+        <option value="$PROJECT_DIR$/flashcards/tasks.py" />
+        <option value="$PROJECT_DIR$/flashcards/views.py" />
+        <option value="$PROJECT_DIR$/flashcards/models.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="1786" />
+    <option name="y" value="9" />
     <option name="width" value="1616" />
     <option name="height" value="884" />
   </component>
@@ -213,25 +211,6 @@
               <item name="english_learning_app" type="b2602c69:ProjectViewProjectNode" />
               <item name="english_learning_app" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="english_learning_app" type="b2602c69:ProjectViewProjectNode" />
-              <item name="english_learning_app" type="462c0819:PsiDirectoryNode" />
-              <item name="english_learning_app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="english_learning_app" type="b2602c69:ProjectViewProjectNode" />
-              <item name="english_learning_app" type="462c0819:PsiDirectoryNode" />
-              <item name="flashcards" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="english_learning_app" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="english_learning_app" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.1 (20230902_venv) &gt;" type="70bed36:NamedLibraryElementNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -241,14 +220,15 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/manage.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../django_practice" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Python" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\norman.p\Desktop\projects\python_project\github\english_learning_app\backend\english_learning_app" />
       <recent name="C:\Users\unknown-pc\Desktop\projects\python_project\github\english_learning_app\backend\english_learning_app\flashcards" />
     </key>
   </component>
@@ -265,6 +245,28 @@
     </option>
   </component>
   <component name="RunManager" selected="Django server.english_learning_app">
+    <configuration name="django q" type="PythonConfigurationType" factoryName="Python">
+      <module name="english_learning_app" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/manage.py" />
+      <option name="PARAMETERS" value="qcluster" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="qcluster" type="PythonConfigurationType" factoryName="Python">
       <module name="english_learning_app" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -272,9 +274,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\unknown-pc\Desktop\projects\python_project\20230902_venv\Scripts\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -314,6 +316,7 @@
     <list>
       <item itemvalue="Django server.english_learning_app" />
       <item itemvalue="Python.qcluster" />
+      <item itemvalue="Python.django q" />
     </list>
   </component>
   <component name="SvnConfiguration">
@@ -367,11 +370,14 @@
       <workItem from="1746087031284" duration="67000" />
       <workItem from="1746334611707" duration="59573000" />
       <workItem from="1746762714623" duration="14891000" />
+      <workItem from="1748844784765" duration="1942000" />
+      <workItem from="1748847064494" duration="6279000" />
+      <workItem from="1748915611540" duration="4846000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="319585000" />
+    <option name="totallyTimeSpent" value="332652000" />
   </component>
   <component name="TodoView" selected-index="3">
     <todo-panel id="selected-file">
@@ -383,25 +389,25 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1066" extended-state="7" />
+    <frame x="1592" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5043956" visible="true" weight="0.2238806" />
-      <window_info id="Structure" order="1" sideWeight="0.4956044" side_tool="true" visible="true" weight="0.2238806" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.50300604" visible="true" weight="0.15565032" />
+      <window_info id="Structure" order="1" sideWeight="0.496994" side_tool="true" weight="0.22686376" />
+      <window_info id="Favorites" order="2" sideWeight="0.496994" side_tool="true" weight="0.22686376" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.31978023" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49946696" weight="0.34945056" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.31960997" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49946696" weight="0.34777898" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32967034" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32839838" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32967034" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32839838" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50053304" side_tool="true" weight="0.30653805" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49946696" weight="0.3989011" />
-      <window_info anchor="bottom" id="Python Console" order="12" weight="0.32967034" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5012854" side_tool="true" weight="0.39838493" />
+      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49871466" visible="true" weight="0.39761648" />
+      <window_info anchor="bottom" id="Python Console" order="12" weight="0.32827735" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -414,58 +420,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../20230902_venv/Lib/site-packages/rest_framework/exceptions.py</url>
-          <line>263</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../20230902_venv/Lib/site-packages/rest_framework/serializers.py</url>
-          <line>639</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/views/generic/base.py</url>
-          <line>142</line>
-          <option name="timeStamp" value="47" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/flashcards/serializers.py</url>
-          <line>68</line>
-          <option name="timeStamp" value="61" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py</url>
-          <line>692</line>
-          <option name="timeStamp" value="81" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py</url>
-          <line>694</line>
-          <option name="timeStamp" value="82" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py</url>
-          <line>696</line>
-          <option name="timeStamp" value="83" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/flashcards/views.py</url>
-          <line>101</line>
-          <option name="timeStamp" value="88" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py</url>
-          <line>441</line>
-          <option name="timeStamp" value="96" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py</url>
-          <line>498</line>
-          <option name="timeStamp" value="98" />
-        </line-breakpoint>
-      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Python.DjangoServer">
@@ -528,145 +489,19 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/deletion.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/enums.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="34" column="45" selection-start-line="34" selection-start-column="45" selection-end-line="34" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/contrib/staticfiles/management/commands/collectstatic.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="125" column="40" selection-start-line="125" selection-start-column="40" selection-end-line="125" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/routers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6132">
-          <caret line="303" column="43" lean-forward="true" selection-start-line="303" selection-start-column="43" selection-end-line="303" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/utils/decorators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/renderers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="654" lean-forward="true" selection-start-line="654" selection-end-line="654" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/views/generic/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="52" column="33" lean-forward="true" selection-start-line="52" selection-start-column="33" selection-end-line="52" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="63" column="6" selection-start-line="63" selection-start-column="6" selection-end-line="63" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/jwt/api_jws.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="283" column="40" lean-forward="true" selection-start-line="283" selection-start-column="40" selection-end-line="283" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/authentication.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="34" column="38" selection-start-line="34" selection-start-column="38" selection-end-line="34" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/authentication.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-445">
-          <caret line="136" column="42" selection-start-line="136" selection-start-column="24" selection-end-line="136" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/backends.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="147" column="47" lean-forward="true" selection-start-line="147" selection-start-column="47" selection-end-line="147" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/tokens.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3916">
-          <caret line="197" column="49" selection-start-line="197" selection-start-column="49" selection-end-line="197" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/contrib/auth/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="63" column="4" selection-start-line="63" selection-start-column="4" selection-end-line="63" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/authtoken/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="17" column="34" lean-forward="true" selection-start-line="17" selection-start-column="34" selection-end-line="17" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#44#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="29" column="6" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/jwt/api_jwt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2354">
-          <caret line="128" column="39" selection-start-line="128" selection-start-column="39" selection-end-line="128" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="39" column="66" selection-start-line="39" selection-start-column="66" selection-end-line="39" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/renderers.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/views/generic/base.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/settings.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/jwt/api_jws.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/authentication.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/authentication.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/backends.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/tokens.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/contrib/auth/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/authtoken/serializers.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/serializers.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/jwt/api_jwt.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/views.py" />
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3/io.pyi">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -674,78 +509,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/permissions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="144" column="6" selection-start-line="144" selection-start-column="6" selection-end-line="144" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/gtts/tts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="101" column="8" selection-start-line="101" selection-start-column="8" selection-end-line="101" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/djangorestframework-3.15.2.dist-info/INSTALLER">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/filters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django_q/tasks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="19" column="38" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="502" column="17" selection-start-line="502" selection-start-column="17" selection-end-line="502" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/response.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="39" column="13" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
-          <folding>
-            <element signature="e#240#273#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="746" column="59" selection-start-line="746" selection-start-column="59" selection-end-line="746" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="53" lean-forward="true" selection-start-column="53" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/generics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="114" lean-forward="true" selection-start-line="114" selection-end-line="114" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/permissions.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/gtts/tts.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/djangorestframework-3.15.2.dist-info/INSTALLER" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django_q/tasks.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/views.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/response.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/base.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/generics.py" />
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3/typing.pyi">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="229">
@@ -760,23 +532,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python311/Lib/test/test_enumerate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="161" column="19" selection-start-line="161" selection-start-column="19" selection-end-line="161" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/mixins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
-          <folding>
-            <element signature="e#178#231#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python311/Lib/test/test_enumerate.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/mixins.py" />
     <entry file="file://$PROJECT_DIR$/flashcards/queryset_utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="88">
@@ -787,121 +544,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/models.py">
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/viewsets.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/signals.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/query.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python311/Lib/uuid.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/fields.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/relations.py" />
+    <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django/dispatch/dispatcher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="40" column="8" selection-start-line="40" selection-start-column="8" selection-end-line="40" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/mixins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/viewsets.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="488">
-          <caret line="237" column="33" selection-start-line="237" selection-start-column="33" selection-end-line="237" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/tasks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/signals.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="45" selection-start-line="45" selection-end-line="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/task_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/signals.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="7" column="56" selection-start-line="7" selection-start-column="56" selection-end-line="7" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/english_learning_app/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
-          <folding>
-            <element signature="e#321#345#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/english_learning_app/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="35" column="75" selection-start-line="35" selection-start-column="75" selection-end-line="35" selection-end-column="75" />
-          <folding>
-            <element signature="e#659#691#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/query.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="290" column="6" selection-start-line="290" selection-start-column="6" selection-end-line="290" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="498" column="71" selection-start-line="498" selection-start-column="71" selection-end-line="498" selection-end-column="71" />
-          <folding>
-            <element signature="e#445#462#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="96" column="69" selection-start-line="96" selection-start-column="69" selection-end-line="96" selection-end-column="69" />
-          <folding>
-            <element signature="e#0#66#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python311/Lib/uuid.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2183">
-          <caret line="226" column="44" selection-start-line="226" selection-start-column="44" selection-end-line="226" selection-end-column="44" />
+        <state relative-caret-position="96">
+          <caret line="166" lean-forward="true" selection-start-line="166" selection-end-line="166" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
+        <state relative-caret-position="72">
           <caret line="7" column="57" selection-start-line="7" selection-start-column="57" selection-end-line="7" selection-end-column="57" />
           <folding>
             <element signature="e#0#36#0" expanded="true" />
@@ -909,17 +568,125 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/fields.py">
+    <entry file="file://$PROJECT_DIR$/english_learning_app/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="578" column="8" selection-start-line="578" selection-start-column="8" selection-end-line="578" selection-end-column="8" />
+        <state relative-caret-position="840">
+          <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
+          <folding>
+            <element signature="e#321#345#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/relations.py">
+    <entry file="file://$PROJECT_DIR$/flashcards/signals.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="250" lean-forward="true" selection-start-line="250" selection-end-line="250" />
+        <state relative-caret-position="168">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/task_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/tasks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="9" column="26" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django_q/tasks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/rest_framework/mixins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="477">
+          <caret line="85" column="7" selection-start-line="85" selection-start-column="7" selection-end-line="85" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/mixins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/english_learning_app/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="40" column="74" lean-forward="true" selection-start-line="40" selection-start-column="74" selection-end-line="40" selection-end-column="74" />
+          <folding>
+            <element signature="e#659#691#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/rest_framework/viewsets.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="224" column="7" selection-start-line="224" selection-start-column="7" selection-end-line="224" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/filters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="6" column="66" selection-start-line="6" selection-start-column="66" selection-end-line="6" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django/db/models/deletion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="30" column="48" lean-forward="true" selection-start-line="30" selection-start-column="48" selection-end-line="30" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="31" column="22" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="71" column="40" selection-start-line="71" selection-start-column="40" selection-end-line="71" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#66#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="12" column="19" lean-forward="true" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
         </state>
       </provider>
     </entry>

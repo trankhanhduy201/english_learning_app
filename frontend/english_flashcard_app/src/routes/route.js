@@ -13,12 +13,12 @@ import VocabModal from "../pages/VocabModal";
 import TopicModal from "../pages/TopicModal";
 import Test from "../pages/Test";
 
-const isShouldRevalidate = (formData, actionResult) => {
+const isShouldNotRevalidate = (formData, actionResult) => {
   return formData?.has("_not_revalidate") || actionResult?.status === "error";
 };
 
 const defaultShouldRevalidate = ({ formData, actionResult }) => {
-  return !isShouldRevalidate(formData, actionResult);
+  return !isShouldNotRevalidate(formData, actionResult);
 };
 
 const topicShouldRevalidate = ({
@@ -28,7 +28,7 @@ const topicShouldRevalidate = ({
   nextUrl,
 }) => {
   if (formData) {
-    if (isShouldRevalidate(formData, actionResult)) {
+    if (isShouldNotRevalidate(formData, actionResult)) {
       return false;
     }
     const formName = formData?.get("_form_name") ?? "";
@@ -87,7 +87,11 @@ const routes = createBrowserRouter(
               children: [
                 {
                   path: "vocab/import",
-                  action: vocabsAction.importVocab,
+                  action: vocabsAction.importVocabs,
+                },
+                {
+                  path: "vocab/delete",
+                  action: vocabsAction.deleteVocabs,
                 },
                 {
                   path: "vocab/:vocabId/:action?",
