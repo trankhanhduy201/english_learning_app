@@ -8,7 +8,6 @@ import {
   importVocabThunk,
   updateVocabThunk,
 } from "../../stores/thunks/vocabsThunk";
-import { DEFAULT_LANG } from "../../configs/langConfigs";
 
 const getTrans = (trans) => {
   if (!trans) {
@@ -46,9 +45,9 @@ const deleteVocab = async (topicId, vocabId, params = {}) => {
   }
 };
 
-const doDeleteAllVocabs = async (topicId, lang) => {
+const doDeleteAllVocabs = async (topicId) => {
   try {
-    await store.dispatch(deleteAllVocabThunk({ topicId, lang })).unwrap();
+    await store.dispatch(deleteAllVocabThunk({ topicId })).unwrap();
     return {
       status: "success",
     };
@@ -94,5 +93,5 @@ export const importVocabs = async ({ request, params }) => {
 };
 
 export const deleteVocabs = async ({ request, params }) => {
-  return await doDeleteAllVocabs(params.topicId, DEFAULT_LANG);
+  return await doDeleteAllVocabs(params.topicId);
 };

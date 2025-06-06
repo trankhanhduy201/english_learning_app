@@ -51,22 +51,22 @@ const trans2Vocabs = (vocab) => {
 
 const TopicLearn = () => {
   const dispatch = useDispatch();
-  const lang = useSelector((state) => state.lang);
   const { topicPromise, vocabsPromise } = useLoaderData();
   const [originVocabs, setOriginVocabs] = useState([]);
   const [vocabs, setVocabs] = useState([]);
   const [isReverse, setIsReverse] = useState(false);
   const [filterTypes, setFilterTypes] = useState([]);
-  const getVocabsByLang = () => originVocabs[lang] ?? [];
+  const [filterLang, setFilterLang] = useState('en');
+  const getVocabsByLang = (lang) => originVocabs[lang] ?? [];
 
   let reverseVocabs = useMemo(() => {
-    return getVocabsByLang().reduce((newVocabs, vocab) => {
+    return getVocabsByLang(filterLang).reduce((newVocabs, vocab) => {
       return [...newVocabs, ...trans2Vocabs(vocab)];
     }, []);
   }, [originVocabs]);
 
   useEffect(() => {
-    setVocabs(getFilterVocabs([], isReverse));
+    setVocabs(getFilterVocabs(filterLang, [], isReverse));
   }, [originVocabs]);
 
   useEffect(() => {
@@ -86,8 +86,8 @@ const TopicLearn = () => {
     getVocabs();
   }, []);
 
-  const getFilterVocabs = (types, reverse) => {
-    let filterVocabs = !reverse ? getVocabsByLang() : reverseVocabs;
+  const getFilterVocabs = (lang, types, reverse) => {
+    let filterVocabs = !reverse ? getVocabsByLang(lang) : reverseVocabs;
     if (Object.keys(types).length > 0) {
       filterVocabs = filterVocabs.filter((v) => v.type in types);
     }
@@ -95,7 +95,7 @@ const TopicLearn = () => {
   };
 
   const onReverseVocabs = useCallback(() => {
-    setVocabs(getFilterVocabs(filterTypes, !isReverse));
+    setVocabs(getFilterVocabs(filterLang, filterTypes, !isReverse));
     setIsReverse(!isReverse);
   }, [vocabs]);
 
@@ -108,10 +108,18 @@ const TopicLearn = () => {
         newFilterTypes = { ...newFilterTypes, [type]: true };
       }
       setFilterTypes(newFilterTypes);
-      setVocabs(getFilterVocabs(newFilterTypes, isReverse));
+      setVocabs(getFilterVocabs(filterLang, newFilterTypes, isReverse));
     },
     [vocabs],
   );
+
+  const onFilterVocabsByLang = useCallback(
+    (lang) => {
+      setFilterLang(lang);
+      setVocabs(getFilterVocabs(lang, filterTypes, isReverse));
+    },
+    [vocabs],
+  )
 
   return (
     <Suspense
@@ -127,8 +135,10 @@ const TopicLearn = () => {
           <Flashcard
             vocabs={vocabs}
             filterTypes={filterTypes}
+            filterLang={filterLang}
             onReverseVocabs={onReverseVocabs}
             onFilterVocabsByTypes={onFilterVocabsByTypes}
+            onFilterVocabsByLang={onFilterVocabsByLang}
           />
         )}
       </Await>

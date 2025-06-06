@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f228967d-d47c-40b6-91b2-1697015a03a7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/english_learning_app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/english_learning_app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/english_learning_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/english_learning_app/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flashcards/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcards/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flashcards/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcards/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/utils/localStorage.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/utils/localStorage.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,11 +25,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/flashcards/views.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="198">
-                  <caret line="71" column="40" selection-start-line="71" selection-start-column="40" selection-end-line="71" selection-end-column="40" />
+                <state relative-caret-position="294">
+                  <caret line="69" column="52" lean-forward="true" selection-start-line="69" selection-start-column="52" selection-end-line="69" selection-end-column="52" />
                   <folding>
                     <element signature="e#0#66#0" expanded="true" />
                   </folding>
@@ -42,11 +37,11 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/requirements.txt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="288">
-                  <caret line="12" column="19" lean-forward="true" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
+                <state relative-caret-position="216">
+                  <caret line="9" column="13" lean-forward="true" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
                 </state>
               </provider>
             </entry>
@@ -372,12 +367,12 @@
       <workItem from="1746762714623" duration="14891000" />
       <workItem from="1748844784765" duration="1942000" />
       <workItem from="1748847064494" duration="6279000" />
-      <workItem from="1748915611540" duration="4846000" />
+      <workItem from="1748915611540" duration="5479000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="332652000" />
+    <option name="totallyTimeSpent" value="333285000" />
   </component>
   <component name="TodoView" selected-index="3">
     <todo-panel id="selected-file">
@@ -406,7 +401,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32839838" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5012854" side_tool="true" weight="0.39838493" />
-      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49871466" visible="true" weight="0.39761648" />
+      <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49871466" weight="0.39761648" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.32827735" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -673,20 +668,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/views.py">
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="71" column="40" selection-start-line="71" selection-start-column="40" selection-end-line="71" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#66#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="216">
+          <caret line="9" column="13" lean-forward="true" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
+    <entry file="file://$PROJECT_DIR$/flashcards/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="12" column="19" lean-forward="true" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
+        <state relative-caret-position="294">
+          <caret line="69" column="52" lean-forward="true" selection-start-line="69" selection-start-column="52" selection-end-line="69" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#66#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

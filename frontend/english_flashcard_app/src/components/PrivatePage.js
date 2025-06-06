@@ -7,6 +7,7 @@ import TopicLearn from "../pages/TopicLearn";
 import Vocab from "../pages/Vocab";
 import useCheckAuth from "../hooks/useCheckAuth";
 import { memo } from "react";
+import { useSelector } from "react-redux";
 
 const Page = memo(({ pageName }) => {
   switch (pageName) {
@@ -26,6 +27,7 @@ const Page = memo(({ pageName }) => {
 });
 
 const PrivatePage = memo(({ pageName }) => {
+  const globalLang = useSelector(state => state.lang);
   const { isLogged } = useCheckAuth({
     hasCheckExpired: false,
   });
@@ -38,7 +40,7 @@ const PrivatePage = memo(({ pageName }) => {
     return <Navigate to="/login" />;
   }
 
-  return <Page pageName={pageName} />;
+  return <Page key={globalLang} pageName={pageName} />;
 });
 
 export default PrivatePage;

@@ -1,12 +1,12 @@
 import { callApi } from "./apiService";
 
-const getQueryString = (topicId, lang) => {
-  const searchParams = new URLSearchParams({ topic_id: topicId, lang });
+const getQueryString = (topicId) => {
+  const searchParams = new URLSearchParams({ topic_id: topicId });
   return searchParams.toString();
 }
 
-export const getVocabs = async (topicId, lang = "en") => {
-  return await callApi(`vocabularies?${ getQueryString(topicId, lang) }`, {
+export const getVocabs = async (topicId) => {
+  return await callApi(`vocabularies?${ getQueryString(topicId) }`, {
     method: "GET",
   });
 };
@@ -47,8 +47,8 @@ export const deleteVocab = async (id, options = {}) => {
   });
 };
 
-export const deleteAllVocabs = async (topicId, lang, options = {}) => {
-  return await callApi(`vocabularies/delete/?${ getQueryString(topicId, lang) }`, {
+export const deleteAllVocabs = async (topicId, options = {}) => {
+  return await callApi(`vocabularies/delete/?${ getQueryString(topicId) }`, {
     method: "POST",
     ...options,
   });

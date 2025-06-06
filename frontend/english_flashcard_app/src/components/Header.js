@@ -1,13 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { initialState, setAuth } from "../stores/slices/authSlice";
 import { Dropdown, Nav } from "react-bootstrap";
 import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from "./ConfirmModal";
 import * as cookies from "../utils/cookies";
 import { toggleSidebar } from "../stores/slices/sidebarSlice";
+import { setLangThunk } from "../stores/thunks/langThunk";
+import { useEffect } from "react";
 
 const Header = () => {
+  const globalLang = useSelector(state => state.lang);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const confirmLogoutModal = useConfirmModal({
@@ -22,6 +25,11 @@ const Header = () => {
       });
     },
   });
+
+  const onChangeGlobalLang = lang => {
+    dispatch(setLangThunk(lang));
+    navigate('/topics');
+  }
 
   return (
     <header className="navbar navbar-light bg-light border-bottom p-2 d-flex justify-content-between align-items-center">
@@ -41,6 +49,18 @@ const Header = () => {
           <span className="input-group-text bg-white">
             <i className="bi bi-search"></i>
           </span>
+        </div>
+        <div className="dropdown me-2">
+          <Dropdown as={Nav.Item}>
+            <Dropdown.Toggle as={Nav.Link} className="text-dark">
+              { globalLang }
+            </Dropdown.Toggle>
+            <Dropdown.Menu align="end">
+              <Dropdown.Item onClick={() => onChangeGlobalLang('en')}>English</Dropdown.Item>
+              <Dropdown.Item onClick={() => onChangeGlobalLang('jp')}>Japan</Dropdown.Item>
+              <Dropdown.Item onClick={() => onChangeGlobalLang('vn')}>Viet Nam</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
         <div className="dropdown">
           <Dropdown as={Nav.Item}>

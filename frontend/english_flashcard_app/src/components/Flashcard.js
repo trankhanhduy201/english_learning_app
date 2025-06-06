@@ -14,9 +14,11 @@ export const EMPTY_VOCAB = {
 
 const Flashcard = memo(({
   vocabs = [],
+  filterLang = '',
   filterTypes = [],
   onReverseVocabs = null,
   onFilterVocabsByTypes = null,
+  onFilterVocabsByLang = null
 }) => {
   const [vocab, setVocab] = useState(EMPTY_VOCAB);
   const [isOpen, setIsOpen] = useState(false);
@@ -194,6 +196,17 @@ const Flashcard = memo(({
               onClick={() => onFilterVocabsByTypes(v.key)}
             >
               {v.text}
+            </button>
+          ))}
+        </div>
+        <div className="col-12 mt-3">
+          {['en', 'jp', 'vn'].map((v) => (
+            <button
+              key={v.key}
+              className={`btn ${v == filterLang ? "btn-secondary" : "btn-outline-secondary"} d-inline-block ms-2`}
+              onClick={() => onFilterVocabsByLang(v)}
+            >
+              {v}
             </button>
           ))}
         </div>

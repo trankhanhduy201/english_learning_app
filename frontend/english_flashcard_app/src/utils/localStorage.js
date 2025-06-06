@@ -12,6 +12,8 @@ export const getValue = (key, defaultValue) => {
 
 export const setValue = (key, value) => localStorage.setItem(key, value);
 
-export const getLang = () => getValue("lang", DEFAULT_LANG);
+export const LANG_KEY = 'lang';
 
-export const setLang = (value) => setValue("lang", value);
+export const getLang = () => getValue(LANG_KEY, DEFAULT_LANG);
+
+export const setLang = (value) => setValue(LANG_KEY, value);

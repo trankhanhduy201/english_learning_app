@@ -33,7 +33,6 @@ export const editTopic = async ({ request, params }) => {
     const redirectTo = url.searchParams.get("redirectTo");
     return deleteTopic(params.topicId, redirectTo);
   }
-
   return await updateTopic(params.topicId, updateData);
 };
 

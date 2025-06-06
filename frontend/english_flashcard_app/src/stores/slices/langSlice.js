@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { setLangReducer } from "../reducers/langReducer";
-import { DEFAULT_LANG } from "../../configs/langConfigs";
+import { getLang } from "../../utils/localStorage";
+
 
 const langSlice = createSlice({
   name: "lang",
-  initialState: DEFAULT_LANG,
+  initialState: getLang(),
   reducers: {
     setLang: setLangReducer,
   },

@@ -1,13 +1,7 @@
 import { redirect } from "react-router-dom";
-import * as langConfigs from "../../configs/langConfigs";
 import * as topicApi from "../../services/topicApi";
 import * as vocabApi from "../../services/vocabApi";
 import * as topicCommon from "../../commons/topicCommon";
-
-const getLang = (request) => {
-  const url = new URL(request.url);
-  return url.searchParams.get("lang") || langConfigs.DEFAULT_LANG;
-};
 
 export const getTopics = async () => {
   try {
@@ -31,7 +25,7 @@ export const getTopic = async ({ request, params }) => {
 
   try {
     const vocabsPromise = vocabApi
-      .getVocabs(topicId, getLang(request))
+      .getVocabs(topicId)
       .then((resp) => resp.data);
 
     let topicData = topicCommon.getTopicFromStore(topicId);
