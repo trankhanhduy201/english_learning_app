@@ -52,19 +52,19 @@ const Header = () => {
         </div>
         <div className="dropdown me-2">
           <Dropdown as={Nav.Item}>
-            <Dropdown.Toggle as={Nav.Link} className="text-dark">
+            <Dropdown.Toggle key={'globalLang'} as={Nav.Link} className="text-dark">
               { globalLang }
             </Dropdown.Toggle>
             <Dropdown.Menu align="end">
               {Object.keys(TRANS_LANGS).map(key => 
-                <Dropdown.Item onClick={() => onChangeGlobalLang(key)}>{ TRANS_LANGS[key] }</Dropdown.Item>
+                <Dropdown.Item key={key} onClick={() => onChangeGlobalLang(key)}>{ TRANS_LANGS[key] }</Dropdown.Item>
               )}
             </Dropdown.Menu>
           </Dropdown>
         </div>
         <div className="dropdown">
           <Dropdown as={Nav.Item}>
-            <Dropdown.Toggle as={Nav.Link} className="text-dark">
+            <Dropdown.Toggle key={'profile'} as={Nav.Link} className="text-dark">
               <img
                 src="https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=30"
                 alt="User Avatar"
