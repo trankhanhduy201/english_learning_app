@@ -124,7 +124,7 @@ const Flashcard = memo(({
                     {vocab.word}
                     {isReverse && (vocab?.type ? ` (${vocab.type})` : "")}
                   </h2>
-                  <div className="flashcard-content">
+                  <div className="flashcard-content" style={{ fontSize: '20px' }}>
                     <hr />
                     {isOpen ? (
                       <>
