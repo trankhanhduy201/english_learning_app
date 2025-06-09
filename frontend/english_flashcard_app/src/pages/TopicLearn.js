@@ -38,6 +38,7 @@ const trans2Vocabs = (vocab) => {
       ...EMPTY_VOCAB,
       word: trans.translation,
       type: trans.type,
+      language: trans.language,
       translations: [
         {
           ...trans,
@@ -57,12 +58,15 @@ const TopicLearn = () => {
   const [isReverse, setIsReverse] = useState(false);
   const [filterTypes, setFilterTypes] = useState([]);
   const [filterLang, setFilterLang] = useState('en');
-  const getVocabsByLang = (lang) => originVocabs[lang] ?? [];
+  const getVocabsByLang = (lang = null) => lang ? (originVocabs[lang] ?? []) : originVocabs;
+  const getReverseVocabsByLang = (lang = null) => lang ? (reverseVocabs[lang] ?? []) : reverseVocabs;
 
   let reverseVocabs = useMemo(() => {
-    return getVocabsByLang(filterLang).reduce((newVocabs, vocab) => {
+    const flattenOriginVocabs = _.flatMap(getVocabsByLang());
+    const reverseOriginVocabs = flattenOriginVocabs.reduce((newVocabs, vocab) => {
       return [...newVocabs, ...trans2Vocabs(vocab)];
     }, []);
+    return _.groupBy(reverseOriginVocabs, 'language');
   }, [originVocabs]);
 
   useEffect(() => {
@@ -87,7 +91,7 @@ const TopicLearn = () => {
   }, []);
 
   const getFilterVocabs = (lang, types, reverse) => {
-    let filterVocabs = !reverse ? getVocabsByLang(lang) : reverseVocabs;
+    let filterVocabs = !reverse ? getVocabsByLang(lang) : getReverseVocabsByLang(lang);
     if (Object.keys(types).length > 0) {
       filterVocabs = filterVocabs.filter((v) => v.type in types);
     }
