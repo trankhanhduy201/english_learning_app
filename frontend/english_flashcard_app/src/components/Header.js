@@ -7,7 +7,7 @@ import ConfirmModal from "./ConfirmModal";
 import * as cookies from "../utils/cookies";
 import { toggleSidebar } from "../stores/slices/sidebarSlice";
 import { setLangThunk } from "../stores/thunks/langThunk";
-import { useEffect } from "react";
+import { TRANS_LANGS } from "../configs/langConfigs";
 
 const Header = () => {
   const globalLang = useSelector(state => state.lang);
@@ -56,9 +56,9 @@ const Header = () => {
               { globalLang }
             </Dropdown.Toggle>
             <Dropdown.Menu align="end">
-              <Dropdown.Item onClick={() => onChangeGlobalLang('en')}>English</Dropdown.Item>
-              <Dropdown.Item onClick={() => onChangeGlobalLang('jp')}>Japan</Dropdown.Item>
-              <Dropdown.Item onClick={() => onChangeGlobalLang('vn')}>Viet Nam</Dropdown.Item>
+              {Object.keys(TRANS_LANGS).map(key => 
+                <Dropdown.Item onClick={() => onChangeGlobalLang(key)}>{ TRANS_LANGS[key] }</Dropdown.Item>
+              )}
             </Dropdown.Menu>
           </Dropdown>
         </div>

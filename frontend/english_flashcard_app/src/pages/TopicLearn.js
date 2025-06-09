@@ -29,6 +29,7 @@ const TopicLearn = () => {
       ) : (
         <Flashcard
           vocabs={getFilterVocabs(filterLang, filterTypes, isReverse)}
+          isReverse={isReverse}
           filterTypes={filterTypes}
           filterLang={filterLang}
           onReverseVocabs={onReverseVocabs}

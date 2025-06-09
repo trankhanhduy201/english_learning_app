@@ -2,6 +2,7 @@ import React, { memo, useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getRandomIntWithExceptions } from "../utils/commons";
 import * as transTypeEnums from "../enums/transTypes";
+import { TRANS_LANGS } from "../configs/langConfigs";
 
 export const EMPTY_VOCAB = {
   idx: "",
@@ -14,6 +15,7 @@ export const EMPTY_VOCAB = {
 
 const Flashcard = memo(({
   vocabs = [],
+  isReverse = false,
   filterLang = '',
   filterTypes = [],
   onReverseVocabs = null,
@@ -120,7 +122,7 @@ const Flashcard = memo(({
                 <div className="flashcard mx-3" onClick={onOpenCard}>
                   <h2 className="flashcard-header">
                     {vocab.word}
-                    {vocab?.type ? ` (${vocab.type})` : ""}
+                    {isReverse && (vocab?.type ? ` (${vocab.type})` : "")}
                   </h2>
                   <div className="flashcard-content">
                     <hr />
@@ -130,6 +132,7 @@ const Flashcard = memo(({
                           vocab.translations.map((item, index) => (
                             <div key={index}>
                               {item.translation}
+                              {!isReverse && (vocab?.type ? ` (${vocab.type})` : "")}
                               {item?.note && (
                                 <div className="text-start mt-2">
                                   Examples:
@@ -198,9 +201,9 @@ const Flashcard = memo(({
           ))}
         </div>
         <div className="col-12 mt-3">
-          {['en', 'jp', 'vn'].map((v) => (
+          {Object.keys(TRANS_LANGS).map((v) => (
             <button
-              key={v.key}
+              key={v}
               className={`btn ${v == filterLang ? "btn-secondary" : "btn-outline-secondary"} d-inline-block ms-2`}
               onClick={() => onFilterVocabsByLang(v)}
             >
