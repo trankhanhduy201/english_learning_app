@@ -152,7 +152,11 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 				translation_type = Translation.TranslationTypeEnums.ADJ.value if translation_type == 'a' else translation_type
 				if translation_type not in Translation.TranslationTypeEnums.values:
 					translation_type = None
-				translation_text = parts[0] if len(parts) == 1 else ' '.join(parts)
+				translation_text = text
+				if len(parts) > 1:
+					if translation_type:
+						parts.pop(0)
+					translation_text = ' '.join(parts)
 				translations_entries.append({
 					"translation": translation_text,
 					"language": language,

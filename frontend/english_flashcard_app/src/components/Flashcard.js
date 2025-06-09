@@ -42,9 +42,7 @@ const Flashcard = memo(({
   const onPickVocab = (direction = "") => {
     setVocab((oldVocab) => {
       if (direction === "") {
-        const randomIndex = getRandomIntWithExceptions(0, vocabs.length - 1, [
-          oldVocab.index,
-        ]);
+        const randomIndex = getRandomIntWithExceptions(0, vocabs.length - 1, [ oldVocab.idx ]);
         return pickVocab(randomIndex);
       }
 

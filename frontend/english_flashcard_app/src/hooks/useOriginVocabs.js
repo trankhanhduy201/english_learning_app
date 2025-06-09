@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import _ from "lodash";
 import { EMPTY_VOCAB } from "../components/Flashcard";
 import { setAlert } from "../stores/slices/alertSlice";
 import * as alertConfigs from "../configs/alertConfigs";
+import _ from "lodash";
 
 const getOriginDatas = (vocabs) => {
   const newDatas = vocabs.reduce((persistence, vocab) => {
@@ -37,26 +37,26 @@ const getOriginDatas = (vocabs) => {
   // Group data by language field
   return {
     originDatas: _.groupBy(newDatas.originDatas, 'language'),
-    reverseDatas: _.groupBy(newDatas.reverseDatas, 'language'),
+    reverseDatas: _.groupBy(newDatas.reverseDatas, 'language')
   }
 };
 
 const useOriginVocabs = ({ vocabsPromise }) => {
   const dispatch = useDispatch();
-  const [ originVocabs, setOriginVocabs ] = useState([]);
-  const getOriginVocabs = (lang, reverse = false) => {
+  const [ isLoadingData, setIsLoadingData ] = useState(true);
+  const [ originVocabs, setOriginVocabs ] = useState({ originDatas: [], reverseDatas: [] });
+  const getOriginVocabs = useCallback((lang, reverse = false) => {
     const results = reverse 
       ? originVocabs.originDatas
       : originVocabs.reverseDatas;
     return results[lang] ?? [];
-  }
+  }, [originVocabs]);
 
   useEffect(() => {
     const getVocabs = async () => {
       try {
-        setOriginVocabs(
-          getOriginDatas(await vocabsPromise)
-        );
+        setOriginVocabs(getOriginDatas(await vocabsPromise));
+        setIsLoadingData(true);
       } catch (error) {
         dispatch(
           setAlert({
@@ -64,14 +64,15 @@ const useOriginVocabs = ({ vocabsPromise }) => {
             message: "Can not get vocabularies",
           }),
         );
+        setIsLoadingData(false);
       }
     };
     getVocabs();
   }, [vocabsPromise]);
 
   return {
-    originDatas: originVocabs.originDatas,
-    reverseDatas: originVocabs.reverseDatas,
+    isLoadingData,
+    ...originVocabs,
     getOriginVocabs
   };
 };
