@@ -1,0 +1,13 @@
+Adding vocab type (en, jp, vn)
+Adding audio in list of vocab
+Sync topic to GG drive 
+Adding memo for vocab
+Adding auto complete for searching
+
+
+Adding export
+Checking owner of topic when pick it up in vocab page
+Detecting favorite vocabs automatically
+Fixing refresh new token for every request
+Fixing col width for table 
+Checking bundle request (console log)

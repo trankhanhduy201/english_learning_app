@@ -19,14 +19,5 @@ for filter
 9. npm install react-window
 10. Web Workers (Advanced)
 
-
-Fix col width for table 
-truthy or falsy
-check bundle request (console log)
 qs.parse
-
-
-Fix refresh new token for every request
-
-
 npx prettier --write .
