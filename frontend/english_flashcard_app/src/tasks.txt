@@ -5,6 +5,7 @@ Adding memo for vocab
 Adding auto complete for searching
 
 
+Fixing show audio after finishing inserting vocab (lets use pub sub redis)
 Adding export
 Checking owner of topic when pick it up in vocab page
 Detecting favorite vocabs automatically

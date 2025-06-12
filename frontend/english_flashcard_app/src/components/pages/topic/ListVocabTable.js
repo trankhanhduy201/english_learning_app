@@ -1,8 +1,8 @@
-import React, { memo, useRef } from "react";
+import { memo } from "react";
 import { Link } from "react-router-dom";
 
 const ListVocabTable = memo(
-  ({ vocabs, topicId, isSearching, onDeleteVocab, onSearchVocab }) => {
+  ({ vocabs, topicId, isSearching, onDeleteVocab, onSearchVocab, onPlayAudio = null }) => {
     return (
       <div
         className="table-responsive"
@@ -53,7 +53,17 @@ const ListVocabTable = memo(
               vocabs.map((vocab, index) => (
                 <tr key={vocab.id}>
                   <td>{index + 1}</td>
-                  <td>{vocab.word}</td>
+                  <td>
+                    {(onPlayAudio && vocab.audio) && (
+                      <Link to={`#`} className="me-2" onClick={(e) => {
+                        e.preventDefault();
+                        onPlayAudio(vocab.audio)
+                      }}>
+                        <i className="bi bi-volume-up"></i>
+                      </Link>
+                    )}
+                    {vocab.word}
+                  </td>
                   <td>{vocab.descriptions}</td>
                   <td>
                     <div className="d-flex justify-content-end">

@@ -46,7 +46,7 @@ const useOriginVocabs = ({ vocabsPromise }) => {
   const [ isLoadingData, setIsLoadingData ] = useState(true);
   const [ originVocabs, setOriginVocabs ] = useState({ originDatas: [], reverseDatas: [] });
   const getOriginVocabs = useCallback((lang, reverse = false) => {
-    const results = reverse 
+    const results = !reverse 
       ? originVocabs.originDatas
       : originVocabs.reverseDatas;
     return results[lang] ?? [];

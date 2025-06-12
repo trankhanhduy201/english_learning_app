@@ -1,4 +1,3 @@
-import React from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
 const LoadingOverlay = ({ position = "fixed", background = "dark" }) => {

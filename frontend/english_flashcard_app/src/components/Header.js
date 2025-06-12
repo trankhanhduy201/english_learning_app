@@ -7,7 +7,7 @@ import ConfirmModal from "./ConfirmModal";
 import * as cookies from "../utils/cookies";
 import { toggleSidebar } from "../stores/slices/sidebarSlice";
 import { setLangThunk } from "../stores/thunks/langThunk";
-import { TRANS_LANGS } from "../configs/langConfigs";
+import { LANGUAGES } from "../configs/langConfigs";
 
 const Header = () => {
   const globalLang = useSelector(state => state.lang);
@@ -56,8 +56,8 @@ const Header = () => {
               { globalLang }
             </Dropdown.Toggle>
             <Dropdown.Menu align="end">
-              {Object.keys(TRANS_LANGS).map(key => 
-                <Dropdown.Item key={key} onClick={() => onChangeGlobalLang(key)}>{ TRANS_LANGS[key] }</Dropdown.Item>
+              {LANGUAGES.map(item => 
+                <Dropdown.Item key={item.key} onClick={() => onChangeGlobalLang(item.key)}>{ item.text }</Dropdown.Item>
               )}
             </Dropdown.Menu>
           </Dropdown>

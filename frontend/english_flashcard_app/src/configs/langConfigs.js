@@ -1,7 +1,16 @@
 export const DEFAULT_LANG = "en";
 
-export const TRANS_LANGS = {
-  'en': 'English',
-  'jp': 'Japan',
-  'vn': 'Việt Nam'
-};
+export const LANGUAGES = [
+  {
+    'key': 'en',
+    'text': 'English'
+  },
+  {
+    'key': 'ja',
+    'text': 'Japan'
+  },
+  {
+    'key': 'vn',
+    'text': 'Việt Nam'
+  }
+];

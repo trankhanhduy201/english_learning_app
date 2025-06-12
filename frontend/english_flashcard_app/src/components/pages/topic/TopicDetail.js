@@ -1,5 +1,7 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { useFetcher, Link } from "react-router-dom";
+import { LANGUAGES } from "../../../configs/langConfigs";
+import { Form } from "react-bootstrap";
 
 const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const editTopicFetcher = useFetcher();
@@ -24,27 +26,54 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
       method={isNew ? "post" : "put"}
     >
       <input type="hidden" name="_not_revalidate" defaultValue={"1"} />
-      <div className="mb-3">
-        <label htmlFor="name" className="form-label">
-          Name
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          name="name"
-          defaultValue={topic?.name}
-          placeholder="Name..."
-        />
+      <div className="row">
+        <div className="mb-3 col-lg-6">
+          <label htmlFor="name" className="form-label">
+            Topic name
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            name="name"
+            defaultValue={topic?.name}
+            placeholder="Name..."
+          />
+          {editTopicFetcher.data?.errors?.name && (
+            <ul>
+              {editTopicFetcher.data.errors.name.map((error, index) => (
+                <li className="text-danger" key={index}>
+                  {error}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="mb-3 col-lg-6">
+          <label htmlFor="learning_language" className="form-label">
+            Which language are you learning?
+          </label>
+          <Form.Select
+            className="form-control"
+            name="learning_language"
+            defaultValue={topic?.learning_language}
+          >
+            {LANGUAGES.map(item => (
+              <option key={item.key} value={item.key}>
+                {item.text}
+              </option>
+            ))}
+          </Form.Select>
+          {editTopicFetcher.data?.errors?.learning_language && (
+            <ul>
+              {editTopicFetcher.data.errors.learning_language.map((error, index) => (
+                <li className="text-danger" key={index}>
+                  {error}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
-      {editTopicFetcher.data?.errors?.name && (
-        <ul>
-          {editTopicFetcher.data.errors.name.map((error, index) => (
-            <li className="text-danger" key={index}>
-              {error}
-            </li>
-          ))}
-        </ul>
-      )}
       <div className="mb-3">
         <label htmlFor="descriptions" className="form-label">
           Descriptions

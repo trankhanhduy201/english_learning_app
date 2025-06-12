@@ -1,6 +1,8 @@
 from django.db import IntegrityError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
+from flashcards.models import LanguageEnums
 from flashcards.queryset_utils import get_translation_prefetch_related
 from .models import Topic, Vocabulary, Translation
 
@@ -46,7 +48,7 @@ class BaseSerializer(serializers.ModelSerializer):
 class TopicSerializer(BaseSerializer):
 	class Meta(BaseSerializer.Meta):
 		model = Topic
-		fields = ['id', 'name', 'descriptions', 'created_by']
+		fields = ['id', 'name', 'learning_language', 'descriptions', 'created_by']
 
 
 class TranslationListSerializer(BaseListSerializer):
@@ -105,9 +107,9 @@ class VocabularySerializer(BaseSerializer):
 	
 	class Meta(BaseSerializer.Meta):
 		model = Vocabulary
-		fields = ['id', 'word', 'topic', 'audio', 'translations', 'descriptions', 'created_by']
+		fields = ['id', 'word', 'topic', 'audio', 'language', 'translations', 'descriptions', 'created_by']
 		list_serializer_class = VocabularyListSerializer
-		read_only_fields = ['audio']
+		read_only_fields = ['audio', 'topic']
 	
 	def _create_or_update_translations(self, instance, translations, is_create=False):
 		if len(translations) == 0:
@@ -163,4 +165,5 @@ class VocabularyImportSerializer(serializers.Serializer):
 	import_type = serializers.ChoiceField(choices=["text", "csv", "json"])
 	topic_id = serializers.IntegerField()
 	text_data = serializers.CharField()
-	lang = serializers.CharField(max_length=5)
+	learning_lang = serializers.ChoiceField(choices=LanguageEnums.values)
+	translating_lang = serializers.ChoiceField(choices=LanguageEnums.values)

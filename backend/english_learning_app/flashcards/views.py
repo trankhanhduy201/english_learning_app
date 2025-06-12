@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from flashcards.mixins import OwnerListModelMixin
 from flashcards.queryset_utils import get_translation_prefetch_related
 from flashcards.serializers import TopicSerializer, VocabularySerializer, VocabularyImportSerializer
-from flashcards.models import Topic, Vocabulary, Translation
+from flashcards.models import Topic, Vocabulary, Translation, LanguageEnums
 from flashcards.filters import VocabularyFilter
 from flashcards.permissions import IsOwner
 from rest_framework.decorators import action
@@ -120,7 +120,8 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		
 	def import_text(self, request, *args, **kwargs):
-		language = request.data.get('lang', Translation.LanguageEnums.EN.value)
+		learning_language = request.data.get('learning_lang')
+		translating_language = request.data.get('translating_lang')
 		topic_id = request.data.get('topic_id')
 		text_data = request.data.get('text_data')
 		user_id = request.user.id
@@ -159,7 +160,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 					translation_text = ' '.join(parts)
 				translations_entries.append({
 					"translation": translation_text,
-					"language": language,
+					"language": translating_language,
 					"type": translation_type,
 					"created_by": user_id
 				})
@@ -167,6 +168,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 			vocab_entries.append({
 				"word": word,
 				"topic": int(topic_id),
+				"language": learning_language,
 				"translations": translations_entries,
 				"created_by": user_id
 			})

@@ -1,5 +1,7 @@
 import React, { memo, useEffect, useRef } from "react";
 import { useFetcher } from "react-router-dom";
+import { LANGUAGES } from "../../../configs/langConfigs";
+import { Form } from "react-bootstrap";
 
 const ImportTextModal = memo(({ topicId, lang, onClose }) => {
   const fetcher = useFetcher();
@@ -29,7 +31,31 @@ const ImportTextModal = memo(({ topicId, lang, onClose }) => {
             >
               <input type="hidden" name="_form_name" value="importing_vocab" />
               <input type="hidden" name="import_type" value="text" />
-              <input type="hidden" name="lang" value={lang} />
+              <input type="hidden" name="learning_lang" value={lang} />
+              <div className="mb-3 col-lg-4">
+                <label htmlFor="translating_lang" className="form-label">
+                  Which language do you want to translate?
+                </label>
+                <Form.Select
+                  className="form-control"
+                  name="translating_lang"
+                >
+                  {LANGUAGES.map(item => (
+                    <option key={item.key} value={item.key}>
+                      {item.text}
+                    </option>
+                  ))}
+                </Form.Select>
+                {fetcher.data?.errors?.translating_lang && (
+                  <ul>
+                    {fetcher.data.errors.translating_lang.map((error, index) => (
+                      <li className="text-danger" key={index}>
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               <textarea
                 name="text_data"
                 className="form-control"

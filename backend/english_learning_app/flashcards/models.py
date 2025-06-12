@@ -3,6 +3,12 @@ from django.db import models
 from django.utils.translation import gettext as _
 
 
+class LanguageEnums(models.TextChoices):
+	EN = ('en', _('English'))
+	VN = ('vn', _('Vietnamese'))
+	JA = ('ja', _('Japanese'))
+
+
 class CreatedBy(models.Model):
 	created_by = models.ForeignKey(
 		settings.AUTH_USER_MODEL,
@@ -17,6 +23,7 @@ class CreatedBy(models.Model):
 
 class Topic(CreatedBy):
 	name = models.CharField(max_length=100)
+	learning_language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
 	descriptions = models.TextField(blank=True, null=True)
 
 	def __str__(self):
@@ -26,6 +33,7 @@ class Topic(CreatedBy):
 class Vocabulary(CreatedBy):
 	word = models.CharField(max_length=100)
 	topic = models.ForeignKey(Topic, related_name='vocabularies', on_delete=models.CASCADE, null=True)
+	language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
 	audio = models.BinaryField(null=True)
 	descriptions = models.TextField(blank=True, null=True)
 
@@ -34,11 +42,7 @@ class Vocabulary(CreatedBy):
 
 
 class Translation(CreatedBy):
-	class LanguageEnums(models.TextChoices):
-		EN = ('en', _('English'))
-		VN = ('vn', _('Vietnamese'))
-		JA = ('ja', _('Japanese'))
-		
+
 	class TranslationTypeEnums(models.TextChoices):
 		N = ('n', _('Noun'))
 		V = ('v', _('Verb'))

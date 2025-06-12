@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { memo, Suspense } from "react";
 import {
   Await,
   Link,
@@ -11,7 +11,7 @@ import TranslationTabs from "../components/pages/vocab/TranslationTabs";
 import LoadingOverlay from "../components/LoadingOverlay";
 import VocabDetail from "../components/pages/vocab/VocabDetail";
 
-const Vocab = () => {
+const Vocab = memo(() => {
   const vocabFetcher = useFetcher();
   const delVocabFetcher = useFetcher();
   const { topicId, vocabId } = useParams();
@@ -103,6 +103,6 @@ const Vocab = () => {
       </div>
     </vocabFetcher.Form>
   );
-};
+});
 
 export default Vocab;

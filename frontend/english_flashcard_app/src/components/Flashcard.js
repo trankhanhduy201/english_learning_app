@@ -2,7 +2,8 @@ import React, { memo, useEffect, useState, useRef, useCallback, useMemo } from "
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getRandomIntWithExceptions } from "../utils/commons";
 import * as transTypeEnums from "../enums/transTypes";
-import { TRANS_LANGS } from "../configs/langConfigs";
+import { LANGUAGES } from "../configs/langConfigs";
+import useAudio from "../hooks/useAudio";
 
 export const EMPTY_VOCAB = {
   idx: "",
@@ -13,7 +14,7 @@ export const EMPTY_VOCAB = {
   audio: "", // Added audio property to EMPTY_VOCAB
 };
 
-const LeftSideButtons = memo(({ isActive, isOpen, onOpenCard, onReverseVocabs, onPlayAudio }) => {
+const LeftSideButtons = memo(({ vocab, isActive, isOpen, onOpenCard, onReverseVocabs, onPlayAudio }) => {
   return (
     <>
       <button
@@ -41,7 +42,7 @@ const LeftSideButtons = memo(({ isActive, isOpen, onOpenCard, onReverseVocabs, o
       <button
         disabled={!isActive}
         className="btn btn-secondary d-block mt-1"
-        onClick={onPlayAudio}
+        onClick={() => onPlayAudio(vocab.audio)}
       >
         <i className="bi bi-volume-up"></i>
       </button>
@@ -150,13 +151,13 @@ const WordTypeFilterButtons = memo(({ filterTypes, onFilterVocabsByTypes }) => {
 const LanguageFilterButtons = memo(({ filterLang, onFilterVocabsByLang }) => {
   return (
     <>
-      {Object.keys(TRANS_LANGS).map((v) => (
+      {LANGUAGES.map(item => (
         <button
-          key={v}
-          className={`btn ${v == filterLang ? "btn-secondary" : "btn-outline-secondary"} d-inline-block ms-2`}
-          onClick={() => onFilterVocabsByLang(v)}
+          key={item.key}
+          className={`btn ${item.key == filterLang ? "btn-secondary" : "btn-outline-secondary"} d-inline-block ms-2`}
+          onClick={() => onFilterVocabsByLang(item.key)}
         >
-          {v}
+          {item.key}
         </button>
     ))}
     </>
@@ -176,7 +177,7 @@ const Flashcard = memo(({
   const [isOpen, setIsOpen] = useState(false);
   const [isOrder, setIsOrder] = useState(true);
   const isActive = vocabs.length > 0;
-  const audioRef = useRef(null);
+  const { audioRef, onPlayAudio } = useAudio();
   const pickVocab = (index) => vocabs[index] ?? EMPTY_VOCAB;
 
   useEffect(() => {
@@ -213,29 +214,13 @@ const Flashcard = memo(({
     });
   }, [vocabs]);
 
-  const onPlayAudio = useCallback(() => {
-    if (!vocab.audio) {
-      console.error("Audio data is not available for this vocabulary.");
-      return;
-    }
-
-    // Convert the binary audio data (base64 encoded) to a playable audio URL
-    const audioBlob = new Blob([new Uint8Array(atob(vocab.audio).split("").map((char) => char.charCodeAt(0)))], {
-      type: "audio/mpeg",
-    });
-    const audioUrl = URL.createObjectURL(audioBlob);
-
-    // Set the audio source and play
-    audioRef.current.src = audioUrl;
-    audioRef.current.play();
-  }, [vocab]);
-
   return (
     <div className="row justify-content-center">
       <div className="col-12 col-md-6">
         <div className="d-flex align-items-center">
           <div className="mb-auto">
             <LeftSideButtons 
+              vocab={vocab}
               isActive={isActive}
               isOpen={isOpen}
               onOpenCard={onOpenCard}

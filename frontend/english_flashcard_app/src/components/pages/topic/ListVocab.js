@@ -11,16 +11,18 @@ import ListVocabTable from "./ListVocabTable";
 import { debounce } from "lodash";
 import LoadingOverlay from "../../LoadingOverlay";
 import DeleteAllButton from "../../DeleteAllButton";
+import useAudio from "../../../hooks/useAudio";
 
 const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
-  const [vocabs, setVocabs] = useState([]);
+  const [vocabs, setVocabs] = useState(vocabDatas);
   const [showImportTextModal, setShowImportTextModal] = useState(false);
   const [isSearching, transition] = useTransition();
+  const { audioRef, onPlayAudio } = useAudio();
   const delVocabFetcher = useFetcher();
 
   const onCloseImportTextModal = useCallback(() => {
     setShowImportTextModal(false);
-  }, [vocabDatas, topicId, lang]);
+  });
 
   const onDeleteVocab = useCallback(
     (vocabId) => {
@@ -34,7 +36,7 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
         prevVocabs.filter((vocab) => vocab.id !== vocabId),
       );
     },
-    [vocabDatas, topicId, lang],
+    [topicId],
   );
 
   const onSearchVocab = useCallback(
@@ -48,7 +50,7 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
         });
       });
     }, 300),
-    [vocabDatas, topicId, lang],
+    [vocabDatas],
   );
 
   useEffect(() => {
@@ -59,51 +61,51 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
     }
   }, [delVocabFetcher.data]);
 
-  useEffect(() => {
-    setVocabs(vocabDatas);
-  }, [vocabDatas, topicId, lang]);
-
   return (
-    <div className="position-relative">
-      {delVocabFetcher.state === "submitting" && (
-        <LoadingOverlay position="absolute" background="white" />
-      )}
-      <ListVocabTable
-        vocabs={vocabs}
-        topicId={topicId}
-        isSearching={isSearching}
-        onDeleteVocab={onDeleteVocab}
-        onSearchVocab={onSearchVocab}
-      />
-      <div className="d-flex justify-content-end mt-2">
-        <Link
-          to={`/topic/${topicId}/vocab/export`}
-          className="btn btn-secondary me-2"
-        >
-          <i className="bi bi-download"></i> Export
-        </Link>
-        <button
-          onClick={() => setShowImportTextModal(true)}
-          className="btn btn-secondary me-2"
-        >
-          <i className="bi bi-upload"></i> Import
-        </button>
-        <Link to={`/topic/${topicId}/vocab/new`} className="btn btn-secondary me-2">
-          <i className="bi bi-plus-circle"></i> New
-        </Link>
-        <DeleteAllButton 
-          action={`/topic/${topicId}/vocab/delete`} 
-          formName={'deleting_all_vocab'}
-        />
-      </div>
-      {showImportTextModal && (
-        <ImportTextModal
+    <>
+      <audio ref={audioRef} />
+      <div className="position-relative">
+        {delVocabFetcher.state === "submitting" && (
+          <LoadingOverlay position="absolute" background="white" />
+        )}
+        <ListVocabTable
+          vocabs={vocabs}
           topicId={topicId}
-          lang={lang}
-          onClose={onCloseImportTextModal}
+          isSearching={isSearching}
+          onDeleteVocab={onDeleteVocab}
+          onSearchVocab={onSearchVocab}
+          onPlayAudio={onPlayAudio}
         />
-      )}
-    </div>
+        <div className="d-flex justify-content-end mt-2">
+          <Link
+            to={`/topic/${topicId}/vocab/export`}
+            className="btn btn-secondary me-2"
+          >
+            <i className="bi bi-download"></i> Export
+          </Link>
+          <button
+            onClick={() => setShowImportTextModal(true)}
+            className="btn btn-secondary me-2"
+          >
+            <i className="bi bi-upload"></i> Import
+          </button>
+          <Link to={`/topic/${topicId}/vocab/new`} className="btn btn-secondary me-2">
+            <i className="bi bi-plus-circle"></i> New
+          </Link>
+          <DeleteAllButton 
+            action={`/topic/${topicId}/vocab/delete`} 
+            formName={'deleting_all_vocab'}
+          />
+        </div>
+        {showImportTextModal && (
+          <ImportTextModal
+            topicId={topicId}
+            lang={lang}
+            onClose={onCloseImportTextModal}
+          />
+        )}
+      </div>
+    </>
   );
 });
 
