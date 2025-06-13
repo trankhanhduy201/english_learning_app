@@ -21,3 +21,6 @@ for filter
 
 qs.parse
 npx prettier --write .
+
+
+set new key to force react to unmount and remount component

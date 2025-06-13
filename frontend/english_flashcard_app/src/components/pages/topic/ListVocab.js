@@ -1,9 +1,10 @@
-import React, {
+import {
   memo,
   useCallback,
   useEffect,
   useState,
   useTransition,
+  useRef
 } from "react";
 import { Link, useFetcher } from "react-router-dom";
 import ImportTextModal from "../topic/ImportTextModal";
@@ -19,6 +20,22 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
   const [isSearching, transition] = useTransition();
   const { audioRef, onPlayAudio } = useAudio();
   const delVocabFetcher = useFetcher();
+  const curSearchText = useRef("");
+
+  const filterVocabs = (searchText) => {
+    transition(() => {
+      const filteredVocabs = vocabDatas.filter((vocab) =>
+        vocab.word.toLowerCase().includes(searchText),
+      );
+      transition(() => {
+        setVocabs(filteredVocabs);
+      });
+    });
+  }
+
+  useEffect(() => {
+    filterVocabs(curSearchText.current);
+  }, [vocabDatas]);
 
   const onCloseImportTextModal = useCallback(() => {
     setShowImportTextModal(false);
@@ -41,14 +58,8 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
 
   const onSearchVocab = useCallback(
     debounce((searchText) => {
-      transition(() => {
-        const filteredVocabs = vocabDatas.filter((vocab) =>
-          vocab.word.toLowerCase().includes(searchText.toLowerCase()),
-        );
-        transition(() => {
-          setVocabs(filteredVocabs);
-        });
-      });
+      curSearchText.current = searchText.toLowerCase();
+      filterVocabs(searchText);
     }, 300),
     [vocabDatas],
   );

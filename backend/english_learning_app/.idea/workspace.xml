@@ -66,23 +66,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="167" column="73" lean-forward="true" selection-start-line="167" selection-start-column="73" selection-end-line="167" selection-end-column="73" />
-              <folding>
-                <element signature="e#0#36#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="124">
+              <caret line="4" column="43" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django/db/models/enums.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="46" column="76" selection-start-line="46" selection-start-column="76" selection-end-line="46" selection-end-column="76" />
+            <state relative-caret-position="267">
+              <caret line="47" column="71" lean-forward="true" selection-start-line="47" selection-start-column="71" selection-end-line="47" selection-end-column="71" />
             </state>
           </provider>
         </entry>
@@ -99,8 +96,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/flashcards/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="434">
-              <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
+            <state relative-caret-position="464">
+              <caret line="35" column="72" selection-start-line="35" selection-start-column="72" selection-end-line="35" selection-end-column="72" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -187,7 +184,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="1">
     <option name="x" value="1751" />
     <option name="y" value="137" />
     <option name="width" value="1616" />
@@ -382,12 +379,12 @@
       <workItem from="1748915611540" duration="7267000" />
       <workItem from="1749434335464" duration="2693000" />
       <workItem from="1749608165726" duration="1735000" />
-      <workItem from="1749704855990" duration="6416000" />
+      <workItem from="1749704855990" duration="7076000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="345917000" />
+    <option name="totallyTimeSpent" value="346577000" />
   </component>
   <component name="TodoView" selected-index="3">
     <todo-panel id="selected-file">
@@ -399,7 +396,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1592" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="1592" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.50300604" visible="true" weight="0.1391258" />
@@ -678,16 +675,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="434">
-          <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/rest_framework/fields.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
@@ -695,20 +682,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django/db/models/enums.py">
+    <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="46" column="76" selection-start-line="46" selection-start-column="76" selection-end-line="46" selection-end-column="76" />
+        <state relative-caret-position="124">
+          <caret line="4" column="43" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="43" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
+    <entry file="file://$PROJECT_DIR$/flashcards/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="167" column="73" lean-forward="true" selection-start-line="167" selection-start-column="73" selection-end-line="167" selection-end-column="73" />
+        <state relative-caret-position="464">
+          <caret line="35" column="72" selection-start-line="35" selection-start-column="72" selection-end-line="35" selection-end-column="72" />
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#32#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django/db/models/enums.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="47" column="71" lean-forward="true" selection-start-line="47" selection-start-column="71" selection-end-line="47" selection-end-column="71" />
         </state>
       </provider>
     </entry>
