@@ -1,11 +1,17 @@
-import React, { memo, Suspense } from "react";
-import { Await } from "react-router-dom";
+import { memo } from "react";
 import { Form } from "react-bootstrap";
 import _ from "lodash";
 import { LANGUAGES } from "../../../configs/langConfigs";
 
 const VocabDetail = memo(
-  ({ topicId = "", data = {}, errors = {}, topicsPromise = null }) => {
+  ({
+    vocabData = {},
+    topicData = null,
+    topicId = "",
+    errors = {},
+  }) => {
+    const defaultLanguage = vocabData?.language || topicData?.learning_language || "";
+
     return (
       <>
         <div className="mb-3">
@@ -16,7 +22,7 @@ const VocabDetail = memo(
             type="text"
             className="form-control"
             name="word"
-            defaultValue={data?.word}
+            defaultValue={vocabData?.word}
             placeholder="Word..."
           />
         </div>
@@ -37,7 +43,7 @@ const VocabDetail = memo(
             <Form.Select
               className="form-control"
               name="language"
-              defaultValue={data?.language}
+              defaultValue={defaultLanguage}
             >
               {LANGUAGES.map(item => (
                 <option key={item.key} value={item.key}>
@@ -59,29 +65,16 @@ const VocabDetail = memo(
             <label htmlFor="topic" className="form-label">
               Topic
             </label>
-            {topicsPromise && (
-              <Suspense fallback={<option>Loading...</option>}>
-                <Await resolve={topicsPromise}>
-                  {(dataTopic) => (
-                    <>
-                      <Form.Select
-                        className="form-control"
-                        name="topic"
-                        defaultValue={topicId}
-                      >
-                        <option value="">-- No choice --</option>
-                        {dataTopic &&
-                          dataTopic.map((item, index) => (
-                            <option key={index} value={item.id}>
-                              {item.name}
-                            </option>
-                          ))}
-                      </Form.Select>
-                    </>
-                  )}
-                </Await>
-              </Suspense>
-            )}
+            <Form.Select
+              className="form-control"
+              name="topic"
+              defaultValue={topicId}
+              disabled
+            >
+              {topicData && (
+                <option value={topicData.id}>{topicData.name}</option>
+              )}
+            </Form.Select>
             {errors?.topic && (
               <ul>
                 {errors.topic.map((error, index) => (
@@ -101,7 +94,7 @@ const VocabDetail = memo(
             rows={5}
             className="form-control"
             name="descriptions"
-            defaultValue={data?.descriptions}
+            defaultValue={vocabData?.descriptions}
             placeholder="Description..."
           ></textarea>
         </div>

@@ -13,14 +13,16 @@ import { debounce } from "lodash";
 import LoadingOverlay from "../../LoadingOverlay";
 import DeleteAllButton from "../../DeleteAllButton";
 import useAudio from "../../../hooks/useAudio";
+import { useTopicContext } from "../../../contexts/TopicContext";
 
-const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
-  const [vocabs, setVocabs] = useState(vocabDatas);
+const ListVocab = memo(({ vocabDatas, topicId }) => {
+  const [vocabs, setVocabs] = useState([]);
   const [showImportTextModal, setShowImportTextModal] = useState(false);
   const [isSearching, transition] = useTransition();
   const { audioRef, onPlayAudio } = useAudio();
   const delVocabFetcher = useFetcher();
   const curSearchText = useRef("");
+  const { topic } = useTopicContext();
 
   const filterVocabs = (searchText) => {
     transition(() => {
@@ -111,7 +113,7 @@ const ListVocab = memo(({ vocabDatas, topicId, lang }) => {
         {showImportTextModal && (
           <ImportTextModal
             topicId={topicId}
-            lang={lang}
+            learningLang={topic?.learning_language} // <-- use context value
             onClose={onCloseImportTextModal}
           />
         )}

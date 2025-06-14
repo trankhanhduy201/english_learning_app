@@ -109,7 +109,16 @@ class VocabularySerializer(BaseSerializer):
 		model = Vocabulary
 		fields = ['id', 'word', 'topic', 'audio', 'language', 'translations', 'descriptions', 'created_by']
 		list_serializer_class = VocabularyListSerializer
-		read_only_fields = ['audio', 'topic']
+		read_only_fields = ['audio']
+
+	def get_fields(self):
+		fields = super().get_fields()
+
+		# Make 'topic' read-only on update
+		if self.instance is not None:
+			fields['topic'].read_only = True
+
+		return fields
 	
 	def _create_or_update_translations(self, instance, translations, is_create=False):
 		if len(translations) == 0:

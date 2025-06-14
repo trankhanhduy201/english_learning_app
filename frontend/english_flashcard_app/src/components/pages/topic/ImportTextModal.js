@@ -3,7 +3,7 @@ import { useFetcher } from "react-router-dom";
 import { LANGUAGES } from "../../../configs/langConfigs";
 import { Form } from "react-bootstrap";
 
-const ImportTextModal = memo(({ topicId, lang, onClose }) => {
+const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
   const fetcher = useFetcher();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const ImportTextModal = memo(({ topicId, lang, onClose }) => {
             >
               <input type="hidden" name="_form_name" value="importing_vocab" />
               <input type="hidden" name="import_type" value="text" />
-              <input type="hidden" name="learning_lang" value={lang} />
+              <input type="hidden" name="learning_lang" value={learningLang} />
               <div className="mb-3 col-lg-4">
                 <label htmlFor="translating_lang" className="form-label">
                   Which language do you want to translate?

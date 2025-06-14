@@ -1,11 +1,13 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useFetcher, Link } from "react-router-dom";
 import { LANGUAGES } from "../../../configs/langConfigs";
 import { Form } from "react-bootstrap";
+import { useTopicContext } from "../../../contexts/TopicContext";
 
 const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const editTopicFetcher = useFetcher();
   const delTopicFetcher = useFetcher();
+  const { setTopic } = useTopicContext();
 
   const handleDelTopic = () => {
     const formData = new FormData();
@@ -19,6 +21,17 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const isDisableButton = () =>
     editTopicFetcher.state === "submitting" ||
     delTopicFetcher.state === "submitting";
+
+  useEffect(() => {
+    setTopic(topic);
+  }, []);
+
+  // Update context topic after successful update
+  useEffect(() => {
+    if (editTopicFetcher.data?.status === "success" && editTopicFetcher.data.data) {
+      setTopic(editTopicFetcher.data.data);
+    }
+  }, [editTopicFetcher.data]);
 
   return (
     <editTopicFetcher.Form

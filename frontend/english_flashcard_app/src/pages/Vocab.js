@@ -1,4 +1,4 @@
-import React, { memo, Suspense } from "react";
+import { memo, Suspense } from "react";
 import {
   Await,
   Link,
@@ -6,17 +6,18 @@ import {
   useLoaderData,
   useParams,
 } from "react-router-dom";
-import _ from "lodash";
 import TranslationTabs from "../components/pages/vocab/TranslationTabs";
 import LoadingOverlay from "../components/LoadingOverlay";
 import VocabDetail from "../components/pages/vocab/VocabDetail";
+import { useTopicContext } from "../contexts/TopicContext";
 
 const Vocab = memo(() => {
   const vocabFetcher = useFetcher();
   const delVocabFetcher = useFetcher();
   const { topicId, vocabId } = useParams();
-  const { topicsPromise, vocabPromise } = useLoaderData();
+  const { vocabPromise } = useLoaderData();
   const isNew = () => vocabId === "new";
+  const { topic: topicData } = useTopicContext();
 
   const handleDelVocab = () => {
     const formData = new FormData();
@@ -53,12 +54,12 @@ const Vocab = memo(() => {
             }
           >
             <Await resolve={vocabPromise}>
-              {(data) => (
+              {(vocabData) => (
                 <VocabDetail
+                  vocabData={vocabData}
+                  topicData={topicData}
                   topicId={topicId}
-                  data={data}
                   errors={vocabFetcher.data?.errors ?? {}}
-                  topicsPromise={topicsPromise}
                 />
               )}
             </Await>

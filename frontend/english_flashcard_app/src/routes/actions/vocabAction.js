@@ -69,6 +69,7 @@ export const editVocab = async ({ request, params }) => {
   const updateData = qs.parse(Object.fromEntries(formData));
 
   if (params.vocabId === "new") {
+    updateData.topic = params.topicId;
     return await createVocab(params.topicId, {
       ...updateData,
       translations: getTrans(updateData?.translations),
@@ -78,7 +79,7 @@ export const editVocab = async ({ request, params }) => {
   if (params.action === "delete") {
     return await deleteVocab(params.topicId, params.vocabId, updateData);
   }
-
+  
   return await updateVocab(params.topicId, params.vocabId, {
     ...updateData,
     id: params.vocabId,
