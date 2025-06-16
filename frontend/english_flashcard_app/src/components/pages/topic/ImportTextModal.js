@@ -1,8 +1,8 @@
 import { memo, useEffect } from "react";
 import { useFetcher } from "react-router-dom";
-import { LANGUAGES } from "../../../configs/langConfigs";
-import { Form } from "react-bootstrap";
+import { DEFAULT_LANG, LANGUAGES } from "../../../configs/langConfigs";
 import FieldErrors from "../../../components/FieldErrors";
+import Dropdown from "../../../components/Dropdown";
 
 const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
   const fetcher = useFetcher();
@@ -37,16 +37,11 @@ const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
                 <label htmlFor="translating_lang" className="form-label">
                   Which language do you want to translate?
                 </label>
-                <Form.Select
-                  className="form-control"
+                <Dropdown
                   name="translating_lang"
-                >
-                  {LANGUAGES.map(item => (
-                    <option key={item.key} value={item.key}>
-                      {item.text}
-                    </option>
-                  ))}
-                </Form.Select>
+                  defaultValue={DEFAULT_LANG}
+                  options={LANGUAGES}
+                />
                 {fetcher.data?.errors?.translating_lang && (
                   <FieldErrors errors={fetcher.data.errors.translating_lang} />
                 )}

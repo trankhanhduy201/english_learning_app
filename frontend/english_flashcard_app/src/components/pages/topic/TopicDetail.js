@@ -1,9 +1,9 @@
 import { memo, useEffect } from "react";
 import { useFetcher, Link } from "react-router-dom";
 import { LANGUAGES } from "../../../configs/langConfigs";
-import { Form } from "react-bootstrap";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import FieldErrors from "../../../components/FieldErrors";
+import Dropdown from "../../../components/Dropdown";
 
 const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const editTopicFetcher = useFetcher();
@@ -60,17 +60,11 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           <label htmlFor="learning_language" className="form-label">
             Which language are you learning?
           </label>
-          <Form.Select
-            className="form-control"
+          <Dropdown
             name="learning_language"
             defaultValue={topic?.learning_language}
-          >
-            {LANGUAGES.map(item => (
-              <option key={item.key} value={item.key}>
-                {item.text}
-              </option>
-            ))}
-          </Form.Select>
+            options={LANGUAGES}
+          />
           {editTopicFetcher.data?.errors?.learning_language && (
             <FieldErrors errors={editTopicFetcher.data.errors.learning_language} />
           )}

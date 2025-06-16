@@ -1,8 +1,9 @@
 import { memo } from "react";
-import { Form } from "react-bootstrap";
 import _ from "lodash";
 import { LANGUAGES } from "../../../configs/langConfigs";
 import FieldErrors from "../../../components/FieldErrors";
+import Dropdown from "../../../components/Dropdown";
+
 
 const VocabDetail = memo(
   ({
@@ -35,17 +36,11 @@ const VocabDetail = memo(
             <label htmlFor="language" className="form-label">
               Language
             </label>
-            <Form.Select
-              className="form-control"
+            <Dropdown
               name="language"
               defaultValue={defaultLanguage}
-            >
-              {LANGUAGES.map(item => (
-                <option key={item.key} value={item.key}>
-                  {item.text}
-                </option>
-              ))}
-            </Form.Select>
+              options={LANGUAGES}
+            />
             {errors?.language && (
               <FieldErrors errors={errors.language} />
             )}
@@ -54,18 +49,15 @@ const VocabDetail = memo(
             <label htmlFor="topic" className="form-label">
               Topic
             </label>
-            <Form.Select
-              className="form-control"
+            <Dropdown
               name="topic"
-              defaultValue={topicId}
-              disabled
-            >
-              {topicData && (
-                <option value={topicData.id}>
-                  {topicData.name}
-                </option>
-              )}
-            </Form.Select>
+              defaultValue={defaultLanguage}
+              options={[{
+                key: topicData?.id,
+                text: topicData?.name,
+              }]}
+              disabled={1}
+            />
             {errors?.topic && (
               <FieldErrors errors={errors.topic} />
             )}
