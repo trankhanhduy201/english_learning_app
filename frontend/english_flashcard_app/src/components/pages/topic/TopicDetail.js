@@ -3,6 +3,7 @@ import { useFetcher, Link } from "react-router-dom";
 import { LANGUAGES } from "../../../configs/langConfigs";
 import { Form } from "react-bootstrap";
 import { useTopicContext } from "../../../contexts/TopicContext";
+import FieldErrors from "../../../components/FieldErrors";
 
 const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const editTopicFetcher = useFetcher();
@@ -52,13 +53,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
             placeholder="Name..."
           />
           {editTopicFetcher.data?.errors?.name && (
-            <ul>
-              {editTopicFetcher.data.errors.name.map((error, index) => (
-                <li className="text-danger" key={index}>
-                  {error}
-                </li>
-              ))}
-            </ul>
+            <FieldErrors errors={editTopicFetcher.data.errors.name} />
           )}
         </div>
         <div className="mb-3 col-lg-6">
@@ -77,13 +72,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
             ))}
           </Form.Select>
           {editTopicFetcher.data?.errors?.learning_language && (
-            <ul>
-              {editTopicFetcher.data.errors.learning_language.map((error, index) => (
-                <li className="text-danger" key={index}>
-                  {error}
-                </li>
-              ))}
-            </ul>
+            <FieldErrors errors={editTopicFetcher.data.errors.learning_language} />
           )}
         </div>
       </div>
@@ -98,16 +87,10 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           defaultValue={topic?.descriptions}
           placeholder="Description..."
         ></textarea>
+        {editTopicFetcher.data?.errors?.descriptions && (
+          <FieldErrors errors={editTopicFetcher.data.errors.descriptions} />
+        )}
       </div>
-      {editTopicFetcher.data?.errors?.descriptions && (
-        <ul>
-          {editTopicFetcher.data.errors.descriptions.map((error, index) => (
-            <li className="text-danger" key={index}>
-              {error}
-            </li>
-          ))}
-        </ul>
-      )}
       <div className="d-flex justify-content-end mt-2">
         <Link to={`/topics`} className="btn btn-secondary me-2">
           <i className="bi bi-arrow-left"></i> List topic

@@ -1,7 +1,8 @@
-import React, { memo, useEffect, useRef } from "react";
+import { memo, useEffect } from "react";
 import { useFetcher } from "react-router-dom";
 import { LANGUAGES } from "../../../configs/langConfigs";
 import { Form } from "react-bootstrap";
+import FieldErrors from "../../../components/FieldErrors";
 
 const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
   const fetcher = useFetcher();
@@ -47,23 +48,24 @@ const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
                   ))}
                 </Form.Select>
                 {fetcher.data?.errors?.translating_lang && (
-                  <ul>
-                    {fetcher.data.errors.translating_lang.map((error, index) => (
-                      <li className="text-danger" key={index}>
-                        {error}
-                      </li>
-                    ))}
-                  </ul>
+                  <FieldErrors errors={fetcher.data.errors.translating_lang} />
                 )}
               </div>
-              <textarea
-                name="text_data"
-                className="form-control"
-                rows="15"
-                placeholder="Paste vocabularies here..."
-                required
-                disabled={fetcher.state === "submitting"}
-              ></textarea>
+              <div className="mb-3">
+                <label htmlFor="text_data" className="form-label">
+                  Paste vocabularies here (one per line)
+                </label>
+                <textarea
+                  name="text_data"
+                  className="form-control"
+                  rows="15"
+                  placeholder="Paste vocabularies here..."
+                  disabled={fetcher.state === "submitting"}
+                ></textarea>
+                {fetcher.data?.errors?.text_data && (
+                  <FieldErrors errors={fetcher.data.errors.text_data} />
+                )}
+              </div>
               <div className="mt-3 text-end">
                 <button
                   type="button"
@@ -81,6 +83,9 @@ const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
                   {fetcher.state === "submitting" ? "Importing..." : "Import"}
                 </button>
               </div>
+              {fetcher.data?.errors?.learning_lang && (
+                <FieldErrors errors={fetcher.data.errors.learning_lang} />
+              )}
             </fetcher.Form>
           </div>
         </div>

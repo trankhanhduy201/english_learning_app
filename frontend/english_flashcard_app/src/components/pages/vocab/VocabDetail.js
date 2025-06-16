@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Form } from "react-bootstrap";
 import _ from "lodash";
 import { LANGUAGES } from "../../../configs/langConfigs";
+import FieldErrors from "../../../components/FieldErrors";
 
 const VocabDetail = memo(
   ({
@@ -25,16 +26,10 @@ const VocabDetail = memo(
             defaultValue={vocabData?.word}
             placeholder="Word..."
           />
+          {errors?.word && (
+            <FieldErrors errors={errors.word} />
+          )}
         </div>
-        {errors?.word && (
-          <ul>
-            {errors.word.map((error, index) => (
-              <li className="text-danger" key={index}>
-                {error}
-              </li>
-            ))}
-          </ul>
-        )}
         <div className="row">
           <div className="mb-3 col-lg-6">
             <label htmlFor="language" className="form-label">
@@ -52,13 +47,7 @@ const VocabDetail = memo(
               ))}
             </Form.Select>
             {errors?.language && (
-              <ul>
-                {errors.language.map((error, index) => (
-                  <li className="text-danger" key={index}>
-                    {error}
-                  </li>
-                ))}
-              </ul>
+              <FieldErrors errors={errors.language} />
             )}
           </div>
           <div className="mb-3 col-lg-6">
@@ -72,17 +61,13 @@ const VocabDetail = memo(
               disabled
             >
               {topicData && (
-                <option value={topicData.id}>{topicData.name}</option>
+                <option value={topicData.id}>
+                  {topicData.name}
+                </option>
               )}
             </Form.Select>
             {errors?.topic && (
-              <ul>
-                {errors.topic.map((error, index) => (
-                  <li className="text-danger" key={index}>
-                    {error}
-                  </li>
-                ))}
-              </ul>
+              <FieldErrors errors={errors.topic} />
             )}
           </div>
         </div>
@@ -97,16 +82,10 @@ const VocabDetail = memo(
             defaultValue={vocabData?.descriptions}
             placeholder="Description..."
           ></textarea>
+          {errors?.descriptions && (
+            <FieldErrors errors={errors.descriptions} />
+          )}
         </div>
-        {errors?.descriptions && (
-          <ul>
-            {errors.descriptions.map((error, index) => (
-              <li className="text-danger" key={index}>
-                {error}
-              </li>
-            ))}
-          </ul>
-        )}
       </>
     );
   },
