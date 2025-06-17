@@ -1,16 +1,19 @@
 import { redirect } from "react-router-dom";
-import * as topicApi from "../../services/topicApi";
-import * as vocabApi from "../../services/vocabApi";
-import * as topicCommon from "../../commons/topicCommon";
+import store from "../../stores/store";
+import {
+  getTopicsThunk,
+  getTopicThunk
+} from "../../stores/thunks/topicsThunk";
+import {
+  getVocabsThunk
+} from "../../stores/thunks/vocabsThunk";
 
 export const getTopics = async () => {
   try {
-    let topicDatas = null;
-    if (!topicCommon.isFetchedToStore()) {
-      topicDatas = topicApi.getTopics().then((resp) => resp.data);
-    } else {
-      topicDatas = topicCommon.getTopicsFromStore();
-    }
+    const topicDatas = store
+      .dispatch(getTopicsThunk())
+      .unwrap()
+      .then(resp => resp.data);
     return { topicDatas };
   } catch (error) {
     throw new Response("", { status: 400 });
@@ -24,14 +27,16 @@ export const getTopic = async ({ request, params }) => {
   }
 
   try {
-    const vocabsPromise = vocabApi
-      .getVocabs(topicId)
-      .then((resp) => resp.data);
+    const vocabsPromise = store
+      .dispatch(getVocabsThunk({ topicId }))
+      .unwrap()
+      .then(resp => resp.data)
 
-    let topicData = topicCommon.getTopicFromStore(topicId);
-    if (!topicData) {
-      topicData = topicApi.getTopicById(topicId).then((resp) => resp.data);
-    }
+    const topicData = store
+      .dispatch(getTopicThunk({ topicId }))
+      .unwrap()
+      .then(resp => resp.data)
+
     return {
       topicData,
       vocabsPromise,

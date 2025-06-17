@@ -5,7 +5,6 @@ export const editTrans = async ({ request, params }) => {
   const updateTrans = Object.fromEntries(formData);
   return await transApi.updateTrans(
     params.transId,
-    { ...updateTrans, id: params.transId },
-    { throwEx: false },
+    { ...updateTrans, id: params.transId }
   );
 };

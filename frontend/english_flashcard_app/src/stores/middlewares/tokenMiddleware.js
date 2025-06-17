@@ -1,5 +1,5 @@
-import * as cookieUtils from "../../utils/cookies";
-import * as jwtUtils from "../../utils/jwt";
+import * as cookies from "../../commons/cookies";
+import * as jwtUtils from "../../commons/jwt";
 import { clearAuth } from "../slices/authSlice";
 import { refreshTokenThunk } from "../thunks/tokenThunk";
 
@@ -11,7 +11,7 @@ export const verifyTokenMiddleware = (store) => (next) => (action) => {
     return next(action);
   }
 
-  const { token, refreshToken } = cookieUtils.getAuthTokens();
+  const { token, refreshToken } = cookies.getAuthTokens();
   if (token && !jwtUtils.checkTokenExpired(token)) {
     return next(action);
   }

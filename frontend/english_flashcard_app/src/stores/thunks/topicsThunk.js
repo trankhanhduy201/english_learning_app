@@ -1,87 +1,102 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createThunkWithCallback } from "./commonsThunk";
 import * as topicApi from "../../services/topicApi";
-import { setTopics, setTopic, clearTopic } from "../slices/topicsSlice";
-import { setAlert } from "../slices/alertSlice";
-import * as alertConfigs from "../../configs/alertConfigs";
+import { setTopics, setTopic, clearTopic, setIsFetched } from "../slices/topicsSlice";
+import { dispatchSuccessAlert, rejectWithErrorValue } from "./commonsThunk";
 
-const dispatchSuccessAlert = (dispatch, message) => {
-  dispatch(setAlert({ type: alertConfigs.SUCCESS_TYPE, message }));
-};
+export const getTopicsThunk = createThunkWithCallback(
+  "topics/get",
+  async (_, { dispatch, rejectWithValue, getState }) => {
+    const state = getState();
+    if (state.topics.isFetched) {
+      return {
+        status: "success",
+        data: state.topics.data,
+      }
+    }
+    const response = await topicApi.getTopics();
+    if (response.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
+    }
+    if (response.data) {
+      dispatch(setTopics(response.data));
+      dispatch(setIsFetched(true));
+    }
+    return response;
+  },
+);
 
-export const createTopicThunk = createAsyncThunk(
+export const getTopicThunk = createThunkWithCallback(
+  "topic/get",
+  async ({ topicId }, { dispatch, rejectWithValue, getState }) => {
+    const state = getState();
+    const topicFilters = state?.topics.data.find(
+      topic => parseInt(topic.id) === parseInt(topicId)
+    );
+    if (topicFilters) {
+      return {
+        status: "success",
+        data: topicFilters
+      }
+    }
+    const response = await topicApi.getTopicById(topicId);
+    if (response.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
+    }
+    return response;
+  },
+);
+
+export const createTopicThunk = createThunkWithCallback(
   "topic/create",
   async ({ data }, { dispatch, rejectWithValue }) => {
-    try {
-      const response = await topicApi.createTopic(data, { throwEx: false });
-      if (response.status === "error") {
-        return rejectWithValue(response);
-      }
-      dispatch(setTopic(response.data));
-      dispatchSuccessAlert(dispatch, "Topic is created successfully");
-      return response;
-    } catch (err) {
-      return rejectWithValue({ status: "error" });
+    const response = await topicApi.createTopic(data);
+    if (response.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
+    dispatch(setTopic(response.data));
+    dispatchSuccessAlert(dispatch, "Topic is created successfully");
+    return response;
   },
 );
 
-export const updateTopicThunk = createAsyncThunk(
+export const updateTopicThunk = createThunkWithCallback(
   "topic/update",
   async ({ topicId, data }, { dispatch, rejectWithValue }) => {
-    try {
-      const response = await topicApi.updateTopic(topicId, data, {
-        throwEx: false,
-      });
-      if (response.status === "error") {
-        return rejectWithValue(response);
-      }
-      dispatch(setTopic(response.data));
-      dispatchSuccessAlert(dispatch, "Topic is updated successfully");
-      return response;
-    } catch (err) {
-      return rejectWithValue({ status: "error" });
+    const response = await topicApi.updateTopic(topicId, data);
+    if (response.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
+    dispatch(setTopic(response.data));
+    dispatchSuccessAlert(dispatch, "Topic is updated successfully");
+    return response;
   },
 );
 
-export const deleteTopicThunk = createAsyncThunk(
+export const deleteTopicThunk = createThunkWithCallback(
   "topic/delete",
-  async ({ topicId }, { dispatch, rejectWithValue }) => {
+  async ({ topicId }, { dispatch }) => {
     const params = { id: topicId };
-    try {
-      await topicApi.deleteTopic(topicId);
-      dispatch(clearTopic(params));
-      dispatchSuccessAlert(dispatch, "Topic is deleted successfully");
-      return {
-        status: "success",
-        data: params,
-      };
-    } catch (err) {
-      return rejectWithValue({
-        status: "error",
-        data: params,
-      });
-    }
+    await topicApi.deleteTopic(topicId);
+    dispatch(clearTopic(params));
+    dispatchSuccessAlert(dispatch, "Topic is deleted successfully");
+    return {
+      status: "success",
+      data: params,
+    };
   },
 );
 
-export const deleteTopicsThunk = createAsyncThunk(
+export const deleteTopicsThunk = createThunkWithCallback(
   "topics/delete",
-  async (_, { dispatch, rejectWithValue, getState }) => {
-    try {
-      const state = getState();
-      if (state.topics.data.length > 0) {
-        await topicApi.deleteTopics();
-        dispatch(setTopics([]));
-      }
-      dispatchSuccessAlert(dispatch, "Topics are deleted successfully");
-      return {
-        status: "success",
-      };
-    } catch (err) {
-      return rejectWithValue({
-        status: "error",
-      });
+  async (_, { dispatch, getState }) => {
+    const state = getState();
+    if (state.topics.data.length > 0) {
+      await topicApi.deleteTopics();
+      dispatch(setTopics([]));
     }
+    dispatchSuccessAlert(dispatch, "Topics are deleted successfully");
+    return {
+      status: "success",
+    };
   },
 );

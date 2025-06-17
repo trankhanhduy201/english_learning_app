@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { setLangReducer } from "../reducers/langReducer";
-import { getLang } from "../../utils/localStorage";
+import { getLang } from "../../commons/localStorage";
 
 
 const langSlice = createSlice({

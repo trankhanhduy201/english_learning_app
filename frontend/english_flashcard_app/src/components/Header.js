@@ -4,7 +4,7 @@ import { initialState, setAuth } from "../stores/slices/authSlice";
 import { Dropdown, Nav } from "react-bootstrap";
 import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from "./ConfirmModal";
-import * as cookies from "../utils/cookies";
+import * as cookies from "../commons/cookies";
 import { toggleSidebar } from "../stores/slices/sidebarSlice";
 import { setLangThunk } from "../stores/thunks/langThunk";
 import { LANGUAGES } from "../configs/langConfigs";

@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect } from "react";
+import { Suspense, useCallback } from "react";
 import ListTopic from "../components/pages/topics/ListTopic";
 import {
   Link,
@@ -8,23 +8,11 @@ import {
   useFetcher,
 } from "react-router-dom";
 import LoadingOverlay from "../components/LoadingOverlay";
-import { setTopics, setIsFetched } from "../stores/slices/topicsSlice";
-import { useDispatch } from "react-redux";
 import DeleteAllButton from "../components/DeleteAllButton";
 
 const Topics = () => {
   const deleteTopicFetcher = useFetcher();
   const { topicDatas } = useLoaderData();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (topicDatas && topicDatas instanceof Promise) {
-      topicDatas.then((data) => {
-        dispatch(setTopics(data));
-        dispatch(setIsFetched(true));
-      });
-    }
-  }, [topicDatas, dispatch]);
 
   const removeTopic = useCallback(async (topicId) => {
     return await deleteTopicFetcher.submit(null, {
@@ -46,17 +34,13 @@ const Topics = () => {
           formName={'deleting_all_topic'}
         />
       </div>
-      {topicDatas && topicDatas instanceof Promise ? (
-        <Suspense fallback={<LoadingOverlay />}>
-          <Await resolve={topicDatas}>
-            {(topics) => (
-              <ListTopic topics={topics} removeTopic={removeTopic} />
-            )}
-          </Await>
-        </Suspense>
-      ) : (
-        <ListTopic topics={topicDatas} removeTopic={removeTopic} />
-      )}
+      <Suspense fallback={<LoadingOverlay />}>
+        <Await resolve={topicDatas}>
+          {(topics) => (
+            <ListTopic topics={topics} removeTopic={removeTopic} />
+          )}
+        </Await>
+      </Suspense>
       <Outlet />
     </>
   );

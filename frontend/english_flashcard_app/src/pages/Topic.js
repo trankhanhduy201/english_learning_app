@@ -1,5 +1,5 @@
-import { Suspense, useState } from "react";
-import { useLoaderData, Await, useParams, Outlet } from "react-router-dom";
+import { Suspense } from "react";
+import { useLoaderData, Await, useParams, Outlet, Navigate } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import TopicDetail from "../components/pages/topic/TopicDetail";
 import ListVocab from "../components/pages/topic/ListVocab";
@@ -11,13 +11,8 @@ const Topic = () => {
   const isNew = () => isNaN(topicId);
   const loaderData = useLoaderData();
 
-  // Get initial topic data for context
-  const initialTopic = loaderData?.topicData instanceof Promise
-    ? null
-    : loaderData?.topicData;
-
   return (
-    <TopicProvider initialTopic={initialTopic}>
+    <TopicProvider initialTopic={null}>
       <div className="row">
         <div className={`${isNew() ? "col-12" : "col-lg-12"} text-start mb-4`}>
           {!isNew() && (
@@ -26,7 +21,9 @@ const Topic = () => {
               <hr />
             </>
           )}
-          {loaderData?.topicData && loaderData.topicData instanceof Promise ? (
+          <ErrorBoundary
+            fallback={<Navigate to="/topics" />}
+          >
             <Suspense
               fallback={
                 <>
@@ -37,50 +34,42 @@ const Topic = () => {
             >
               <Await resolve={loaderData.topicData}>
                 {(topic) => (
-                  <TopicDetail 
-                    topic={topic} 
-                    topicId={topicId} 
-                    isNew={isNew()} 
-                  />
+                  <>
+                    {topic ? (
+                      <TopicDetail 
+                        topic={topic} 
+                        topicId={topicId} 
+                        isNew={isNew()} 
+                      />
+                    ) : (
+                      <Navigate to="/topics" />
+                    )}
+                  </>
                 )}
               </Await>
             </Suspense>
-          ) : (
-            <TopicDetail
-              topic={loaderData?.topicData}
-              topicId={topicId}
-              isNew={isNew()}
-            />
-          )}
+          </ErrorBoundary>
         </div>
         {!isNew() && (
           <div className="col-lg-12 text-start">
             <h2>Vocabularies</h2>
             <hr />
-            {loaderData?.vocabsPromise &&
-            loaderData.vocabsPromise instanceof Promise ? (
-              <ErrorBoundary
-                fallback={<p className="alert alert-danger">Can not get data</p>}
-              >
-                <Suspense fallback={<p className="text-center">Loading...</p>}>
-                  <Await resolve={loaderData.vocabsPromise}>
-                    {(vocabDatas) => (
-                      <>
-                        <ListVocab
-                          vocabDatas={vocabDatas}
-                          topicId={topicId}
-                        />
-                      </>
-                    )}
-                  </Await>
-                </Suspense>
-              </ErrorBoundary>
-            ) : (
-              <ListVocab
-                vocabDatas={[]} 
-                topicId={topicId} 
-              />
-            )}
+            <ErrorBoundary
+              fallback={<p className="alert alert-danger">Can not get data</p>}
+            >
+              <Suspense fallback={<p className="text-center">Loading...</p>}>
+                <Await resolve={loaderData.vocabsPromise}>
+                  {(vocabDatas) => (
+                    <>
+                      <ListVocab
+                        vocabDatas={vocabDatas}
+                        topicId={topicId}
+                      />
+                    </>
+                  )}
+                </Await>
+              </Suspense>
+            </ErrorBoundary>
             <Outlet />
           </div>
         )}

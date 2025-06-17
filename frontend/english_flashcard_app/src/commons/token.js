@@ -1,6 +1,6 @@
 import * as authApi from "../services/authApi";
-import * as jwtUtils from "../utils/jwt";
-import * as cookieUtils from "../utils/cookies";
+import * as jwtUtils from "./jwt";
+import * as cookieUtils from "../commons/cookies";
 
 export const refreshNewToken = async (refreshToken) => {
   if (!refreshToken) {
@@ -8,7 +8,7 @@ export const refreshNewToken = async (refreshToken) => {
     return false;
   }
 
-  const resp = await authApi.refreshToken(refreshToken, { throwEx: false });
+  const resp = await authApi.refreshToken(refreshToken);
   if (resp.status === "error") {
     cookieUtils.clearAuthTokens();
     return false;
@@ -21,7 +21,7 @@ export const refreshNewToken = async (refreshToken) => {
 
 export const verifyToken = async (token, refreshToken) => {
   if (token) {
-    const resp = await authApi.verifyToken(token, { throwEx: false });
+    const resp = await authApi.verifyToken(token);
     if (resp.code == 200) {
       return true;
     }

@@ -1,14 +1,16 @@
 import { callApi } from "./apiService";
 
-export const getTopics = async () => {
+export const getTopics = async (options = {}) => {
   return await callApi(`topics/`, {
-    method: "GET"
+    method: "GET",
+    ...options
   });
 };
 
-export const getTopicById = async (id) => {
+export const getTopicById = async (id, options = {}) => {
   return await callApi(`topics/${id}`, {
-    method: "GET"
+    method: "GET",
+    ...options
   });
 };
 

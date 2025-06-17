@@ -1,19 +1,19 @@
 import * as apiConfigs from "../configs/apiConfigs";
-import * as cookieUtils from "../utils/cookies";
+import * as cookies from "../commons/cookies";
 
 const API_BASE_URL = apiConfigs.API_BASE_URL;
 
 const checkStatusNoContent = (status) => [204, 304].includes(status);
 
 export const callApi = async (endpoint, options = {}) => {
-  const { token } = cookieUtils.getAuthTokens();
+  const { token } = cookies.getAuthTokens();
   const headers = {
     Authorization: `Bearer ${token}`,
     ...options?.header,
     "Content-Type": "application/json",
   };
 
-  let throwEx = true;
+  let throwEx = false;
   if (options.throwEx !== undefined) {
     throwEx = options.throwEx;
     delete options.throwEx;
@@ -44,6 +44,13 @@ export const callApi = async (endpoint, options = {}) => {
     return dataJson;
   } catch (error) {
     console.error("API Fetch Error:", error);
+    if (!throwEx) {
+      return {
+        code: error.code || 500,
+        error: error.message || "An error occurred while fetching data.",
+        status: 'error'
+      }
+    }
     throw error;
   }
 };

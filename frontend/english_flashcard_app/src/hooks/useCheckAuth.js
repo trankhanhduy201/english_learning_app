@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import * as cookieUtils from "../utils/cookies";
-import * as authCommon from "../commons/authCommon";
+import * as cookies from "../commons/cookies";
+import * as tokenCommon from "../commons/token";
 
 const useCheckAuth = ({ hasCheckExpired }) => {
   const [dataAuth, setDataAuth] = useState({
@@ -15,8 +15,8 @@ const useCheckAuth = ({ hasCheckExpired }) => {
 
   useEffect(() => {
     const verify = async () => {
-      const { token, refreshToken } = cookieUtils.getAuthTokens();
-      const verified = await authCommon.verifyToken(token, refreshToken);
+      const { token, refreshToken } = cookies.getAuthTokens();
+      const verified = await tokenCommon.verifyToken(token, refreshToken);
       setIsLogged(verified);
     };
     setIsLogged(null);
@@ -25,8 +25,8 @@ const useCheckAuth = ({ hasCheckExpired }) => {
     // For checking expiration
     if (hasCheckExpired) {
       const checkExpired = async () => {
-        const { token, refreshToken } = cookieUtils.getAuthTokens();
-        const verified = await authCommon.localVerifyToken(token, refreshToken);
+        const { token, refreshToken } = cookies.getAuthTokens();
+        const verified = await tokenCommon.localVerifyToken(token, refreshToken);
         setIsExpired(!verified);
       };
       const interval = setInterval(() => checkExpired(), 5000);

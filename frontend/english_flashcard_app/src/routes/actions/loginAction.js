@@ -1,7 +1,7 @@
 import { redirect } from "react-router-dom";
 import { loginThunk } from "../../stores/thunks/authThunk";
 import store from "../../stores/store";
-import * as cookies from "../../utils/cookies";
+import * as cookies from "../../commons/cookies";
 import { setUserInfo } from "../../stores/slices/authSlice";
 
 export const login = async ({ request, param }) => {

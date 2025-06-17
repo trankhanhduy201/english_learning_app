@@ -1,13 +1,15 @@
-import * as vocabApi from "../../services/vocabApi";
-import * as topicApi from "../../services/topicApi";
+import store from "../../stores/store";
+import { getVocabThunk } from "../../stores/thunks/vocabsThunk";
 
 export const getVocab = async ({ request, params }) => {
   try {
     let vocabPromise = null;
+    const { vocabId } = params;
     if (params.vocabId !== "new") {
-      vocabPromise = vocabApi
-        .getVocab(params.vocabId)
-        .then((data) => data.data);
+      vocabPromise = store
+        .dispatch(getVocabThunk({ vocabId }))
+        .unwrap()
+        .then(resp => resp.data);
     }
     return { vocabPromise };
   } catch (error) {
