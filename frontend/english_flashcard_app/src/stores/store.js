@@ -1,18 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { verifyTokenMiddleware } from "./middlewares/tokenMiddleware";
-import alertReducers from "./slices/alertSlice";
-import langReducers from "./slices/langSlice";
-import topicsReducers from "./slices/topicsSlice";
-import authReducers from "./slices/authSlice";
-import sidebarReducers from "./slices/sidebarSlice";
+// import { verifyTokenMiddleware } from "./middlewares/tokenMiddleware";
+import alertSlice from "./slices/alertSlice";
+import langSlice from "./slices/langSlice";
+import topicSlice from "./slices/topicSlice";
+import authSlice from "./slices/authSlice";
+import sidebarSlice from "./slices/sidebarSlice";
 
 const store = configureStore({
   reducer: {
-    alerts: alertReducers,
-    lang: langReducers,
-    topics: topicsReducers,
-    auth: authReducers,
-    sidebar: sidebarReducers,
+    alerts: alertSlice,
+    lang: langSlice,
+    topics: topicSlice,
+    auth: authSlice,
+    sidebar: sidebarSlice
   },
   // middleware: (getDefaultMiddleware) =>
   //   getDefaultMiddleware().concat(verifyTokenMiddleware),

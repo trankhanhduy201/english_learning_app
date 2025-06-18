@@ -16,7 +16,7 @@ const TopicLearn = () => {
     getFilterVocabs,
     onReverseVocabs,
     onFilterVocabsByTypes,
-    onFilterVocabsByLang
+    onFilterVocabsByLang,
   } = useFilterVocabs({ getOriginVocabs });
 
   return (

@@ -2,7 +2,6 @@ import { memo } from "react";
 import Vocab from "./Vocab";
 
 const VocabModal = memo(() => {
-
   return (
     <div
       className={`modal fade show d-block`}

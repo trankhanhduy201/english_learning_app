@@ -7,7 +7,7 @@ import {
   deleteVocabThunk,
   importVocabThunk,
   updateVocabThunk,
-} from "../../stores/thunks/vocabsThunk";
+} from "../../stores/actions/vocabAction";
 
 const getTrans = (trans) => {
   if (!trans) {
@@ -79,7 +79,7 @@ export const editVocab = async ({ request, params }) => {
   if (params.action === "delete") {
     return await deleteVocab(params.topicId, params.vocabId, updateData);
   }
-  
+
   return await updateVocab(params.topicId, params.vocabId, {
     ...updateData,
     id: params.vocabId,

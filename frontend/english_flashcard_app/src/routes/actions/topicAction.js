@@ -5,7 +5,7 @@ import {
   updateTopicThunk,
   deleteTopicThunk,
   deleteTopicsThunk,
-} from "../../stores/thunks/topicsThunk";
+} from "../../stores/actions/topicAction";
 
 const updateTopic = async (topicId, data) => {
   try {

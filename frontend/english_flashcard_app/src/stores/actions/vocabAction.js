@@ -1,6 +1,10 @@
-import { createThunkWithCallback } from "./commonsThunk";
+
 import * as vocabApi from "../../services/vocabApi";
-import { dispatchSuccessAlert, rejectWithErrorValue } from "./commonsThunk";
+import { 
+  createThunkWithCallback, 
+  dispatchSuccessAlert, 
+  rejectWithErrorValue 
+} from "./commonAction";
 
 export const importVocabThunk = createThunkWithCallback(
   "vocab/import",
@@ -87,4 +91,3 @@ export const deleteAllVocabThunk = createThunkWithCallback(
     };
   },
 );
-

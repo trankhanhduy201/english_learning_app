@@ -1,6 +1,6 @@
 import { memo, useEffect } from "react";
 import { useFetcher } from "react-router-dom";
-import { DEFAULT_LANG, LANGUAGES } from "../../../configs/langConfigs";
+import { DEFAULT_LANG, LANGUAGES } from "../../../configs/langConfig";
 import FieldErrors from "../../../components/FieldErrors";
 import Dropdown from "../../../components/Dropdown";
 

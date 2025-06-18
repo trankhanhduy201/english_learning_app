@@ -1,4 +1,4 @@
-import { createThunkWithCallback } from "./commonsThunk";
+import { createThunkWithCallback } from "./commonAction";
 import * as tokenCommon from "../../commons/token";
 
 export const refreshTokenThunk = createThunkWithCallback(

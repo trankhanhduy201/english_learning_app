@@ -1,4 +1,4 @@
-import { DEFAULT_LANG } from "../configs/langConfigs";
+import { DEFAULT_LANG } from "../configs/langConfig";
 
 export const getValue = (key, defaultValue) => {
   try {
@@ -12,7 +12,7 @@ export const getValue = (key, defaultValue) => {
 
 export const setValue = (key, value) => localStorage.setItem(key, value);
 
-export const LANG_KEY = 'lang';
+export const LANG_KEY = "lang";
 
 export const getLang = () => getValue(LANG_KEY, DEFAULT_LANG);
 

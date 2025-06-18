@@ -1,5 +1,5 @@
 import { redirect } from "react-router-dom";
-import { loginThunk } from "../../stores/thunks/authThunk";
+import { loginThunk } from "../../stores/actions/authAction";
 import store from "../../stores/store";
 import * as cookies from "../../commons/cookies";
 import { setUserInfo } from "../../stores/slices/authSlice";

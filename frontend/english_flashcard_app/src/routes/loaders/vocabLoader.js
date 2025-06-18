@@ -1,5 +1,5 @@
 import store from "../../stores/store";
-import { getVocabThunk } from "../../stores/thunks/vocabsThunk";
+import { getVocabThunk } from "../../stores/actions/vocabAction";
 
 export const getVocab = async ({ request, params }) => {
   try {
@@ -9,7 +9,7 @@ export const getVocab = async ({ request, params }) => {
       vocabPromise = store
         .dispatch(getVocabThunk({ vocabId }))
         .unwrap()
-        .then(resp => resp.data);
+        .then((resp) => resp.data);
     }
     return { vocabPromise };
   } catch (error) {

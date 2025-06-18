@@ -6,11 +6,11 @@ import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from "./ConfirmModal";
 import * as cookies from "../commons/cookies";
 import { toggleSidebar } from "../stores/slices/sidebarSlice";
-import { setLangThunk } from "../stores/thunks/langThunk";
-import { LANGUAGES } from "../configs/langConfigs";
+import { setLangThunk } from "../stores/actions/langAction";
+import { LANGUAGES } from "../configs/langConfig";
 
 const Header = () => {
-  const globalLang = useSelector(state => state.lang);
+  const globalLang = useSelector((state) => state.lang);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const confirmLogoutModal = useConfirmModal({
@@ -26,10 +26,10 @@ const Header = () => {
     },
   });
 
-  const onChangeGlobalLang = lang => {
+  const onChangeGlobalLang = (lang) => {
     dispatch(setLangThunk(lang));
-    navigate('/topics');
-  }
+    navigate("/topics");
+  };
 
   return (
     <header className="navbar navbar-light bg-light border-bottom p-2 d-flex justify-content-between align-items-center">
@@ -52,19 +52,32 @@ const Header = () => {
         </div>
         <div className="dropdown me-2">
           <Dropdown as={Nav.Item}>
-            <Dropdown.Toggle key={'globalLang'} as={Nav.Link} className="text-dark">
-              { globalLang }
+            <Dropdown.Toggle
+              key={"globalLang"}
+              as={Nav.Link}
+              className="text-dark"
+            >
+              {globalLang}
             </Dropdown.Toggle>
             <Dropdown.Menu align="end">
-              {LANGUAGES.map(item => 
-                <Dropdown.Item key={item.key} onClick={() => onChangeGlobalLang(item.key)}>{ item.text }</Dropdown.Item>
-              )}
+              {LANGUAGES.map((item) => (
+                <Dropdown.Item
+                  key={item.key}
+                  onClick={() => onChangeGlobalLang(item.key)}
+                >
+                  {item.text}
+                </Dropdown.Item>
+              ))}
             </Dropdown.Menu>
           </Dropdown>
         </div>
         <div className="dropdown">
           <Dropdown as={Nav.Item}>
-            <Dropdown.Toggle key={'profile'} as={Nav.Link} className="text-dark">
+            <Dropdown.Toggle
+              key={"profile"}
+              as={Nav.Link}
+              className="text-dark"
+            >
               <img
                 src="https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=30"
                 alt="User Avatar"

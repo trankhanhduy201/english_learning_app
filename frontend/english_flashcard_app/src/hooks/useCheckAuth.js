@@ -26,7 +26,10 @@ const useCheckAuth = ({ hasCheckExpired }) => {
     if (hasCheckExpired) {
       const checkExpired = async () => {
         const { token, refreshToken } = cookies.getAuthTokens();
-        const verified = await tokenCommon.localVerifyToken(token, refreshToken);
+        const verified = await tokenCommon.localVerifyToken(
+          token,
+          refreshToken,
+        );
         setIsExpired(!verified);
       };
       const interval = setInterval(() => checkExpired(), 5000);

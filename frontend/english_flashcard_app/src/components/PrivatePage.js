@@ -27,7 +27,7 @@ const Page = memo(({ pageName }) => {
 });
 
 const PrivatePage = memo(({ pageName }) => {
-  const globalLang = useSelector(state => state.lang);
+  const globalLang = useSelector((state) => state.lang);
   const { isLogged } = useCheckAuth({
     hasCheckExpired: false,
   });

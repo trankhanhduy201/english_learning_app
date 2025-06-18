@@ -1,7 +1,7 @@
-import * as apiConfigs from "../configs/apiConfigs";
+import * as apiConfig from "../configs/apiConfig";
 import * as cookies from "../commons/cookies";
 
-const API_BASE_URL = apiConfigs.API_BASE_URL;
+const API_BASE_URL = apiConfig.API_BASE_URL;
 
 const checkStatusNoContent = (status) => [204, 304].includes(status);
 
@@ -48,8 +48,8 @@ export const callApi = async (endpoint, options = {}) => {
       return {
         code: error.code || 500,
         error: error.message || "An error occurred while fetching data.",
-        status: 'error'
-      }
+        status: "error",
+      };
     }
     throw error;
   }

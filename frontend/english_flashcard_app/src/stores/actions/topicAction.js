@@ -1,7 +1,15 @@
-import { createThunkWithCallback } from "./commonsThunk";
 import * as topicApi from "../../services/topicApi";
-import { setTopics, setTopic, clearTopic, setIsFetched } from "../slices/topicsSlice";
-import { dispatchSuccessAlert, rejectWithErrorValue } from "./commonsThunk";
+import {
+  setTopics,
+  setTopic,
+  clearTopic,
+  setIsFetched,
+} from "../slices/topicSlice";
+import { 
+  createThunkWithCallback, 
+  dispatchSuccessAlert, 
+  rejectWithErrorValue 
+} from "./commonAction";
 
 export const getTopicsThunk = createThunkWithCallback(
   "topics/get",
@@ -11,7 +19,7 @@ export const getTopicsThunk = createThunkWithCallback(
       return {
         status: "success",
         data: state.topics.data,
-      }
+      };
     }
     const response = await topicApi.getTopics();
     if (response.status === "error") {
@@ -30,13 +38,13 @@ export const getTopicThunk = createThunkWithCallback(
   async ({ topicId }, { dispatch, rejectWithValue, getState }) => {
     const state = getState();
     const topicFilters = state?.topics.data.find(
-      topic => parseInt(topic.id) === parseInt(topicId)
+      (topic) => parseInt(topic.id) === parseInt(topicId),
     );
     if (topicFilters) {
       return {
         status: "success",
-        data: topicFilters
-      }
+        data: topicFilters,
+      };
     }
     const response = await topicApi.getTopicById(topicId);
     if (response.status === "error") {

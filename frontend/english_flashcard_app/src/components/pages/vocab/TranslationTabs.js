@@ -17,7 +17,7 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableTr } from "../../../components/SortableTr";
 import * as utils from "../../../utils/commons";
-import * as tranTypes from "../../../enums/transTypes";
+import * as transType from "../../../enums/transType";
 
 const EVENT_KEY_NEW_TAB = "new";
 
@@ -188,7 +188,7 @@ const TranslationTabs = ({ data }) => {
                                 defaultValue={item.type}
                               >
                                 <option key={0}></option>
-                                {tranTypes.getDatas().map((v, i) => (
+                                {transType.getDatas().map((v, i) => (
                                   <option key={i} value={v.key}>
                                     {v.text}
                                   </option>
@@ -285,7 +285,7 @@ const TranslationTabs = ({ data }) => {
               </label>
               <select id="type" className="form-control">
                 <option key={0}>-- No choice --</option>
-                {tranTypes.getDatas().map((v, i) => (
+                {transType.getDatas().map((v, i) => (
                   <option key={i + 1} value={v.key}>
                     {v.text}
                   </option>

@@ -1,18 +1,13 @@
 import { memo } from "react";
 import _ from "lodash";
-import { LANGUAGES } from "../../../configs/langConfigs";
+import { LANGUAGES } from "../../../configs/langConfig";
 import FieldErrors from "../../../components/FieldErrors";
 import Dropdown from "../../../components/Dropdown";
 
-
 const VocabDetail = memo(
-  ({
-    vocabData = {},
-    topicData = null,
-    topicId = "",
-    errors = {},
-  }) => {
-    const defaultLanguage = vocabData?.language || topicData?.learning_language || "";
+  ({ vocabData = {}, topicData = null, topicId = "", errors = {} }) => {
+    const defaultLanguage =
+      vocabData?.language || topicData?.learning_language || "";
 
     return (
       <>
@@ -27,9 +22,7 @@ const VocabDetail = memo(
             defaultValue={vocabData?.word}
             placeholder="Word..."
           />
-          {errors?.word && (
-            <FieldErrors errors={errors.word} />
-          )}
+          {errors?.word && <FieldErrors errors={errors.word} />}
         </div>
         <div className="row">
           <div className="mb-3 col-lg-6">
@@ -41,9 +34,7 @@ const VocabDetail = memo(
               defaultValue={defaultLanguage}
               options={LANGUAGES}
             />
-            {errors?.language && (
-              <FieldErrors errors={errors.language} />
-            )}
+            {errors?.language && <FieldErrors errors={errors.language} />}
           </div>
           <div className="mb-3 col-lg-6">
             <label htmlFor="topic" className="form-label">
@@ -52,15 +43,15 @@ const VocabDetail = memo(
             <Dropdown
               name="topic"
               defaultValue={defaultLanguage}
-              options={[{
-                key: topicData?.id,
-                text: topicData?.name,
-              }]}
+              options={[
+                {
+                  key: topicData?.id,
+                  text: topicData?.name,
+                },
+              ]}
               disabled={1}
             />
-            {errors?.topic && (
-              <FieldErrors errors={errors.topic} />
-            )}
+            {errors?.topic && <FieldErrors errors={errors.topic} />}
           </div>
         </div>
         <div className="mb-3">
@@ -74,9 +65,7 @@ const VocabDetail = memo(
             defaultValue={vocabData?.descriptions}
             placeholder="Description..."
           ></textarea>
-          {errors?.descriptions && (
-            <FieldErrors errors={errors.descriptions} />
-          )}
+          {errors?.descriptions && <FieldErrors errors={errors.descriptions} />}
         </div>
       </>
     );

@@ -3,14 +3,14 @@ import { callApi } from "./apiService";
 export const getTopics = async (options = {}) => {
   return await callApi(`topics/`, {
     method: "GET",
-    ...options
+    ...options,
   });
 };
 
 export const getTopicById = async (id, options = {}) => {
   return await callApi(`topics/${id}`, {
     method: "GET",
-    ...options
+    ...options,
   });
 };
 
@@ -18,7 +18,7 @@ export const createTopic = async (datas, options = {}) => {
   return await callApi(`topics/`, {
     method: "POST",
     body: JSON.stringify(datas),
-    ...options
+    ...options,
   });
 };
 
@@ -26,20 +26,20 @@ export const updateTopic = async (id, datas, options = {}) => {
   return await callApi(`topics/${id}/`, {
     method: "PUT",
     body: JSON.stringify(datas),
-    ...options
+    ...options,
   });
 };
 
 export const deleteTopic = async (id, options = {}) => {
   return await callApi(`topics/${id}/`, {
     method: "DELETE",
-    ...options
+    ...options,
   });
 };
 
 export const deleteTopics = async (options = {}) => {
   return await callApi(`topics/delete/`, {
     method: "POST",
-    ...options
+    ...options,
   });
 };

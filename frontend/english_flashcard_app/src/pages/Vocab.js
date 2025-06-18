@@ -35,9 +35,7 @@ const Vocab = memo(() => {
     delVocabFetcher.state === "submitting";
 
   return (
-    <ErrorBoundary
-      fallback={<Navigate to={`/topic/${topicId}`} />}
-    >
+    <ErrorBoundary fallback={<Navigate to={`/topic/${topicId}`} />}>
       <vocabFetcher.Form
         action={`/topic/${topicId}/vocab/${vocabId}`}
         method={isNew() ? "POST" : "PUT"}
@@ -75,7 +73,9 @@ const Vocab = memo(() => {
             <div className="container mt-4">
               <Suspense fallback={<p className="text-center">Loadding...</p>}>
                 <Await resolve={vocabPromise}>
-                  {(data) => <TranslationTabs data={data?.translations ?? []} />}
+                  {(data) => (
+                    <TranslationTabs data={data?.translations ?? []} />
+                  )}
                 </Await>
               </Suspense>
             </div>

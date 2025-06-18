@@ -1,9 +1,8 @@
-import { createThunkWithCallback } from "./commonsThunk";
+import { createThunkWithCallback, rejectWithErrorValue } from "./commonAction";
 import { setAuth } from "../slices/authSlice";
 import { setAlert } from "../slices/alertSlice";
 import * as authApi from "../../services/authApi";
-import * as alertConfigs from "../../configs/alertConfigs";
-import { rejectWithErrorValue } from "./commonsThunk";
+import * as alertConfig from "../../configs/alertConfig";
 
 export const loginThunk = createThunkWithCallback(
   "auth/login",
@@ -15,7 +14,7 @@ export const loginThunk = createThunkWithCallback(
     dispatch(setAuth({ userInfo: { username } }));
     dispatch(
       setAlert({
-        type: alertConfigs.SUCCESS_TYPE,
+        type: alertConfig.SUCCESS_TYPE,
         message: `Hi ${username}, wellcome back!`,
       }),
     );

@@ -1,5 +1,11 @@
 import { Suspense } from "react";
-import { useLoaderData, Await, useParams, Outlet, Navigate } from "react-router-dom";
+import {
+  useLoaderData,
+  Await,
+  useParams,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import TopicDetail from "../components/pages/topic/TopicDetail";
 import ListVocab from "../components/pages/topic/ListVocab";
@@ -21,9 +27,7 @@ const Topic = () => {
               <hr />
             </>
           )}
-          <ErrorBoundary
-            fallback={<Navigate to="/topics" />}
-          >
+          <ErrorBoundary fallback={<Navigate to="/topics" />}>
             <Suspense
               fallback={
                 <>
@@ -36,10 +40,10 @@ const Topic = () => {
                 {(topic) => (
                   <>
                     {topic ? (
-                      <TopicDetail 
-                        topic={topic} 
-                        topicId={topicId} 
-                        isNew={isNew()} 
+                      <TopicDetail
+                        topic={topic}
+                        topicId={topicId}
+                        isNew={isNew()}
                       />
                     ) : (
                       <Navigate to="/topics" />
@@ -61,10 +65,7 @@ const Topic = () => {
                 <Await resolve={loaderData.vocabsPromise}>
                   {(vocabDatas) => (
                     <>
-                      <ListVocab
-                        vocabDatas={vocabDatas}
-                        topicId={topicId}
-                      />
+                      <ListVocab vocabDatas={vocabDatas} topicId={topicId} />
                     </>
                   )}
                 </Await>

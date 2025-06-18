@@ -2,7 +2,14 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 
 const ListVocabTable = memo(
-  ({ vocabs, topicId, isSearching, onDeleteVocab, onSearchVocab, onPlayAudio = null }) => {
+  ({
+    vocabs,
+    topicId,
+    isSearching,
+    onDeleteVocab,
+    onSearchVocab,
+    onPlayAudio = null,
+  }) => {
     return (
       <div
         className="table-responsive"
@@ -54,11 +61,15 @@ const ListVocabTable = memo(
                 <tr key={vocab.id}>
                   <td>{index + 1}</td>
                   <td>
-                    {(onPlayAudio && vocab.audio) && (
-                      <Link to={`#`} className="me-2" onClick={(e) => {
-                        e.preventDefault();
-                        onPlayAudio(vocab.audio)
-                      }}>
+                    {onPlayAudio && vocab.audio && (
+                      <Link
+                        to={`#`}
+                        className="me-2"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onPlayAudio(vocab.audio);
+                        }}
+                      >
                         <i className="bi bi-volume-up"></i>
                       </Link>
                     )}

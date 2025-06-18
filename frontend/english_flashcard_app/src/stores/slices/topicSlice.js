@@ -5,7 +5,7 @@ import {
   clearTopicsReducer,
   setTopicReducer,
   clearTopicReducer,
-} from "../reducers/topicsReducer";
+} from "../reducers/topicReducer";
 
 const initialState = {
   data: [],
@@ -24,7 +24,12 @@ const topicSlice = createSlice({
   },
 });
 
-export const { setIsFetched, setTopics, clearTopics, setTopic, clearTopic } =
-  topicSlice.actions;
+export const { 
+  setIsFetched, 
+  setTopics, 
+  clearTopics, 
+  setTopic, 
+  clearTopic 
+} = topicSlice.actions;
 
 export default topicSlice.reducer;

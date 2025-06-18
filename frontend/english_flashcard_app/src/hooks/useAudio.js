@@ -1,10 +1,14 @@
 import { useCallback, useRef } from "react";
 
 const getAudioUrl = (audioData) => {
-  const uint8Array = new Uint8Array(atob(audioData).split("").map((char) => char.charCodeAt(0)));
+  const uint8Array = new Uint8Array(
+    atob(audioData)
+      .split("")
+      .map((char) => char.charCodeAt(0)),
+  );
   const audioBlob = new Blob([uint8Array], { type: "audio/mpeg" });
   return URL.createObjectURL(audioBlob);
-}
+};
 
 const useAudio = () => {
   const audioRef = useRef(null);
@@ -24,8 +28,8 @@ const useAudio = () => {
 
   return {
     audioRef,
-    onPlayAudio
-  }
+    onPlayAudio,
+  };
 };
 
 export default useAudio;

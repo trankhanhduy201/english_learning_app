@@ -2,55 +2,64 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { EMPTY_VOCAB } from "../components/Flashcard";
 import { setAlert } from "../stores/slices/alertSlice";
-import * as alertConfigs from "../configs/alertConfigs";
+import * as alertConfig from "../configs/alertConfig";
 import _ from "lodash";
 
 const getOriginDatas = (vocabs) => {
-  const newDatas = vocabs.reduce((persistence, vocab) => {
-    const originDatas = vocab?.translations.map(v => ({
-      ...EMPTY_VOCAB,
-      word: vocab.word,
-      type: v.type,
-      language: v.language,
-      audio: vocab.audio,
-      translations: [{ translation: v.translation }]
-    }));
+  const newDatas = vocabs.reduce(
+    (persistence, vocab) => {
+      const originDatas = vocab?.translations.map((v) => ({
+        ...EMPTY_VOCAB,
+        word: vocab.word,
+        type: v.type,
+        language: v.language,
+        audio: vocab.audio,
+        translations: [{ translation: v.translation }],
+      }));
 
-    const reverseDatas = vocab?.translations.map(v => ({
-      ...EMPTY_VOCAB,
-      word: v.translation,
-      type: v.type,
-      language: v.language,
-      audio: vocab.audio,
-      translations: [{ translation: vocab.word }]
-    }));
+      const reverseDatas = vocab?.translations.map((v) => ({
+        ...EMPTY_VOCAB,
+        word: v.translation,
+        type: v.type,
+        language: v.language,
+        audio: vocab.audio,
+        translations: [{ translation: vocab.word }],
+      }));
 
-    return {
-      originDatas: [ ...persistence.originDatas, ...originDatas ],
-      reverseDatas: [ ...persistence.reverseDatas, ...reverseDatas ]
-    };
-  }, {
-    originDatas: [],
-    reverseDatas: []
-  });
+      return {
+        originDatas: [...persistence.originDatas, ...originDatas],
+        reverseDatas: [...persistence.reverseDatas, ...reverseDatas],
+      };
+    },
+    {
+      originDatas: [],
+      reverseDatas: [],
+    },
+  );
 
   // Group data by language field
   return {
-    originDatas: _.groupBy(newDatas.originDatas, 'language'),
-    reverseDatas: _.groupBy(newDatas.reverseDatas, 'language')
-  }
+    originDatas: _.groupBy(newDatas.originDatas, "language"),
+    reverseDatas: _.groupBy(newDatas.reverseDatas, "language"),
+  };
 };
 
 const useOriginVocabs = ({ vocabsPromise }) => {
   const dispatch = useDispatch();
-  const [ isLoadingData, setIsLoadingData ] = useState(true);
-  const [ originVocabs, setOriginVocabs ] = useState({ originDatas: [], reverseDatas: [] });
-  const getOriginVocabs = useCallback((lang, reverse = false) => {
-    const results = !reverse 
-      ? originVocabs.originDatas
-      : originVocabs.reverseDatas;
-    return results[lang] ?? [];
-  }, [originVocabs]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [originVocabs, setOriginVocabs] = useState({
+    originDatas: [],
+    reverseDatas: [],
+  });
+  const getOriginVocabs = useCallback(
+    (lang, reverse = false) => {
+      const results = !reverse
+        ? originVocabs.originDatas
+        : originVocabs.reverseDatas;
+      return results[lang] ?? [];
+    },
+    [originVocabs],
+  );
 
   useEffect(() => {
     const getVocabs = async () => {
@@ -60,7 +69,7 @@ const useOriginVocabs = ({ vocabsPromise }) => {
       } catch (error) {
         dispatch(
           setAlert({
-            type: alertConfigs.ERROR_TYPE,
+            type: alertConfig.ERROR_TYPE,
             message: "Can not get vocabularies",
           }),
         );
@@ -73,7 +82,7 @@ const useOriginVocabs = ({ vocabsPromise }) => {
   return {
     isLoadingData,
     ...originVocabs,
-    getOriginVocabs
+    getOriginVocabs,
   };
 };
 

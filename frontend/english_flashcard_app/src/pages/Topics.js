@@ -30,15 +30,13 @@ const Topics = () => {
           <i className="bi bi-plus-circle"></i> New topic
         </Link>
         <DeleteAllButton
-          action={`/topics/delete`} 
-          formName={'deleting_all_topic'}
+          action={`/topics/delete`}
+          formName={"deleting_all_topic"}
         />
       </div>
       <Suspense fallback={<LoadingOverlay />}>
         <Await resolve={topicDatas}>
-          {(topics) => (
-            <ListTopic topics={topics} removeTopic={removeTopic} />
-          )}
+          {(topics) => <ListTopic topics={topics} removeTopic={removeTopic} />}
         </Await>
       </Suspense>
       <Outlet />

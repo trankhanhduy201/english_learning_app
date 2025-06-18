@@ -1,7 +1,7 @@
 import * as cookies from "../../commons/cookies";
 import * as jwtUtils from "../../commons/jwt";
 import { clearAuth } from "../slices/authSlice";
-import { refreshTokenThunk } from "../thunks/tokenThunk";
+import { refreshTokenThunk } from "../actions/tokenAction";
 
 const isExecuteMiddleware = (actionType) =>
   ["topics", "topic", "vocab"].some((value) => actionType.includes(value));

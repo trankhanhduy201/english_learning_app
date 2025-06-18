@@ -4,7 +4,7 @@ import {
   useEffect,
   useState,
   useTransition,
-  useRef
+  useRef,
 } from "react";
 import { Link, useFetcher } from "react-router-dom";
 import ImportTextModal from "../topic/ImportTextModal";
@@ -33,7 +33,7 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
         setVocabs(filteredVocabs);
       });
     });
-  }
+  };
 
   useEffect(() => {
     filterVocabs(curSearchText.current);
@@ -102,12 +102,15 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
           >
             <i className="bi bi-upload"></i> Import
           </button>
-          <Link to={`/topic/${topicId}/vocab/new`} className="btn btn-secondary me-2">
+          <Link
+            to={`/topic/${topicId}/vocab/new`}
+            className="btn btn-secondary me-2"
+          >
             <i className="bi bi-plus-circle"></i> New
           </Link>
-          <DeleteAllButton 
-            action={`/topic/${topicId}/vocab/delete`} 
-            formName={'deleting_all_vocab'}
+          <DeleteAllButton
+            action={`/topic/${topicId}/vocab/delete`}
+            formName={"deleting_all_vocab"}
           />
         </div>
         {showImportTextModal && (

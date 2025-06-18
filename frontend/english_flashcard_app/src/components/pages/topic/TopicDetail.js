@@ -1,6 +1,6 @@
 import { memo, useEffect } from "react";
 import { useFetcher, Link } from "react-router-dom";
-import { LANGUAGES } from "../../../configs/langConfigs";
+import { LANGUAGES } from "../../../configs/langConfig";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import FieldErrors from "../../../components/FieldErrors";
 import Dropdown from "../../../components/Dropdown";
@@ -29,7 +29,10 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
 
   // Update context topic after successful update
   useEffect(() => {
-    if (editTopicFetcher.data?.status === "success" && editTopicFetcher.data.data) {
+    if (
+      editTopicFetcher.data?.status === "success" &&
+      editTopicFetcher.data.data
+    ) {
       setTopic(editTopicFetcher.data.data);
     }
   }, [editTopicFetcher.data]);
@@ -66,7 +69,9 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
             options={LANGUAGES}
           />
           {editTopicFetcher.data?.errors?.learning_language && (
-            <FieldErrors errors={editTopicFetcher.data.errors.learning_language} />
+            <FieldErrors
+              errors={editTopicFetcher.data.errors.learning_language}
+            />
           )}
         </div>
       </div>

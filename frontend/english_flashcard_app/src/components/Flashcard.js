@@ -1,8 +1,15 @@
-import React, { memo, useEffect, useState, useRef, useCallback, useMemo } from "react";
+import React, {
+  memo,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getRandomIntWithExceptions } from "../utils/commons";
-import * as transTypeEnums from "../enums/transTypes";
-import { LANGUAGES } from "../configs/langConfigs";
+import * as transType from "../enums/transType";
+import { LANGUAGES } from "../configs/langConfig";
 import useAudio from "../hooks/useAudio";
 
 export const EMPTY_VOCAB = {
@@ -14,75 +21,74 @@ export const EMPTY_VOCAB = {
   audio: "", // Added audio property to EMPTY_VOCAB
 };
 
-const LeftSideButtons = memo(({ vocab, isActive, isOpen, onOpenCard, onReverseVocabs, onPlayAudio }) => {
-  return (
-    <>
-      <button
-        disabled={!isActive}
-        className="btn btn-secondary d-block"
-        onClick={() => onReverseVocabs()}
-      >
-        <i className="bi bi-arrow-repeat text-light"></i>
-      </button>
-      <button
-        disabled={!isActive}
-        className="btn btn-secondary d-block mt-1"
-        onClick={onOpenCard}
-      >
-        <i
-          className={`bi ${isOpen ? "bi-lightbulb-fill" : "bi-lightbulb-off-fill"} text-light`}
-        ></i>
-      </button>
-      <button
-        disabled={!isActive}
-        className="btn btn-secondary d-block mt-1"
-      >
-        <i className="bi bi-youtube"></i>
-      </button>
-      <button
-        disabled={!isActive}
-        className="btn btn-secondary d-block mt-1"
-        onClick={() => onPlayAudio(vocab.audio)}
-      >
-        <i className="bi bi-volume-up"></i>
-      </button>
-    </>
-  )
-});
+const LeftSideButtons = memo(
+  ({ vocab, isActive, isOpen, onOpenCard, onReverseVocabs, onPlayAudio }) => {
+    return (
+      <>
+        <button
+          disabled={!isActive}
+          className="btn btn-secondary d-block"
+          onClick={() => onReverseVocabs()}
+        >
+          <i className="bi bi-arrow-repeat text-light"></i>
+        </button>
+        <button
+          disabled={!isActive}
+          className="btn btn-secondary d-block mt-1"
+          onClick={onOpenCard}
+        >
+          <i
+            className={`bi ${isOpen ? "bi-lightbulb-fill" : "bi-lightbulb-off-fill"} text-light`}
+          ></i>
+        </button>
+        <button disabled={!isActive} className="btn btn-secondary d-block mt-1">
+          <i className="bi bi-youtube"></i>
+        </button>
+        <button
+          disabled={!isActive}
+          className="btn btn-secondary d-block mt-1"
+          onClick={() => onPlayAudio(vocab.audio)}
+        >
+          <i className="bi bi-volume-up"></i>
+        </button>
+      </>
+    );
+  },
+);
 
-const RightSideButtons = memo(({ vocab, length, isActive, isOrder, onChangeOrder, onPickVocab }) => {
-  return (
-    <>
-      <button
-        disabled={!isActive || (isOrder && vocab.idx === 0)}
-        className="btn btn-secondary d-block text-light"
-        onClick={() => onPickVocab(isOrder ? "prev" : "")}
-      >
-        <i className="bi bi-arrow-left-circle-fill"></i>
-      </button>
-      <button
-        disabled={
-          !isActive || (isOrder && vocab.idx === length - 1)
-        }
-        className="btn btn-secondary d-block mt-1 text-light"
-        onClick={() => onPickVocab(isOrder ? "next" : "")}
-      >
-        <i className="bi bi-arrow-right-circle-fill"></i>
-      </button>
-      <button
-        disabled={!isActive}
-        className="btn btn-secondary d-block mt-1"
-        onClick={onChangeOrder}
-      >
-        {isOrder ? (
-          <i className="bi bi-list-ol"></i>
-        ) : (
-          <i className="bi bi-shuffle"></i>
-        )}
-      </button>
-    </>
-  )
-});
+const RightSideButtons = memo(
+  ({ vocab, length, isActive, isOrder, onChangeOrder, onPickVocab }) => {
+    return (
+      <>
+        <button
+          disabled={!isActive || (isOrder && vocab.idx === 0)}
+          className="btn btn-secondary d-block text-light"
+          onClick={() => onPickVocab(isOrder ? "prev" : "")}
+        >
+          <i className="bi bi-arrow-left-circle-fill"></i>
+        </button>
+        <button
+          disabled={!isActive || (isOrder && vocab.idx === length - 1)}
+          className="btn btn-secondary d-block mt-1 text-light"
+          onClick={() => onPickVocab(isOrder ? "next" : "")}
+        >
+          <i className="bi bi-arrow-right-circle-fill"></i>
+        </button>
+        <button
+          disabled={!isActive}
+          className="btn btn-secondary d-block mt-1"
+          onClick={onChangeOrder}
+        >
+          {isOrder ? (
+            <i className="bi bi-list-ol"></i>
+          ) : (
+            <i className="bi bi-shuffle"></i>
+          )}
+        </button>
+      </>
+    );
+  },
+);
 
 const Card = memo(({ vocab, isActive, isOpen, isReverse, onOpenCard }) => {
   return (
@@ -94,7 +100,7 @@ const Card = memo(({ vocab, isActive, isOpen, isReverse, onOpenCard }) => {
               {vocab.word}
               {isReverse && (vocab?.type ? ` (${vocab.type})` : "")}
             </h2>
-            <div className="flashcard-content" style={{ fontSize: '20px' }}>
+            <div className="flashcard-content" style={{ fontSize: "20px" }}>
               <hr />
               {isOpen ? (
                 <>
@@ -116,9 +122,7 @@ const Card = memo(({ vocab, isActive, isOpen, isReverse, onOpenCard }) => {
                     ))}
                 </>
               ) : (
-                <p className="text-center">
-                  Click here to show translation...
-                </p>
+                <p className="text-center">Click here to show translation...</p>
               )}
             </div>
           </div>
@@ -135,7 +139,7 @@ const Card = memo(({ vocab, isActive, isOpen, isReverse, onOpenCard }) => {
 const WordTypeFilterButtons = memo(({ filterTypes, onFilterVocabsByTypes }) => {
   return (
     <>
-      {transTypeEnums.getDatas().map(v =>
+      {transType.getDatas().map((v) => (
         <button
           key={v.key}
           className={`btn ${v.key in filterTypes ? "btn-secondary" : "btn-outline-secondary"} d-inline-block ms-2`}
@@ -143,7 +147,7 @@ const WordTypeFilterButtons = memo(({ filterTypes, onFilterVocabsByTypes }) => {
         >
           {v.text}
         </button>
-      )}
+      ))}
     </>
   );
 });
@@ -151,7 +155,7 @@ const WordTypeFilterButtons = memo(({ filterTypes, onFilterVocabsByTypes }) => {
 const LanguageFilterButtons = memo(({ filterLang, onFilterVocabsByLang }) => {
   return (
     <>
-      {LANGUAGES.map(item => (
+      {LANGUAGES.map((item) => (
         <button
           key={item.key}
           className={`btn ${item.key == filterLang ? "btn-secondary" : "btn-outline-secondary"} d-inline-block ms-2`}
@@ -159,109 +163,118 @@ const LanguageFilterButtons = memo(({ filterLang, onFilterVocabsByLang }) => {
         >
           {item.key}
         </button>
-    ))}
+      ))}
     </>
   );
 });
 
-const Flashcard = memo(({
-  vocabs = [],
-  isReverse = false,
-  filterLang = '',
-  filterTypes = [],
-  onReverseVocabs = null,
-  onFilterVocabsByTypes = null,
-  onFilterVocabsByLang = null
-}) => {
-  const [vocab, setVocab] = useState(EMPTY_VOCAB);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOrder, setIsOrder] = useState(true);
-  const isActive = vocabs.length > 0;
-  const { audioRef, onPlayAudio } = useAudio();
-  const pickVocab = (index) => vocabs[index] ?? EMPTY_VOCAB;
+const Flashcard = memo(
+  ({
+    vocabs = [],
+    isReverse = false,
+    filterLang = "",
+    filterTypes = [],
+    onReverseVocabs = null,
+    onFilterVocabsByTypes = null,
+    onFilterVocabsByLang = null,
+  }) => {
+    const [vocab, setVocab] = useState(EMPTY_VOCAB);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOrder, setIsOrder] = useState(true);
+    const isActive = vocabs.length > 0;
+    const { audioRef, onPlayAudio } = useAudio();
+    const pickVocab = (index) => vocabs[index] ?? EMPTY_VOCAB;
 
-  useEffect(() => {
-    let newVocab = pickVocab(0);
-    setVocab(newVocab);
-  }, [vocabs]);
+    useEffect(() => {
+      let newVocab = pickVocab(0);
+      setVocab(newVocab);
+    }, [vocabs]);
 
-  const onOpenCard = useCallback(() => {
-    setIsOpen((state) => !state);
-  });
-
-  const onChangeOrder = useCallback(() => {
-    setIsOrder((state) => !state);
-  });
-
-  const onPickVocab = useCallback((direction = "") => {
-    setVocab((oldVocab) => {
-      if (direction === "") {
-        const randomIndex = getRandomIntWithExceptions(0, vocabs.length - 1, [ oldVocab.idx ]);
-        return pickVocab(randomIndex);
-      }
-
-      if (direction === "next") {
-        const nextIndex = oldVocab.idx + 1;
-        return nextIndex < vocabs.length ? vocabs[nextIndex] : oldVocab;
-      }
-
-      if (direction === "prev") {
-        const prevIndex = oldVocab.idx - 1;
-        return prevIndex >= 0 ? vocabs[prevIndex] : oldVocab;
-      }
-
-      return oldVocab;
+    const onOpenCard = useCallback(() => {
+      setIsOpen((state) => !state);
     });
-  }, [vocabs]);
 
-  return (
-    <div className="row justify-content-center">
-      <div className="col-12 col-md-6">
-        <div className="d-flex align-items-center">
-          <div className="mb-auto">
-            <LeftSideButtons 
+    const onChangeOrder = useCallback(() => {
+      setIsOrder((state) => !state);
+    });
+
+    const onPickVocab = useCallback(
+      (direction = "") => {
+        setVocab((oldVocab) => {
+          if (direction === "") {
+            const randomIndex = getRandomIntWithExceptions(
+              0,
+              vocabs.length - 1,
+              [oldVocab.idx],
+            );
+            return pickVocab(randomIndex);
+          }
+
+          if (direction === "next") {
+            const nextIndex = oldVocab.idx + 1;
+            return nextIndex < vocabs.length ? vocabs[nextIndex] : oldVocab;
+          }
+
+          if (direction === "prev") {
+            const prevIndex = oldVocab.idx - 1;
+            return prevIndex >= 0 ? vocabs[prevIndex] : oldVocab;
+          }
+
+          return oldVocab;
+        });
+      },
+      [vocabs],
+    );
+
+    return (
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-6">
+          <div className="d-flex align-items-center">
+            <div className="mb-auto">
+              <LeftSideButtons
+                vocab={vocab}
+                isActive={isActive}
+                isOpen={isOpen}
+                onOpenCard={onOpenCard}
+                onReverseVocabs={onReverseVocabs}
+                onPlayAudio={onPlayAudio}
+              />
+            </div>
+            <Card
               vocab={vocab}
               isActive={isActive}
               isOpen={isOpen}
+              isReverse={isReverse}
               onOpenCard={onOpenCard}
-              onReverseVocabs={onReverseVocabs}
-              onPlayAudio={onPlayAudio}
+            />
+            <div className="mb-auto">
+              <RightSideButtons
+                vocab={vocab}
+                length={vocabs.length}
+                isActive={isActive}
+                isOrder={isOrder}
+                onChangeOrder={onChangeOrder}
+                onPickVocab={onPickVocab}
+              />
+            </div>
+          </div>
+          <div className="col-12 mt-3">
+            <WordTypeFilterButtons
+              filterTypes={filterTypes}
+              onFilterVocabsByTypes={onFilterVocabsByTypes}
             />
           </div>
-          <Card 
-            vocab={vocab}
-            isActive={isActive}
-            isOpen={isOpen}
-            isReverse={isReverse}
-            onOpenCard={onOpenCard}
-          />
-          <div className="mb-auto">
-            <RightSideButtons 
-              vocab={vocab}
-              length={vocabs.length}
-              isActive={isActive}
-              isOrder={isOrder}
-              onChangeOrder={onChangeOrder}
-              onPickVocab={onPickVocab}
+          <div className="col-12 mt-3">
+            <LanguageFilterButtons
+              filterLang={filterLang}
+              onFilterVocabsByLang={onFilterVocabsByLang}
             />
           </div>
         </div>
-        <div className="col-12 mt-3">
-          <WordTypeFilterButtons 
-            filterTypes={filterTypes}
-            onFilterVocabsByTypes={onFilterVocabsByTypes}
-          />
-        </div>
-        <div className="col-12 mt-3">
-          <LanguageFilterButtons 
-            filterLang={filterLang}
-            onFilterVocabsByLang={onFilterVocabsByLang}
-          />
-        </div>
+        <audio ref={audioRef} />
       </div>
-      <audio ref={audioRef} />
-    </div>
-  );
-});
+    );
+  },
+);
 
 export default Flashcard;
