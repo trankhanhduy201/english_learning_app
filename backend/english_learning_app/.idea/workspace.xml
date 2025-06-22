@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f228967d-d47c-40b6-91b2-1697015a03a7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flashcards/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/flashcards/tasks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/commons/authCommon.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/components/errors/Error.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/components/errors/Error.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/pages/Topic.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/pages/Topic.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/routes/actions/transAction.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/routes/actions/transAction.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/routes/loaders/topicLoader.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/routes/loaders/topicLoader.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/routes/loaders/vocabLoader.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/routes/loaders/vocabLoader.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/services/apiService.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/services/apiService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/services/topicApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/services/topicApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/services/vocabApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/english_flashcard_app/src/services/vocabApi.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,22 +35,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flashcards/task_utils.py">
+        <entry file="file://$PROJECT_DIR$/flashcards/signals.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="186">
-              <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
-              <folding>
-                <element signature="e#0#37#0" expanded="true" />
-              </folding>
+              <caret line="9" column="49" selection-start-line="9" selection-start-column="49" selection-end-line="9" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django_q/tasks.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="51" column="29" selection-start-line="51" selection-start-column="29" selection-end-line="51" selection-end-column="29" />
+            <state relative-caret-position="73">
+              <caret line="156" column="52" lean-forward="true" selection-start-line="156" selection-start-column="52" selection-end-line="156" selection-end-column="52" />
+              <folding>
+                <element signature="e#0#36#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -91,54 +80,46 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flashcards/signals.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="9" column="49" selection-start-line="9" selection-start-column="49" selection-end-line="9" selection-end-column="49" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="93">
-              <caret line="9" column="62" selection-start-line="9" selection-start-column="62" selection-end-line="9" selection-end-column="62" />
-              <folding>
-                <element signature="e#0#36#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/rest_framework/relations.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2263">
-              <caret line="90" column="22" selection-start-line="90" selection-start-column="22" selection-end-line="90" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/django/db/models/enums.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1054">
-              <caret line="62" column="20" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/flashcards/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="961">
-              <caret line="31" selection-start-line="31" selection-end-line="31" />
+            <state relative-caret-position="-1043">
+              <caret line="10" selection-start-line="10" selection-end-line="10" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flashcards/permissions.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flashcards/queryset_utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="124">
+              <caret line="4" column="50" selection-start-line="4" selection-start-column="50" selection-end-line="4" selection-end-column="50" />
+              <folding>
+                <element signature="e#0#37#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flashcards/renderers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="558">
+              <caret line="18" column="78" selection-start-line="18" selection-start-column="78" selection-end-line="18" selection-end-column="78" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flashcards/renders.py">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -152,7 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>JWTAuthentication</find>
       <find>TIME_ZONE</find>
       <find>TIME_</find>
       <find>TIME</find>
@@ -182,6 +162,7 @@
       <find>generate_vocab_audio_binary</find>
       <find>LanguageEnums</find>
       <find>learning_lang</find>
+      <find>CustomJSONRenderer</find>
     </findStrings>
     <replaceStrings>
       <replace>models.SET_NULL</replace>
@@ -198,7 +179,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/flashcards/renders.py" />
-        <option value="$PROJECT_DIR$/flashcards/renderers.py" />
         <option value="$PROJECT_DIR$/flashcards/exceptions.py" />
         <option value="$PROJECT_DIR$/flashcards/permissions.py" />
         <option value="$PROJECT_DIR$/flashcards/mixins.py" />
@@ -217,6 +197,7 @@
         <option value="$PROJECT_DIR$/flashcards/views.py" />
         <option value="$PROJECT_DIR$/flashcards/tasks.py" />
         <option value="$PROJECT_DIR$/english_learning_app/settings.py" />
+        <option value="$PROJECT_DIR$/flashcards/renderers.py" />
       </list>
     </option>
   </component>
@@ -416,12 +397,12 @@
       <workItem from="1749434335464" duration="2693000" />
       <workItem from="1749608165726" duration="1735000" />
       <workItem from="1749704855990" duration="10248000" />
-      <workItem from="1750128699774" duration="9202000" />
+      <workItem from="1750128699774" duration="9597000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="358951000" />
+    <option name="totallyTimeSpent" value="359346000" />
   </component>
   <component name="TodoView" selected-index="3">
     <todo-panel id="selected-file">
@@ -434,15 +415,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1592" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.50300604" visible="true" weight="0.15191898" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.50300604" visible="true" weight="0.15191898" />
       <window_info id="Structure" order="1" sideWeight="0.496994" side_tool="true" weight="0.22686376" />
       <window_info id="Favorites" order="2" sideWeight="0.496994" side_tool="true" weight="0.22686376" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.23293608" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.49946696" visible="true" weight="0.42795232" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49946696" weight="0.42795232" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32839838" />
@@ -533,9 +513,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/authentication.py" />
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/authentication.py" />
-    <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/backends.py" />
     <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework_simplejwt/tokens.py" />
     <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/contrib/auth/__init__.py" />
     <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/authtoken/serializers.py" />
@@ -567,16 +544,6 @@
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python311/Lib/test/test_enumerate.py" />
     <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/mixins.py" />
-    <entry file="file://$PROJECT_DIR$/flashcards/queryset_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="4" column="50" lean-forward="true" selection-start-line="4" selection-start-column="50" selection-end-line="4" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/rest_framework/viewsets.py" />
     <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/signals.py" />
     <entry file="file://$PROJECT_DIR$/../../../../20230902_venv/Lib/site-packages/django/db/models/query.py" />
@@ -670,16 +637,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="93">
-          <caret line="9" column="62" selection-start-line="9" selection-start-column="62" selection-end-line="9" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../../myenv/Lib/site-packages/rest_framework/relations.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2263">
@@ -691,13 +648,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1054">
           <caret line="62" column="20" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flashcards/signals.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="9" column="49" selection-start-line="9" selection-start-column="49" selection-end-line="9" selection-end-column="49" />
         </state>
       </provider>
     </entry>
@@ -750,10 +700,50 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/flashcards/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="961">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
+        <state relative-caret-position="-1043">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/permissions.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/queryset_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="4" column="50" selection-start-line="4" selection-start-column="50" selection-end-line="4" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/renderers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="558">
+          <caret line="18" column="78" selection-start-line="18" selection-start-column="78" selection-end-line="18" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/renders.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/signals.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="186">
+          <caret line="9" column="49" selection-start-line="9" selection-start-column="49" selection-end-line="9" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flashcards/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="73">
+          <caret line="156" column="52" lean-forward="true" selection-start-line="156" selection-start-column="52" selection-end-line="156" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
