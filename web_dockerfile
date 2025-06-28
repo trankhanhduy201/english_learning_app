@@ -1,0 +1,10 @@
+FROM node:18-alpine
+
+WORKDIR /app
+COPY ./frontend/english_flashcard_app .
+RUN npm install
+
+ENV CHOKIDAR_USEPOLLING=true
+EXPOSE 3000
+
+CMD ["npm", "start"]
