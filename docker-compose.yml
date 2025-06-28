@@ -11,6 +11,7 @@ services:
       - ./supervisord/default.conf:/etc/supervisor/conf.d/supervisord.conf
       - ./logs/supervisord:/code/logs/supervisord
       - gunicorn_socket:/run/gunicorn
+      - static_volume:/code/static
     expose:
       - "8000"
     depends_on:
@@ -37,6 +38,7 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./logs/nginx:/var/log/nginx
       - gunicorn_socket:/run/gunicorn
+      - static_volume:/code/static
     depends_on:
       - api
     restart: always
@@ -48,3 +50,4 @@ services:
 
 volumes:
   gunicorn_socket:
+  static_volume:
