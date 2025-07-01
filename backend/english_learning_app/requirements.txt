@@ -37,4 +37,4 @@ tzdata==2023.3
 urllib3==2.4.0
 virtualenv==20.26.3
 wcwidth==0.2.13
-gunicorn
+gunicorn==23.0.0
