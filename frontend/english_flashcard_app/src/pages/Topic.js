@@ -21,38 +21,42 @@ const Topic = () => {
     <TopicProvider initialTopic={null}>
       <div className="row">
         <div className={`${isNew() ? "col-12" : "col-lg-12"} text-start mb-4`}>
-          {!isNew() && (
+          {!isNew() ? (
             <>
               <h2>Topic info</h2>
               <hr />
-            </>
-          )}
-          <ErrorBoundary fallback={<Navigate to="/topics" />}>
-            <Suspense
-              fallback={
-                <>
-                  <TopicDetail isNew={true} />
-                  <LoadingOverlay />
-                </>
-              }
-            >
-              <Await resolve={loaderData.topicData}>
-                {(topic) => (
-                  <>
-                    {topic ? (
-                      <TopicDetail
-                        topic={topic}
-                        topicId={topicId}
-                        isNew={isNew()}
-                      />
-                    ) : (
-                      <Navigate to="/topics" />
+              <ErrorBoundary fallback={<Navigate to="/topics" />}>
+                <Suspense
+                  fallback={
+                    <>
+                      <TopicDetail isNew={true} />
+                      <LoadingOverlay />
+                    </>
+                  }
+                >
+                  <Await resolve={loaderData.topicData}>
+                    {(topic) => (
+                      <>
+                        {topic ? (
+                          <TopicDetail
+                            topic={topic}
+                            topicId={topicId}
+                            isNew={isNew()}
+                          />
+                        ) : (
+                          <Navigate to="/topics" />
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </Await>
-            </Suspense>
-          </ErrorBoundary>
+                  </Await>
+                </Suspense>
+              </ErrorBoundary>
+            </>
+          ) : (
+            <TopicDetail
+              isNew={true}
+            />
+          )}
         </div>
         {!isNew() && (
           <div className="col-lg-12 text-start">
