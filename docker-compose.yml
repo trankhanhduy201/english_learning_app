@@ -9,7 +9,7 @@ services:
     volumes:
       - ./backend/english_learning_app:/code
       - ./supervisord/default.conf:/etc/supervisor/conf.d/supervisord.conf
-      - ./logs/supervisord:/code/logs/supervisord
+      - ./logs/supervisord:/var/log/supervisord
       - gunicorn_socket:/run/gunicorn
       - static_volume:/code/static
     expose:

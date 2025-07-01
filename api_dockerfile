@@ -20,9 +20,13 @@ COPY ./backend/english_learning_app /code/
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY supervisord/default.conf /etc/supervisor/conf.d/supervisord.conf
-
-RUN python manage.py collectstatic --noinput
+RUN mkdir -p /var/log/supervisord
+RUN chmod -R 755 /var/log/supervisord
 
 EXPOSE 8000
 
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["/usr/bin/supervisord"]
