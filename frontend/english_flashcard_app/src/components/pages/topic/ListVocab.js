@@ -14,6 +14,8 @@ import LoadingOverlay from "../../LoadingOverlay";
 import DeleteAllButton from "../../DeleteAllButton";
 import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
+import useWebSocket from "../../../hooks/useWebSocket";
+import { useSelector } from 'react-redux';
 
 const ListVocab = memo(({ vocabDatas, topicId }) => {
   const [vocabs, setVocabs] = useState([]);
@@ -23,6 +25,23 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
   const delVocabFetcher = useFetcher();
   const curSearchText = useRef("");
   const { topic } = useTopicContext();
+  const userInfo = useSelector(state => state.auth.userInfo);
+  const userId = 1
+
+  useWebSocket(userId, (message) => {
+    console.log("Message from server:", message);
+    if (message?.data) {
+      const audioDatas = JSON.parse(message.data);
+      setVocabs((prev) => {
+        return prev.map(item => {
+          if (item.word in audioDatas) {
+            return { ...item, audio: audioDatas[item.word] };
+          }
+          return item;
+        });
+      });
+    }
+  });
 
   const filterVocabs = (searchText) => {
     transition(() => {

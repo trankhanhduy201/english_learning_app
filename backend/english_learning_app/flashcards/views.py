@@ -97,7 +97,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 			vocab_ids_qs = Vocabulary.objects.\
 				filter(Q(topic_id=topic_id) & Q(audio__isnull=True)).\
 				values_list('id', flat=True)
-			generate_vocab_audio_async(list(vocab_ids_qs))
+			generate_vocab_audio_async(list(vocab_ids_qs), user_id=request.user.pk)
 			
 		return Response(status=status.HTTP_204_NO_CONTENT)
 		
@@ -115,7 +115,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
 		if serializer.is_valid():
 			serializer.save()
 			vocab_ids = list(serializer.instance.values_list('id', flat=True))
-			generate_vocab_audio_async(vocab_ids)
+			generate_vocab_audio_async(vocab_ids, user_id=request.user.pk)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		

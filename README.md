@@ -45,7 +45,7 @@ This is a full-stack web application designed to help users learn English throug
 
 ### ⚙️ DevOps (Dockerized)
 - Full Docker support via `docker-compose`
-- **Gunicorn** for serving Django
+- **Uvicorn** for serving Django
 - **Nginx** as reverse proxy
 - Redis integration planned (caching/pub-sub)
 
@@ -57,7 +57,7 @@ This is a full-stack web application designed to help users learn English throug
 |------------|-----------------------------------------------|
 | Frontend   | React, Redux Toolkit, Bootstrap, React Router |
 | Backend    | Django, Django REST Framework, SQLite         |
-| Production | Docker, Docker Compose, Nginx, Gunicorn       |
+| Production | Docker, Docker Compose, Nginx, Uvicorn        |
 | Optional   | Redis (future enhancement)                    |
 
 ---

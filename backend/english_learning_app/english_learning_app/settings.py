@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'debug_toolbar',
     'rest_framework',
     # 'rest_framework_simplejwt',
@@ -78,7 +79,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'english_learning_app.wsgi.application'
+# WSGI_APPLICATION = 'english_learning_app.wsgi.application'
+ASGI_APPLICATION = 'english_learning_app.asgi.application'
 
 
 # DatabaseINSTALLED_APPS
@@ -180,4 +182,14 @@ Q_CLUSTER = {
     'queue_limit': 50,
     'bulk': 10,
     'orm': 'default',  # <<< This tells Django Q to use the DB
+}
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
 }

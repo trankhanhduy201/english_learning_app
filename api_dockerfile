@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /code /var/log/supervisor
-RUN mkdir -p /run/gunicorn
+RUN mkdir -p /run/uvicorn
 
 WORKDIR /code
 
