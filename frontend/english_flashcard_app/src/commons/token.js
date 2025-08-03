@@ -27,7 +27,7 @@ export const verifyToken = async (token, refreshToken) => {
     }
   }
 
-  const accessToken = refreshNewToken(refreshToken);
+  const accessToken = await refreshNewToken(refreshToken);
   return !!accessToken;
 };
 

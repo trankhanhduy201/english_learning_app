@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print(self.scope['headers'])
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
         self.group_name = f"user_{self.user_id}"
         

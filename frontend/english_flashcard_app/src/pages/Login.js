@@ -1,7 +1,21 @@
+import { Navigate } from "react-router-dom";
 import { useFetcher } from "react-router-dom";
+import useCheckAuth from "../hooks/useCheckAuth";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const Login = () => {
   const loginFetcher = useFetcher();
+  const { isLogged } = useCheckAuth({
+    hasCheckExpired: false,
+  });
+
+  if (isLogged === null) {
+    return <LoadingOverlay />;
+  }
+
+  if (isLogged) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return (
     <div className="d-flex align-items-center justify-content-center vh-100">
