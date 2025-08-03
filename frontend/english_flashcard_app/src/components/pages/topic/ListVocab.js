@@ -18,34 +18,35 @@ import useWebSocket from "../../../hooks/useWebSocket";
 import { useSelector } from 'react-redux';
 
 const ListVocab = memo(({ vocabDatas, topicId }) => {
+  const curSearchText = useRef("");
+  const cachedVocabsRef = useRef([]);
   const [vocabs, setVocabs] = useState([]);
   const [showImportTextModal, setShowImportTextModal] = useState(false);
   const [isSearching, transition] = useTransition();
   const { audioRef, onPlayAudio } = useAudio();
   const delVocabFetcher = useFetcher();
-  const curSearchText = useRef("");
   const { topic } = useTopicContext();
   const userInfo = useSelector(state => state.auth.userInfo);
   const userId = 1
 
   useWebSocket(userId, (message) => {
     console.log("Message from server:", message);
-    if (message?.data) {
+    if (message.data) {
       const audioDatas = JSON.parse(message.data);
-      setVocabs((prev) => {
-        return prev.map(item => {
-          if (item.word in audioDatas) {
-            return { ...item, audio: audioDatas[item.word] };
-          }
-          return item;
-        });
-      });
+      const updateVocabAudio = item => {
+        if (item.word in audioDatas) {
+          return { ...item, audio: audioDatas[item.word] };
+        }
+        return item;
+      }
+      setVocabs(prev => prev.map(updateVocabAudio));
+      cachedVocabsRef.current = cachedVocabsRef.current.map(updateVocabAudio);
     }
   });
 
   const filterVocabs = (searchText) => {
     transition(() => {
-      const filteredVocabs = vocabDatas.filter((vocab) =>
+      const filteredVocabs = cachedVocabsRef.current.filter((vocab) =>
         vocab.word.toLowerCase().includes(searchText),
       );
       transition(() => {
@@ -55,6 +56,7 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
   };
 
   useEffect(() => {
+    cachedVocabsRef.current = vocabDatas;
     filterVocabs(curSearchText.current);
   }, [vocabDatas]);
 
@@ -82,7 +84,7 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
       curSearchText.current = searchText.toLowerCase();
       filterVocabs(searchText);
     }, 300),
-    [vocabDatas],
+    [cachedVocabsRef.current],
   );
 
   useEffect(() => {
