@@ -16,7 +16,10 @@ export default function useWebSocket(userId, onMessage) {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (onMessage) onMessage(data);
+      console.log(data)
+      if (onMessage) {
+        onMessage(data);
+      }
     };
 
     ws.onerror = (err) => {

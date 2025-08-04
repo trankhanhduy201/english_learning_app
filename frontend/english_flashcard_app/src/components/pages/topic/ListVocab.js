@@ -17,36 +17,18 @@ import { useTopicContext } from "../../../contexts/TopicContext";
 import useWebSocket from "../../../hooks/useWebSocket";
 import { useSelector } from 'react-redux';
 
-const ListVocab = memo(({ vocabDatas, topicId }) => {
+const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   const curSearchText = useRef("");
-  const cachedVocabsRef = useRef([]);
-  const [vocabs, setVocabs] = useState([]);
-  const [showImportTextModal, setShowImportTextModal] = useState(false);
-  const [isSearching, transition] = useTransition();
+  const [ vocabs, setVocabs ] = useState([]);
+  const [ showImportTextModal, setShowImportTextModal ] = useState(false);
+  const [ isSearching, transition ] = useTransition();
   const { audioRef, onPlayAudio } = useAudio();
   const delVocabFetcher = useFetcher();
   const { topic } = useTopicContext();
-  const userInfo = useSelector(state => state.auth.userInfo);
-  const userId = 1
-
-  useWebSocket(userId, (message) => {
-    console.log("Message from server:", message);
-    if (message.data) {
-      const audioDatas = JSON.parse(message.data);
-      const updateVocabAudio = item => {
-        if (item.word in audioDatas) {
-          return { ...item, audio: audioDatas[item.word] };
-        }
-        return item;
-      }
-      setVocabs(prev => prev.map(updateVocabAudio));
-      cachedVocabsRef.current = cachedVocabsRef.current.map(updateVocabAudio);
-    }
-  });
 
   const filterVocabs = (searchText) => {
     transition(() => {
-      const filteredVocabs = cachedVocabsRef.current.filter((vocab) =>
+      const filteredVocabs = vocabDatas.filter((vocab) =>
         vocab.word.toLowerCase().includes(searchText),
       );
       transition(() => {
@@ -56,7 +38,6 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
   };
 
   useEffect(() => {
-    cachedVocabsRef.current = vocabDatas;
     filterVocabs(curSearchText.current);
   }, [vocabDatas]);
 
@@ -84,7 +65,7 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
       curSearchText.current = searchText.toLowerCase();
       filterVocabs(searchText);
     }, 300),
-    [cachedVocabsRef.current],
+    [vocabDatas],
   );
 
   useEffect(() => {
@@ -144,6 +125,37 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
       </div>
     </>
   );
+});
+
+const ListVocab = memo(({ vocabDatas, topicId }) => {
+  const [vocabs, setVocabs] = useState([]);
+  const userInfo = useSelector(state => state.auth.userInfo);
+  const userId = 1
+
+  useWebSocket(userId, (message) => {
+    console.log("Message from server:", message);
+    if (message.data) {
+      const audioDatas = JSON.parse(message.data);
+      const updateVocabAudio = item => {
+        if (item.word in audioDatas) {
+          return { ...item, audio: audioDatas[item.word] };
+        }
+        return item;
+      }
+      setVocabs(prev => prev.map(updateVocabAudio));
+    }
+  });
+
+  useEffect(() => {
+    setVocabs(vocabDatas)
+  }, [vocabDatas])
+  
+  return (
+    <ListVocabDetail
+      vocabDatas={vocabs} 
+      topicId={topicId} 
+    />
+  )
 });
 
 export default ListVocab;
