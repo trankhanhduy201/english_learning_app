@@ -1,13 +1,10 @@
 import { useEffect, useRef } from "react";
-import { WS_BASE_URL } from "../configs/apiConfig";
 
-export default function useWebSocket(userId, onMessage) {
+export default function useWebSocket(url, onMessage) {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    if (!userId) return;
-
-    const ws = new WebSocket(`${WS_BASE_URL}/ws/notify/${userId}/`);
+    const ws = new WebSocket(url);
     socketRef.current = ws;
 
     ws.onopen = () => {
@@ -33,7 +30,7 @@ export default function useWebSocket(userId, onMessage) {
     return () => {
       ws.close();
     };
-  }, [userId, onMessage]);
+  }, []);
 
   return socketRef.current;
 }

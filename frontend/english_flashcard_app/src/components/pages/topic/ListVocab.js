@@ -16,6 +16,7 @@ import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import useWebSocket from "../../../hooks/useWebSocket";
 import { useSelector } from 'react-redux';
+import { WS_BASE_URL } from "../../../configs/apiConfig";
 
 const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   const curSearchText = useRef("");
@@ -132,7 +133,7 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
   const userInfo = useSelector(state => state.auth.userInfo);
   const userId = 1
 
-  useWebSocket(userId, (message) => {
+  useWebSocket(`${WS_BASE_URL}/ws/notify/${userId}/`, (message) => {
     console.log("Message from server:", message);
     if (message.data) {
       const audioDatas = JSON.parse(message.data);
