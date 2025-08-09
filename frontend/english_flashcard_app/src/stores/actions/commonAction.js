@@ -31,6 +31,7 @@ export const createThunkWithCallback = (type, callback) =>
     try {
       return await callback(args, thunkAPI);
     } catch (err) {
+      console.error(err);
       const { dispatch, rejectWithValue } = thunkAPI;
       return rejectWithErrorValue(dispatch, rejectWithValue, {
         status: "error",

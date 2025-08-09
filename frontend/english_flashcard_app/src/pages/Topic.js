@@ -11,7 +11,6 @@ import TopicDetail from "../components/pages/topic/TopicDetail";
 import ListVocab from "../components/pages/topic/ListVocab";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { TopicProvider } from "../contexts/TopicContext";
-import { WebSocketContextProvider } from "../contexts/WebSocketContext";
 
 const Topic = () => {
   const { topicId } = useParams();
@@ -70,9 +69,7 @@ const Topic = () => {
                 <Await resolve={loaderData.vocabsPromise}>
                   {(vocabDatas) => (
                     <>
-                      <WebSocketContextProvider type="notify">
-                        <ListVocab vocabDatas={vocabDatas} topicId={topicId} />
-                      </WebSocketContextProvider>
+                      <ListVocab vocabDatas={vocabDatas} topicId={topicId} />
                     </>
                   )}
                 </Await>

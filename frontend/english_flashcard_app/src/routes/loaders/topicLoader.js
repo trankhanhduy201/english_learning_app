@@ -3,10 +3,21 @@ import store from "../../stores/store";
 import { getTopicsThunk, getTopicThunk } from "../../stores/actions/topicAction";
 import { getVocabsThunk } from "../../stores/actions/vocabAction";
 
-export const getTopics = async () => {
+export const getFilters = ({ request }) => {
+  const searchParams = new URL(request.url).searchParams;
+  return {
+    'page': searchParams.get('page') || 1,
+    'text_search': searchParams.get('text_search') || '',
+    'learning_language': searchParams.get('learning_language') || '',
+  }
+}
+
+export const getTopics = async ({ request }) => {
   try {
     const topicDatas = store
-      .dispatch(getTopicsThunk())
+      .dispatch(getTopicsThunk({
+        filters: getFilters({ request }),
+      }))
       .unwrap()
       .then((resp) => resp.data);
     return { topicDatas };

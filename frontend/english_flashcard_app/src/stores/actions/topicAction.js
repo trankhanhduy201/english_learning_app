@@ -11,24 +11,36 @@ import {
   rejectWithErrorValue 
 } from "./commonAction";
 
+// export const getTopicsThunk = createThunkWithCallback(
+//   "topics/get",
+//   async ({ filters }, { dispatch, rejectWithValue, getState }) => {
+//     const state = getState();
+//     if (state.topics.isFetched) {
+//       return {
+//         status: "success",
+//         data: state.topics.data,
+//       };
+//     }
+//     const response = await topicApi.getTopics(filters);
+//     if (response.status === "error") {
+//       return rejectWithErrorValue(dispatch, rejectWithValue, response);
+//     }
+//     if (response.data) {
+//       dispatch(setTopics(response.data));
+//       dispatch(setIsFetched(true));
+//     }
+//     return response;
+//   },
+// );
+
 export const getTopicsThunk = createThunkWithCallback(
   "topics/get",
-  async (_, { dispatch, rejectWithValue, getState }) => {
-    const state = getState();
-    if (state.topics.isFetched) {
-      return {
-        status: "success",
-        data: state.topics.data,
-      };
-    }
-    const response = await topicApi.getTopics();
+  async ({ filters }, { dispatch, rejectWithValue }) => {
+    const response = await topicApi.getTopics(filters);
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
-    if (response.data) {
-      dispatch(setTopics(response.data));
-      dispatch(setIsFetched(true));
-    }
+    // Write function to fetch next or previous page in advance
     return response;
   },
 );

@@ -1,7 +1,8 @@
 import { callApi } from "./apiService";
 
-export const getTopics = async (options = {}) => {
-  return await callApi(`topics/`, {
+export const getTopics = async (filters, options = {}) => {
+  const queryString = new URLSearchParams(filters).toString();
+  return await callApi(`topics?${queryString}`, {
     method: "GET",
     ...options,
   });

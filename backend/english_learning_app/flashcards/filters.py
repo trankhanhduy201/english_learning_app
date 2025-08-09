@@ -1,6 +1,22 @@
 import django_filters
 from django.db.models import Exists, OuterRef
-from .models import Translation
+from .models import Translation, Vocabulary
+from django.db.models import Q
+
+
+class TopicFilter(django_filters.FilterSet):
+	text_search = django_filters.CharFilter(method='filter_text_search')
+	learning_language = django_filters.CharFilter(field_name='learning_language', lookup_expr='iexact')
+	
+	def filter_text_search(self, queryset, name, value):
+		if not value:
+			return queryset
+		vocab_qs = Vocabulary.objects.filter(topic=OuterRef('pk'), word__icontains=value)
+		return queryset.filter(
+			Q(name__icontains=value) | 
+			Q(descriptions__icontains=value) | 
+			Q(Exists(vocab_qs))
+		)
 
 
 class VocabularyFilter(django_filters.FilterSet):
