@@ -50,7 +50,8 @@ export const createTopic = async ({ request }) => {
 
 export const deleteTopics = async () => {
   try {
-    return await store.dispatch(deleteTopicsThunk()).unwrap();
+    await store.dispatch(deleteTopicsThunk()).unwrap();
+    return redirect(`/topics`);
   } catch (err) {
     return err;
   }

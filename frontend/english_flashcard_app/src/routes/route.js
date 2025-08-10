@@ -66,6 +66,7 @@ const routes = createBrowserRouter(
               path: "/topics",
               element: <PrivatePage pageName="Topics" />,
               loader: topicsLoader.getTopics,
+              shouldRevalidate: defaultShouldRevalidate,
               children: [
                 {
                   path: "new",

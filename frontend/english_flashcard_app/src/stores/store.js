@@ -10,7 +10,7 @@ const store = configureStore({
   reducer: {
     alerts: alertSlice,
     lang: langSlice,
-    topics: topicSlice,
+    // topics: topicSlice,
     auth: authSlice,
     sidebar: sidebarSlice
   },

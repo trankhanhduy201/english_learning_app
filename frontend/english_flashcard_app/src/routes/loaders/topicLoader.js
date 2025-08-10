@@ -16,7 +16,7 @@ export const getTopics = async ({ request }) => {
   try {
     const topicDatas = store
       .dispatch(getTopicsThunk({
-        filters: getFilters({ request }),
+        filters: getFilters({ request })
       }))
       .unwrap()
       .then((resp) => resp.data);

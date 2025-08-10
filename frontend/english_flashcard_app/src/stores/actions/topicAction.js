@@ -1,37 +1,9 @@
 import * as topicApi from "../../services/topicApi";
-import {
-  setTopics,
-  setTopic,
-  clearTopic,
-  setIsFetched,
-} from "../slices/topicSlice";
 import { 
   createThunkWithCallback, 
   dispatchSuccessAlert, 
   rejectWithErrorValue 
 } from "./commonAction";
-
-// export const getTopicsThunk = createThunkWithCallback(
-//   "topics/get",
-//   async ({ filters }, { dispatch, rejectWithValue, getState }) => {
-//     const state = getState();
-//     if (state.topics.isFetched) {
-//       return {
-//         status: "success",
-//         data: state.topics.data,
-//       };
-//     }
-//     const response = await topicApi.getTopics(filters);
-//     if (response.status === "error") {
-//       return rejectWithErrorValue(dispatch, rejectWithValue, response);
-//     }
-//     if (response.data) {
-//       dispatch(setTopics(response.data));
-//       dispatch(setIsFetched(true));
-//     }
-//     return response;
-//   },
-// );
 
 export const getTopicsThunk = createThunkWithCallback(
   "topics/get",
@@ -40,24 +12,13 @@ export const getTopicsThunk = createThunkWithCallback(
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
-    // Write function to fetch next or previous page in advance
     return response;
   },
 );
 
 export const getTopicThunk = createThunkWithCallback(
   "topic/get",
-  async ({ topicId }, { dispatch, rejectWithValue, getState }) => {
-    const state = getState();
-    const topicFilters = state?.topics.data.find(
-      (topic) => parseInt(topic.id) === parseInt(topicId),
-    );
-    if (topicFilters) {
-      return {
-        status: "success",
-        data: topicFilters,
-      };
-    }
+  async ({ topicId }, { dispatch, rejectWithValue }) => {
     const response = await topicApi.getTopicById(topicId);
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
@@ -73,7 +34,6 @@ export const createTopicThunk = createThunkWithCallback(
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
-    dispatch(setTopic(response.data));
     dispatchSuccessAlert(dispatch, "Topic is created successfully");
     return response;
   },
@@ -86,7 +46,6 @@ export const updateTopicThunk = createThunkWithCallback(
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
-    dispatch(setTopic(response.data));
     dispatchSuccessAlert(dispatch, "Topic is updated successfully");
     return response;
   },
@@ -97,7 +56,6 @@ export const deleteTopicThunk = createThunkWithCallback(
   async ({ topicId }, { dispatch }) => {
     const params = { id: topicId };
     await topicApi.deleteTopic(topicId);
-    dispatch(clearTopic(params));
     dispatchSuccessAlert(dispatch, "Topic is deleted successfully");
     return {
       status: "success",
@@ -108,12 +66,8 @@ export const deleteTopicThunk = createThunkWithCallback(
 
 export const deleteTopicsThunk = createThunkWithCallback(
   "topics/delete",
-  async (_, { dispatch, getState }) => {
-    const state = getState();
-    if (state.topics.data.length > 0) {
-      await topicApi.deleteTopics();
-      dispatch(setTopics([]));
-    }
+  async (_, { dispatch }) => {
+    await topicApi.deleteTopics();
     dispatchSuccessAlert(dispatch, "Topics are deleted successfully");
     return {
       status: "success",
