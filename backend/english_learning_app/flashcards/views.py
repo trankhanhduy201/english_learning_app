@@ -18,7 +18,7 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
-    #permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
     filter_backends = [DjangoFilterBackend]
     
     def update(self, request, *args, **kwargs):

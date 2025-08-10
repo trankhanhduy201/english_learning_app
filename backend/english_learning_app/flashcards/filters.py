@@ -5,7 +5,7 @@ from django.db.models import Q
 
 
 class TopicFilter(django_filters.FilterSet):
-	text_search = django_filters.CharFilter(method='filter_text_search')
+	text_search = django_filters.CharFilter(method='filter_text_search', label='Search by text')
 	learning_language = django_filters.CharFilter(field_name='learning_language', lookup_expr='iexact')
 	
 	def filter_text_search(self, queryset, name, value):
@@ -21,7 +21,7 @@ class TopicFilter(django_filters.FilterSet):
 
 class VocabularyFilter(django_filters.FilterSet):
 	topic_id = django_filters.NumberFilter(field_name='topic__id')
-	lang = django_filters.CharFilter(method='filter_has_translation')
+	lang = django_filters.CharFilter(method='filter_has_translation', label='Languge')
 	
 	def filter_has_translation(self, queryset, name, value):
 		lang = self.request.GET.get('lang', 'en')
