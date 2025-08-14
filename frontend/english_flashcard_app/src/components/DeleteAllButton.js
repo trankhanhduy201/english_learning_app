@@ -2,7 +2,6 @@ import { memo, useEffect } from "react";
 import { useFetcher } from "react-router-dom";
 import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from "./ConfirmModal";
-import { useCallback } from "react";
 
 const DeleteAllButton = memo(
   ({ action, method = "delete", formName = "", revalidate = true, additionalCallback = null }) => {

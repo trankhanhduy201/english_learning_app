@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { initialState, setAuth } from "../stores/slices/authSlice";
+import { clearUser } from "../stores/slices/userSlice";
 import { Dropdown, Nav } from "react-bootstrap";
 import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from "./ConfirmModal";
@@ -18,7 +18,7 @@ const Header = () => {
       return new Promise((resolve) => {
         setTimeout(() => {
           cookies.clearAuthTokens();
-          dispatch(setAuth(initialState));
+          dispatch(clearUser());
           navigate("/login");
           return resolve();
         }, 3000);

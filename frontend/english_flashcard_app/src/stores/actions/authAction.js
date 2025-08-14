@@ -1,20 +1,34 @@
 import { createThunkWithCallback, rejectWithErrorValue } from "./commonAction";
-import { setAuth } from "../slices/authSlice";
 import { setAlert } from "../slices/alertSlice";
-import * as authApi from "../../services/authApi";
-import * as alertConfig from "../../configs/alertConfig";
+import { getToken as getTokenApi } from "../../services/authApi";
+import { SUCCESS_TYPE } from "../../configs/alertConfig";
+import { setAuthTokens as setAuthTokensCookie } from "../../commons/cookies";
+import { getUserInfo } from "../../commons/token";
+import { setUser as setUserLocalStorage } from "../../commons/localStorage";
 
 export const loginThunk = createThunkWithCallback(
   "auth/login",
   async ({ username, password }, { dispatch, rejectWithValue }) => {
-    const response = await authApi.getToken(username, password);
+    const response = await getTokenApi(username, password);
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
-    dispatch(setAuth({ userInfo: { username } }));
+    
+    const userInfo = getUserInfo(response.data.access);
+    if (!userInfo) {
+      return rejectWithErrorValue(
+        dispatch,
+        rejectWithValue,
+        response,
+        "Invalid user info",
+      );
+    }
+    
+    setAuthTokensCookie(response.data.access, response.data.refresh);
+    setUserLocalStorage(userInfo);
     dispatch(
       setAlert({
-        type: alertConfig.SUCCESS_TYPE,
+        type: SUCCESS_TYPE,
         message: `Hi ${username}, wellcome back!`,
       }),
     );

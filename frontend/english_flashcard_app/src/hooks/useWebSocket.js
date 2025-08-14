@@ -4,6 +4,11 @@ export default function useWebSocket(url, onMessage) {
   const socketRef = useRef(null);
 
   useEffect(() => {
+    if (!url) {
+      console.warn("WebSocket URL is not provided");
+      return;
+    }
+    
     const ws = new WebSocket(url);
     socketRef.current = ws;
 

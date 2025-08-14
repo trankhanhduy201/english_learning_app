@@ -15,8 +15,8 @@ import DeleteAllButton from "../../DeleteAllButton";
 import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import useWebSocket from "../../../hooks/useWebSocket";
-import { useSelector } from 'react-redux';
 import { WS_BASE_URL } from "../../../configs/apiConfig";
+import { getUser as getUserLocalStorage } from "../../../commons/localStorage";
 
 const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   const curSearchText = useRef("");
@@ -130,10 +130,9 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
 
 const ListVocab = memo(({ vocabDatas, topicId }) => {
   const [vocabs, setVocabs] = useState([]);
-  const userInfo = useSelector(state => state.auth.userInfo);
-  const userId = 1
-
-  useWebSocket(`${WS_BASE_URL}/ws/notify/${userId}/`, (message) => {
+  const userInfo = getUserLocalStorage();
+  const wsUrl = userInfo.id ? `${WS_BASE_URL}/ws/notify/${userInfo.id}/` : null;
+  useWebSocket(wsUrl, (message) => {
     console.log("Message from server:", message);
     if (message.data) {
       const audioDatas = JSON.parse(message.data);

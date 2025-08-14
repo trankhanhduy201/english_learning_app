@@ -15,6 +15,9 @@ from rest_framework import status
 from flashcards.task_utils import generate_vocab_audio_async
 import re
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
@@ -82,6 +85,18 @@ class CustomDjangoPagination(PageNumberPagination):
                 'has_previous': self.page.has_previous()
             },
             'results': data
+        })
+
+
+class UserInfoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
         })
 
 
@@ -209,3 +224,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
     # This can combine with OtherFilter
     # filter_backends = [filters.SearchFilter]
     # search_fields = ['word', 'translations__translation']
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

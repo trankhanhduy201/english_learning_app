@@ -13,3 +13,12 @@ export const checkTokenExpired = (token, adjustExp) => {
   const expiresAt = getTokenExp(token, adjustExp);
   return expiresAt && Date.now() >= expiresAt;
 }
+
+export const getTokenPayload = (token) => {
+  try {
+    return jwtDecode(token);
+  } catch (error) {
+    return null;
+  }
+}
+

@@ -1,10 +1,10 @@
 from django.db import IntegrityError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
 from flashcards.models import LanguageEnums
 from flashcards.queryset_utils import get_translation_prefetch_related
 from .models import Topic, Vocabulary, Translation
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class InstancePrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
@@ -176,3 +176,16 @@ class VocabularyImportSerializer(serializers.Serializer):
 	text_data = serializers.CharField()
 	learning_lang = serializers.ChoiceField(choices=LanguageEnums.values)
 	translating_lang = serializers.ChoiceField(choices=LanguageEnums.values)
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['username'] = user.username
+        token['email'] = user.email
+        token['is_staff'] = user.is_staff
+
+        return token

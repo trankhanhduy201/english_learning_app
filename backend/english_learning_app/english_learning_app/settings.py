@@ -41,12 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    'debug_toolbar',
     'rest_framework',
     # 'rest_framework_simplejwt',
     'django_filters',
     'flashcards.apps.FlashcardsConfig',
-    'django_q'
+    'django_q',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [

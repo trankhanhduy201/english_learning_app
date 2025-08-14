@@ -1,8 +1,6 @@
 import { redirect } from "react-router-dom";
 import { loginThunk } from "../../stores/actions/authAction";
 import store from "../../stores/store";
-import * as cookies from "../../commons/cookies";
-import { setUserInfo } from "../../stores/slices/authSlice";
 
 export const login = async ({ request, param }) => {
   const formData = await request.formData();
@@ -10,8 +8,6 @@ export const login = async ({ request, param }) => {
 
   try {
     const resp = await store.dispatch(loginThunk(data)).unwrap();
-    cookies.setAuthTokens(resp.data.access, resp.data.refresh);
-    store.dispatch(setUserInfo(data.username));
     return redirect(`/dashboard`);
   } catch (err) {
     return err;

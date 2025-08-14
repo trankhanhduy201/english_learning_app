@@ -43,3 +43,21 @@ export const localVerifyToken = async (token, refreshToken) => {
   const accessToken = refreshNewToken(refreshToken);
   return !!accessToken;
 };
+
+export const getUserInfo = (token) => {
+  if (!token) {
+    return null;
+  }
+
+  const payload = jwtUtils.getTokenPayload(token);
+  console.log("getUserInfo", payload);
+  if (!payload) {
+    return null;
+  }
+
+  return {
+    id: payload.user_id,
+    username: payload.username,
+    email: payload.email,
+  };
+};
