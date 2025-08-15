@@ -1,7 +1,5 @@
-import { createThunkWithCallback, rejectWithErrorValue } from "./commonAction";
-import { setAlert } from "../slices/alertSlice";
+import { createThunkWithCallback, rejectWithErrorValue, dispatchSuccessAlert } from "./commonAction";
 import { getToken as getTokenApi } from "../../services/authApi";
-import { SUCCESS_TYPE } from "../../configs/alertConfig";
 import { setAuthTokens as setAuthTokensCookie } from "../../commons/cookies";
 import { getUserInfo } from "../../commons/token";
 import { setUser as setUserLocalStorage } from "../../commons/localStorage";
@@ -15,6 +13,7 @@ export const loginThunk = createThunkWithCallback(
     }
     
     const userInfo = getUserInfo(response.data.access);
+    console.log("getUserInfo", userInfo);
     if (!userInfo) {
       return rejectWithErrorValue(
         dispatch,
@@ -26,12 +25,7 @@ export const loginThunk = createThunkWithCallback(
     
     setAuthTokensCookie(response.data.access, response.data.refresh);
     setUserLocalStorage(userInfo);
-    dispatch(
-      setAlert({
-        type: SUCCESS_TYPE,
-        message: `Hi ${username}, wellcome back!`,
-      }),
-    );
+    dispatchSuccessAlert(dispatch, `Hi ${userInfo?.full_name}, wellcome back!`);
     return response;
   },
 );

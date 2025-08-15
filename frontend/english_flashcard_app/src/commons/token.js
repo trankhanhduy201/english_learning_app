@@ -50,7 +50,6 @@ export const getUserInfo = (token) => {
   }
 
   const payload = jwtUtils.getTokenPayload(token);
-  console.log("getUserInfo", payload);
   if (!payload) {
     return null;
   }
@@ -59,5 +58,6 @@ export const getUserInfo = (token) => {
     id: payload.user_id,
     username: payload.username,
     email: payload.email,
+    full_name: payload.full_name
   };
 };
