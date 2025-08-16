@@ -27,7 +27,9 @@ const Layout = () => {
           <div className="d-flex flex-grow-1">
             <Sidebar />
             <main className="flex-grow-1 p-3 bg-light">
-              <Alerts />
+              <div className="position-relative">
+                <Alerts />
+              </div>
               <Outlet />
             </main>
           </div>

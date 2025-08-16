@@ -66,7 +66,7 @@ class BulkModelMixin(BulkDestroyModelMixin):
 
 
 class CustomDjangoPagination(PageNumberPagination):
-    page_size = 10  # Number of items per page
+    page_size = 2  # Number of items per page
     page_size_query_param = 'page_size'  # Allow clients to set page size
     max_page_size = 100  # Maximum page size allowed
 

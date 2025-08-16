@@ -24,18 +24,6 @@ const deleteTopic = async (topicId, redirectTo = null) => {
   }
 };
 
-export const editTopic = async ({ request, params }) => {
-  const formData = await request.formData();
-  const updateData = Object.fromEntries(formData);
-
-  if (params.action === "delete") {
-    const url = new URL(request.url);
-    const redirectTo = url.searchParams.get("redirectTo");
-    return deleteTopic(params.topicId, redirectTo);
-  }
-  return await updateTopic(params.topicId, updateData);
-};
-
 export const createTopic = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -46,6 +34,18 @@ export const createTopic = async ({ request }) => {
   } catch (err) {
     return err;
   }
+};
+
+export const editTopic = async ({ request, params }) => {
+  const formData = await request.formData();
+  const updateData = Object.fromEntries(formData);
+
+  if (params.action === "delete") {
+    const url = new URL(request.url);
+    const redirectTo = url.searchParams.get("redirectTo");
+    return deleteTopic(params.topicId, redirectTo);
+  }
+  return await updateTopic(params.topicId, updateData);
 };
 
 export const deleteTopics = async () => {

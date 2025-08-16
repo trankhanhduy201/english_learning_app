@@ -1,23 +1,29 @@
 import { Suspense, useCallback, useEffect } from "react";
 import ListTopic from "../components/pages/topics/ListTopic";
 import {
-  Link,
   useLoaderData,
   Await,
   Outlet,
   useFetcher,
 } from "react-router-dom";
 import LoadingOverlay from "../components/LoadingOverlay";
-import DeleteAllButton from "../components/DeleteAllButton";
 import Pagination from "../components/Pagination";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import TopicFormSearch from "../components/pages/topics/FormSearch";
+import TopicHeader from "../components/pages/topics/Header";
 
 const Topics = () => {
   const deleteTopicFetcher = useFetcher();
   const [ searchParams ] = useSearchParams();
   const { topicDatas } = useLoaderData();
   const navigate = useNavigate();
+
+  const getPageLink = useCallback((page) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', page);
+    return `/topics?${params.toString()}`;
+  }, [searchParams]);
 
   const removeTopic = useCallback(async (topicId) => {
     const params = new FormData();
@@ -26,37 +32,26 @@ const Topics = () => {
       action: `/topic/${topicId}/delete`,
       method: "delete",
     });
-  });
+  }, [deleteTopicFetcher]);
 
   useEffect(() => {
     if (deleteTopicFetcher.state === 'idle' && deleteTopicFetcher.data?.status === 'success') {
       const tableTr = document.querySelectorAll('table#ListTopicsTable tbody tr');
       const page = parseInt(searchParams.get('page')) || 1;
+      let newPage = 1;
       if (tableTr.length > 1) {
-        navigate(`/topics?page=${page}`);
-        return;
+        newPage = page;
+      } else if (page > 1) {
+        newPage = page - 1;
       }
-      if (page > 1) {
-        navigate(`/topics?page=${page - 1}`);
-        return;
-      }
-      navigate('/topics');
+      navigate(getPageLink(newPage));
     }
   }, [deleteTopicFetcher.state, deleteTopicFetcher.data]);
 
   return (
     <>
-      <h2 className="text-start">Topics</h2>
-      <hr />
-      <div className="d-flex justify-content-end mb-2">
-        <Link className="btn btn-secondary me-2" to={"/topics/new"}>
-          <i className="bi bi-plus-circle"></i> New topic
-        </Link>
-        <DeleteAllButton
-          action={`/topics/delete`}
-          formName={"deleting_all_topic"}
-        />
-      </div>
+      <TopicHeader />
+      <TopicFormSearch />
       <Suspense fallback={<LoadingOverlay />}>
         <Await resolve={topicDatas}>
           {(topics) => 
@@ -70,9 +65,7 @@ const Topics = () => {
                   current_page={topics.paginations.current_page}
                   total_pages={topics.paginations.total_pages}
                   total_items={topics.paginations.total_items}
-                  onPageChange={(page) => {
-                    navigate(`/topics?page=${page}`);
-                  }}
+                  onPageChange={(page) => navigate(getPageLink(page))}
                 />
               )}
             </>

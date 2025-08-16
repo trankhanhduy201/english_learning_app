@@ -50,7 +50,7 @@ const Pagination = ({ current_page, total_pages, onPageChange }) => {
               onClick={handlePrevious}
               disabled={current_page == 1}
             >
-              «
+              « Pre
             </button>
           </li>
           {renderPageNumbers()}
@@ -64,7 +64,7 @@ const Pagination = ({ current_page, total_pages, onPageChange }) => {
               onClick={handleNext}
               disabled={current_page == total_pages}
             >
-              »
+              Next »
             </button>
           </li>
         </ul>

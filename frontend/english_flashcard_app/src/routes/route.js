@@ -21,6 +21,32 @@ const defaultShouldRevalidate = ({ formData, actionResult }) => {
   return !isShouldNotRevalidate(formData, actionResult);
 };
 
+const topicsShouldRevalidate = ({
+  formData,
+  actionResult,
+  currentUrl,
+  nextUrl,
+}) => {
+  if (formData) {
+    if (isShouldNotRevalidate(formData, actionResult)) {
+      return false;
+    }
+  }
+  if (currentUrl.pathname !== nextUrl.pathname) {
+    const includeExceptionPaths = [
+      "/topics",
+      "/topics/new",
+    ].includes(
+      currentUrl.pathname, 
+      nextUrl.pathname
+    );
+    if (includeExceptionPaths) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const topicShouldRevalidate = ({
   formData,
   actionResult,
@@ -66,7 +92,7 @@ const routes = createBrowserRouter(
               path: "/topics",
               element: <PrivatePage pageName="Topics" />,
               loader: topicsLoader.getTopics,
-              shouldRevalidate: defaultShouldRevalidate,
+              shouldRevalidate: topicsShouldRevalidate,
               children: [
                 {
                   path: "new",

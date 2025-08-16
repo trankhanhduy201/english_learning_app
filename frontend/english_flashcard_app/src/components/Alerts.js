@@ -12,16 +12,22 @@ const Alerts = () => {
 
   return (
     <>
-      {alerts.map((alert, index) => (
-        <AutoDismissAlert
-          key={index}
-          id={alert.idx}
-          message={alert.message}
-          type={alert.type}
-          duration={2000}
-          onClose={onClose}
-        />
-      ))}
+      <div className="position-absolute top-0 end-0 w-100">
+        {alerts.map((alert, index) => (
+          <>
+            <div className="col-12 col-md-6 col-lg-4 ms-auto">
+              <AutoDismissAlert
+                key={index}
+                id={alert.idx}
+                message={alert.message}
+                type={alert.type}
+                duration={2000}
+                onClose={onClose}
+              />
+            </div>
+          </>
+        ))}
+      </div>
     </>
   );
 };

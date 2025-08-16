@@ -1,12 +1,12 @@
 import { DEFAULT_LANG } from "../configs/langConfig";
 
 export const getValue = (key, defaultValue) => {
-  try {
-    const value = localStorage.getItem(key);
+  const value = localStorage.getItem(key);
+  try {    
     return value ? JSON.parse(value) : defaultValue;
   } catch (err) {
-    console.error(`Error reading ${key} from localStorage`, err);
-    return defaultValue;
+    console.warn(`Error reading ${key} from localStorage`, err);
+    return value ?? defaultValue;
   }
 };
 

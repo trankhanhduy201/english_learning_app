@@ -25,8 +25,9 @@ const AutoDismissAlert = ({
 
   return (
     <div
-      className={`alert alert-${type} alert-dismissible text-start mb-4 fade-element ${isVisible ? "visible" : "hidden"}`}
+      className={`alert alert-${type} alert-dismissible text-start mb-2 fade-element ${isVisible ? "visible" : "hidden"}`}
       role="alert"
+      style={{ zIndex: 999 }}
     >
       {message}
       <button
