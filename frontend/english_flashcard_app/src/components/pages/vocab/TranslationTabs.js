@@ -264,7 +264,7 @@ const TranslationTabs = ({ data }) => {
         </div>
         <div className="mb-3">
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-sm-6 mb-3 mb-sm-0">
               <label htmlFor="languageSelect" className="form-label">
                 Select Language
               </label>
@@ -279,7 +279,7 @@ const TranslationTabs = ({ data }) => {
                 <option value="vn">Vietnamese (Tiếng Việt)</option>
               </select>
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="type" className="form-label">
                 Type
               </label>
@@ -307,7 +307,7 @@ const TranslationTabs = ({ data }) => {
         <div className="mb-3 text-end">
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary w-sm-100"
             onClick={() => handleAddLang()}
           >
             <i className="bi bi-plus-circle"></i> Add

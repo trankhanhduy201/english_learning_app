@@ -19,7 +19,7 @@ const Dropdown = ({
       {...props}
     >
       {options.map((item) => (
-        <option key={item.key} value={item.key}>
+        <option key={name + item.key} value={item.key}>
           {item.text}
         </option>
       ))}

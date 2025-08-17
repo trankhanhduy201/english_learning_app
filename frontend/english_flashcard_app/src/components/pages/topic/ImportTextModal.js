@@ -61,20 +61,22 @@ const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
                   <FieldErrors errors={fetcher.data.errors.text_data} />
                 )}
               </div>
-              <div className="mt-3 text-end">
+              <div className="d-flex justify-content-start mt-3 text-end">
                 <button
                   type="button"
-                  className="btn btn-secondary me-2"
+                  className="btn btn-secondary w-sm-50 me-2"
                   onClick={onClose}
                   disabled={fetcher.state === "submitting"}
                 >
+                  <i className="bi bi-cross"></i>{" "}
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className="btn btn-primary w-sm-50"
                   disabled={fetcher.state === "submitting"}
                 >
+                  <i className="bi bi-upload"></i>{" "}
                   {fetcher.state === "submitting" ? "Importing..." : "Import"}
                 </button>
               </div>

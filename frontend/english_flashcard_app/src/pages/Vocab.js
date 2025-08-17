@@ -80,22 +80,24 @@ const Vocab = memo(() => {
               </Suspense>
             </div>
           </div>
-          <div className="d-flex justify-content-start">
-            <Link to={`/topic/${topicId}`} className="btn btn-secondary me-2">
-              <i className="bi bi-arrow-left"></i> Topic info
-            </Link>
-            <button
-              type="submit"
-              className="btn btn-primary me-2"
-              disabled={isDisableButton()}
-            >
-              <i className="bi bi-pencil-square text-white"></i>{" "}
-              {vocabFetcher.state === "submitting" ? "Saving..." : "Save"}
-            </button>
+          <div className="d-sm-flex justify-content-start">
+            <div className="d-flex justify-content-start">
+              <Link to={`/topic/${topicId}`} className="btn btn-secondary me-2 w-sm-50">
+                <i className="bi bi-arrow-left"></i> Topic info
+              </Link>
+              <button
+                type="submit"
+                className={`btn btn-primary ${!isNew() ? 'me-sm-2' : ''} w-sm-50`}
+                disabled={isDisableButton()}
+              >
+                <i className="bi bi-pencil-square text-white"></i>{" "}
+                {vocabFetcher.state === "submitting" ? "Saving..." : "Save"}
+              </button>
+            </div>
             {!isNew() && (
               <button
                 type="button"
-                className="btn btn-danger"
+                className="btn btn-danger w-sm-100 mt-sm-0 mt-2"
                 disabled={isDisableButton()}
                 onClick={handleDelVocab}
               >

@@ -22,6 +22,9 @@ export const getRandomIntWithExceptions = (min, max, exceptions) => {
   const randomIndex = Math.floor(Math.random() * possibleNumbers.length);
   return possibleNumbers[randomIndex];
 };
-
-export const getNextMaxId = (items, field) =>
-  Math.max(...items.map((v) => v[field] ?? 0)) + 1;
+export const getNextMaxId = (items, field) => {
+  if (!items || items.length === 0) {
+    return 1; // Return 1 if the array is empty or undefined
+  }
+  return Math.max(...items.map(v => v[field])) + 1;
+}

@@ -97,19 +97,22 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
             to={`/topic/${topicId}/vocab/export`}
             className="btn btn-secondary me-2"
           >
-            <i className="bi bi-download"></i> Export
+            <i className="bi bi-download"></i>
+            <span className="btn-text --d-sm-none"> Export</span>
           </Link>
           <button
             onClick={() => setShowImportTextModal(true)}
             className="btn btn-secondary me-2"
           >
-            <i className="bi bi-upload"></i> Import
+            <i className="bi bi-upload"></i>
+            <span className="btn-text --d-sm-none"> Import</span>
           </button>
           <Link
             to={`/topic/${topicId}/vocab/new`}
             className="btn btn-secondary me-2"
           >
-            <i className="bi bi-plus-circle"></i> New
+            <i className="bi bi-plus-circle"></i>
+            <span className="btn-text --d-sm-none"> New</span>
           </Link>
           <DeleteAllButton
             action={`/topic/${topicId}/vocab/delete`}

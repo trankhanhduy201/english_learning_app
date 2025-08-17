@@ -91,21 +91,25 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
         )}
       </div>
       <div className="d-flex justify-content-end mt-2">
-        <Link to={`/topics`} className="btn btn-secondary me-2">
-          <i className="bi bi-arrow-left"></i> List topic
+        <Link to={`/topics`} className={`btn btn-secondary me-2 ${isNew ? "w-sm-50" : ""}`}>
+          <i className="bi bi-arrow-left"></i>
+          <span className={`btn-text ${!isNew ? "--d-sm-none" : ""}`}> List topic</span>
         </Link>
         {!isNew && (
           <Link to={`/topic/${topicId}/learn`} className="btn btn-success me-2">
-            <i className="bi bi-clipboard-pulse text-white"></i> Learn
+            <i className="bi bi-clipboard-pulse text-white"></i>
+            <span className="btn-text --d-sm-none"> Learn</span>
           </Link>
         )}
         <button
           type="submit"
-          className="btn btn-primary me-2"
+          className={`btn btn-primary ${!isNew ? "me-2" : "w-sm-50"}`}
           disabled={isDisableButton()}
         >
           <i className="bi bi-pencil-square text-white"></i>{" "}
-          {editTopicFetcher.state === "submitting" ? "Saving..." : "Save"}
+          <span className={`btn-text ${!isNew ? "--d-sm-none" : ""}`}>
+            {editTopicFetcher.state === "submitting" ? "Saving..." : "Save"}
+          </span>
         </button>
         {!isNew && (
           <button
@@ -115,7 +119,9 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
             disabled={isDisableButton()}
           >
             <i className="bi bi-trash text-white"></i>{" "}
-            {delTopicFetcher.state === "submitting" ? "Deleting..." : "Delete"}
+            <span className="btn-text --d-sm-none">
+              {delTopicFetcher.state === "submitting" ? "Deleting..." : "Delete"}
+            </span>
           </button>
         )}
       </div>

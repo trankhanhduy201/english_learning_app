@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 // import { verifyTokenMiddleware } from "./middlewares/tokenMiddleware";
 import alertSlice from "./slices/alertSlice";
 import langSlice from "./slices/langSlice";
-import userSlice from "./slices/userSlice";
 import sidebarSlice from "./slices/sidebarSlice";
 
 const store = configureStore({

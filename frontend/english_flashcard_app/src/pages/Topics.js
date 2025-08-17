@@ -36,7 +36,7 @@ const Topics = () => {
 
   useEffect(() => {
     if (deleteTopicFetcher.state === 'idle' && deleteTopicFetcher.data?.status === 'success') {
-      const tableTr = document.querySelectorAll('table#ListTopicsTable tbody tr');
+      const tableTr = document.querySelectorAll('table#topics__list-item tbody tr');
       const page = parseInt(searchParams.get('page')) || 1;
       let newPage = 1;
       if (tableTr.length > 1) {

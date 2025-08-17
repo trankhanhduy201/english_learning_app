@@ -7,9 +7,10 @@ const Header = memo(() => {
     <>
       <div className="d-flex align-items-center">
         <h2 className="text-start me-auto">Topics</h2>
-        <div className="d-flex justify-content-end align-items-center">
-          <Link className="btn btn-secondary me-2" to={"/topics/new"}>
-            <i className="bi bi-plus-circle"></i> New topic
+        <div id="topic__header-buttons" className="d-flex justify-content-end align-items-center">
+          <Link className="btn btn-primary me-2" to={"/topics/new"}>
+            <i className="bi bi-plus-circle"></i>
+            <span className="btn-text --d-sm-none"> New topic</span>
           </Link>
           <DeleteAllButton
             action={`/topics/delete`}

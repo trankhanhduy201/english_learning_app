@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 
 const AutoDismissAlert = ({
-  id,
+  idx,
   message,
   type = "success",
   duration = 2000,
   onClose,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const handleCloseAlert = (id) => {
+  const handleCloseAlert = (idx) => {
     setIsVisible(false);
     setTimeout(() => {
-      onClose(id);
+      onClose(idx);
     }, 200);
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      handleCloseAlert(id);
+      handleCloseAlert(idx);
     }, duration);
 
     return () => clearTimeout(timer);
@@ -34,7 +34,7 @@ const AutoDismissAlert = ({
         type="button"
         className="btn-close float-end"
         aria-label="Close"
-        onClick={() => handleCloseAlert(id)}
+        onClick={() => handleCloseAlert(idx)}
       ></button>
     </div>
   );

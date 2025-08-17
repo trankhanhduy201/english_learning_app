@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Topics = memo(({ topics, removeTopic }) => {
   return (
     <div className="table-responsive">
-      <table id="ListTopicsTable" className="table table-striped table-bordered">
+      <table id="topics__list-item" className="table table-striped table-bordered">
         <thead>
           <tr>
             <th>#</th>

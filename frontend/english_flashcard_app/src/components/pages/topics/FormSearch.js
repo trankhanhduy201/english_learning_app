@@ -10,9 +10,9 @@ const FormSearch = memo(() => {
       <div className="card-body">
         <Form className="form-inline" method="get" action="/topics">
           <div className="row">
-            <div className="col-md-10">
+            <div className="col-md-10 col-sm-9">
               <div className="row">
-                <div className="col-md-6 mb-2 mb-md-0">
+                <div className="col-sm-6 mb-2 mb-sm-0">
                   <input
                     type="text"
                     name="text_search"
@@ -21,7 +21,7 @@ const FormSearch = memo(() => {
                     defaultValue={searchParams.get("text_search") || ""}
                   />
                 </div>
-                <div className="col-md-6 mb-2 mb-md-0">
+                <div className="col-sm-6 mb-2 mb-sm-0">
                   <select
                     name="learning_language"
                     className="form-select"
@@ -35,9 +35,9 @@ const FormSearch = memo(() => {
                 </div>
               </div>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-sm-3">
               <button type="submit" className="btn btn-primary w-100">
-                Search
+                <i className="bi bi-search text-white"></i> Search
               </button>
             </div>
           </div>

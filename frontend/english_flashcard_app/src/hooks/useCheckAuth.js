@@ -8,10 +8,19 @@ const useCheckAuth = ({ hasCheckExpired }) => {
     isExpired: false,
   });
 
-  const setIsLogged = (isLogged) =>
-    setDataAuth((state) => ({ ...state, isLogged: isLogged }));
-  const setIsExpired = (isExpired) =>
-    setDataAuth((state) => ({ ...state, isExpired: isExpired }));
+  const setIsLogged = isLogged =>
+    setDataAuth(state => 
+      state.isLogged != isLogged 
+        ? { ...state, isLogged: isLogged } 
+        : state
+    );
+
+  const setIsExpired = isExpired =>
+    setDataAuth(state => 
+      state.isExpired != isExpired 
+        ? { ...state, isExpired: isExpired } 
+        : state
+    );
 
   useEffect(() => {
     const verify = async () => {

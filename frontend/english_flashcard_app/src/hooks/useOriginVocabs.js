@@ -14,6 +14,8 @@ const getOriginDatas = (vocabs) => {
         type: v.type,
         language: v.language,
         audio: vocab.audio,
+        topic_id: vocab.topic,
+        vocab_id: vocab.id,
         translations: [{ translation: v.translation }],
       }));
 
@@ -23,6 +25,8 @@ const getOriginDatas = (vocabs) => {
         type: v.type,
         language: v.language,
         audio: vocab.audio,
+        topic_id: vocab.topic,
+        vocab_id: vocab.id,
         translations: [{ translation: vocab.word }],
       }));
 

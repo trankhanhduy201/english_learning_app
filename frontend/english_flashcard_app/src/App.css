@@ -51,11 +51,21 @@
   opacity: 1;
 }
 
-.flashcard {
-  flex-grow: 1;
-  text-align: center;
-  height: 250px;
-  cursor: pointer;
+#flashcard {
+  .card {
+    text-align: center;
+    height: 330px;
+    cursor: pointer;
+  }
+
+  .btn.btn-flashcard {
+    background-color: transparent;
+    border-color: transparent
+  }
+
+  .btn.btn-flashcard:disabled {    
+    opacity: 0.1;
+  }
 }
 
 .sidebar {
@@ -84,6 +94,14 @@
   padding-bottom: 0.1rem;
 }
 
+#header__search-bar {
+  width: 200px
+}
+
+.translation-content {
+  font-size: 1.1rem!important;
+}
+
 @media (max-width: 1199.98px) {
   .sidebar {
     position: absolute;
@@ -102,4 +120,24 @@
 
 .dropdown-toggle::after {
   display: none !important;
+}
+
+@media (max-width: 425px) {
+  .btn {
+    .btn-text.--d-sm-none {
+      display: none!important
+    }
+  }
+
+  .w-sm-100 {
+    width: 100%!important
+  }
+
+  .w-sm-50 {
+    width: 50%!important
+  }
+
+  #header__search-bar {
+    width: 160px
+  }
 }
