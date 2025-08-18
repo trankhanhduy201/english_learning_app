@@ -5,6 +5,7 @@ import {
   useState,
   useTransition,
   useRef,
+  startTransition,
 } from "react";
 import { Link, useFetcher } from "react-router-dom";
 import ImportTextModal from "../topic/ImportTextModal";
@@ -29,14 +30,20 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
 
   const filterVocabs = (searchText) => {
     transition(() => {
-      const filteredVocabs = vocabDatas.filter((vocab) =>
-        vocab.word.toLowerCase().includes(searchText),
-      );
-      transition(() => {
-        setVocabs(filteredVocabs);
+      setVocabs(oldState => {
+        if (!searchText) {
+          return [...vocabDatas];
+        }
+        return vocabDatas.filter((vocab) =>
+          vocab.word.toLowerCase().includes(searchText),
+        );
       });
     });
   };
+
+  useEffect(() => {
+    console.log(vocabs);
+  }, [vocabs]);
 
   useEffect(() => {
     filterVocabs(curSearchText.current);
