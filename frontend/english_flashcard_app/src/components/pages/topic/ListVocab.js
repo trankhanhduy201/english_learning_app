@@ -71,7 +71,9 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   const onSearchVocab = useCallback(
     debounce((searchText) => {
       curSearchText.current = searchText.toLowerCase();
-      filterVocabs(searchText);
+      startTransition(() => {
+        filterVocabs(searchText);
+      });
     }, 300),
     [vocabDatas],
   );
