@@ -1,30 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { clearUser } from "../stores/slices/userSlice";
 import { Dropdown, Nav } from "react-bootstrap";
-import useConfirmModal from "../hooks/useConfirmModal";
-import ConfirmModal from "./ConfirmModal";
-import * as cookies from "../commons/cookies";
 import { toggleSidebar } from "../stores/slices/sidebarSlice";
 import { setLangThunk } from "../stores/actions/langAction";
 import { LANGUAGES } from "../configs/langConfig";
+import { memo } from "react";
+import LogoutItem from "./LogoutItem";
 
-const Header = () => {
+const Header = memo(() => {
   const globalLang = useSelector((state) => state.lang);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const confirmLogoutModal = useConfirmModal({
-    submitActionCallback: async () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          cookies.clearAuthTokens();
-          dispatch(clearUser());
-          navigate("/login");
-          return resolve();
-        }, 3000);
-      });
-    },
-  });
 
   const onChangeGlobalLang = (lang) => {
     dispatch(setLangThunk(lang));
@@ -89,26 +75,17 @@ const Header = () => {
               <Dropdown.Item href="/profile">Profile</Dropdown.Item>
               <Dropdown.Item href="/settings">Settings</Dropdown.Item>
               <Dropdown.Divider />
-              <Dropdown.Item
-                onClick={() => confirmLogoutModal.showConfirmModal()}
-              >
-                Logout
-              </Dropdown.Item>
+              <LogoutItem>
+                <Dropdown.Item>
+                  Logout
+                </Dropdown.Item>
+              </LogoutItem>
             </Dropdown.Menu>
           </Dropdown>
-          {confirmLogoutModal.isShowModal && (
-            <ConfirmModal
-              message="Do you want to log out?"
-              isShow={confirmLogoutModal.isShowModal}
-              isSubmmiting={confirmLogoutModal.isSubmmiting}
-              onClose={confirmLogoutModal.onClickNo}
-              onSubmit={confirmLogoutModal.onClickYes}
-            />
-          )}
         </div>
       </div>
     </header>
   );
-};
+});
 
 export default Header;

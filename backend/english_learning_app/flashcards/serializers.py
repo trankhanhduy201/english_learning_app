@@ -7,6 +7,11 @@ from .models import Topic, Vocabulary, Translation
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
+# PrimaryKeyRelatedField
+# SlugRelatedField
+# StringRelatedField
+# HyperlinkedRelatedField
+# SerializerMethodField
 class InstancePrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     def to_internal_value(self, data):
         if isinstance(data, self.queryset.model):

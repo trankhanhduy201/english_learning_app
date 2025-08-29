@@ -24,6 +24,13 @@ export const refreshToken = async (refresh, options = {}) => {
   });
 };
 
+export const revokeTokens = async (options = {}) => {
+  return await callApi("token/revoke", {
+    method: "POST",
+    ...options,
+  });
+};
+
 export const getUserInfo = async (token, options = {}) => {
   return await callApi("user", {
     method: "GET",

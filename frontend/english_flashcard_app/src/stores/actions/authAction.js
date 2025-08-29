@@ -1,8 +1,14 @@
 import { createThunkWithCallback, rejectWithErrorValue, dispatchSuccessAlert } from "./commonAction";
 import { getToken as getTokenApi } from "../../services/authApi";
-import { setAuthTokens as setAuthTokensCookie } from "../../commons/cookies";
+import { 
+  setAuthTokens as setAuthTokensCookie,
+  clearAuthTokens as clearAuthTokensCookie
+} from "../../commons/cookies";
 import { getUserInfo } from "../../commons/token";
-import { setUser as setUserLocalStorage } from "../../commons/localStorage";
+import { 
+  setUser as setUserLocalStorage,
+} from "../../commons/localStorage";
+import { revokeTokensThunk } from "./tokenAction";
 
 export const loginThunk = createThunkWithCallback(
   "auth/login",
@@ -13,7 +19,6 @@ export const loginThunk = createThunkWithCallback(
     }
     
     const userInfo = getUserInfo(response.data.access);
-    console.log("getUserInfo", userInfo);
     if (!userInfo) {
       return rejectWithErrorValue(
         dispatch,
@@ -27,5 +32,23 @@ export const loginThunk = createThunkWithCallback(
     setUserLocalStorage(userInfo);
     dispatchSuccessAlert(dispatch, `Hi ${userInfo?.full_name}, wellcome back!`);
     return response;
+  },
+);
+
+export const logoutThunk = createThunkWithCallback(
+  "auth/logout",
+  async ({ revokeTokens }, { dispatch, rejectWithValue }) => {
+    if (revokeTokens) {
+      const response = await dispatch(revokeTokensThunk()).unwrap();
+      if (response.status === "error") {
+        return rejectWithErrorValue(dispatch, rejectWithValue, response);
+      }
+    }
+    
+    clearAuthTokensCookie();
+    setUserLocalStorage({});
+    return {
+      status: 'success',
+    };
   },
 );

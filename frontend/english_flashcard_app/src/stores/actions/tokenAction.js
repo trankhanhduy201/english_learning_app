@@ -1,10 +1,11 @@
-import { createThunkWithCallback } from "./commonAction";
-import * as tokenCommon from "../../commons/token";
+import { createThunkWithCallback, rejectWithErrorValue } from "./commonAction";
+import { refreshNewToken } from "../../commons/token";
+import { revokeTokens } from "../../services/authApi";
 
 export const refreshTokenThunk = createThunkWithCallback(
   "token/refresh",
   async ({ refreshToken, originalAction }, { dispatch }) => {
-    const accessToken = await tokenCommon.refreshNewToken(refreshToken);
+    const accessToken = await refreshNewToken(refreshToken);
     if (accessToken === false) {
       throw new Error("Can not refresh new access token");
     }
@@ -13,5 +14,16 @@ export const refreshTokenThunk = createThunkWithCallback(
       status: "success",
       data: { accessToken },
     };
+  },
+);
+
+export const revokeTokensThunk = createThunkWithCallback(
+  "tokens/revoke",
+  async (_, { dispatch, rejectWithValue }) => {
+    const response = await revokeTokens();
+    if (response.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
+    }
+    return response;
   },
 );

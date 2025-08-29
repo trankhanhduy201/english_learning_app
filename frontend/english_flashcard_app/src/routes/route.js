@@ -77,6 +77,10 @@ const routes = createBrowserRouter(
       action: loginAction.login,
     },
     {
+      path: "/logout",
+      action: loginAction.logout,
+    },
+    {
       path: "/",
       element: <Layout />,
       children: [
@@ -87,6 +91,10 @@ const routes = createBrowserRouter(
               index: true,
               path: "/dashboard",
               element: <PrivatePage pageName="Dashboard" />,
+            },
+            {
+              path: "/settings",
+              element: <PrivatePage pageName="Settings" />,
             },
             {
               path: "/topics",

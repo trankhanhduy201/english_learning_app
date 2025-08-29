@@ -8,11 +8,14 @@ import Vocab from "../pages/Vocab";
 import useCheckAuth from "../hooks/useCheckAuth";
 import { memo } from "react";
 import { useSelector } from "react-redux";
+import Settings from "../pages/Settings";
 
 const Page = memo(({ pageName }) => {
   switch (pageName) {
     case "Dashboard":
       return <Dashboard />;
+    case "Settings":
+      return <Settings />;
     case "Topics":
       return <Topics />;
     case "Topic":

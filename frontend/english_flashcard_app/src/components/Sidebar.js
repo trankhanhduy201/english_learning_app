@@ -40,6 +40,16 @@ const Sidebar = () => {
             Topics
           </Link>
         </li>
+        <li className="nav-item">
+          <Link
+            className={`nav-link text-start text-white sidebar-link ${
+              isActive(["settings"]) ? "active" : ""
+            }`}
+            to="/settings"
+          >
+            Settings
+          </Link>
+        </li>
       </ul>
     </nav>
   );

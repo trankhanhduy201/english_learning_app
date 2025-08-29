@@ -36,11 +36,14 @@ export const callApi = async (endpoint, options = {}) => {
       dataJson = await resp.json();
     }
 
-    if (throwEx && !resp.ok) {
-      const error = new Error(`HTTP error! status: ${resp.status}`);
-      error.details = dataJson;
-      throw error;
+    if (!resp.ok) {
+      if (throwEx || Object.keys(dataJson).length == 0) {
+        const error = new Error(`HTTP error! status: ${resp.status}`);
+        error.details = dataJson;
+        throw error;
+      }
     }
+
     return dataJson;
   } catch (error) {
     console.error("API Fetch Error:", error);
