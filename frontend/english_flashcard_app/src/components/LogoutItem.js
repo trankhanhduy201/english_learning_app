@@ -3,7 +3,7 @@ import ConfirmModal from "./ConfirmModal";
 import { memo } from "react";
 import { useNavigate, useFetcher } from "react-router-dom";
 
-const LogoutItem = memo(({ children, revokeTokens = false }) => {
+const LogoutItem = memo(({ children, revokeTokens = false}) => {
   const logoutFetcher = useFetcher();
   const navigate = useNavigate();
   const confirmLogoutModal = useConfirmModal({
@@ -33,7 +33,10 @@ const LogoutItem = memo(({ children, revokeTokens = false }) => {
       </div>
       {confirmLogoutModal.isShowModal && (
         <ConfirmModal
-          message="Do you want to log out?"
+          message={revokeTokens 
+            ? "Are you sure you want to logout all machines? " 
+            : "Are you sure you want to logout?"
+          }
           isShow={confirmLogoutModal.isShowModal}
           isSubmmiting={confirmLogoutModal.isSubmmiting}
           onClose={confirmLogoutModal.onClickNo}

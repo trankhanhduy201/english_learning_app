@@ -21,19 +21,21 @@ from rest_framework.routers import DefaultRouter
 from flashcards.views import TopicViewSet, VocabularyViewSet
 from django.conf import settings
 from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView
 )
-from flashcards.views import UserInfoView, CustomTokenObtainPairView
+from flashcards.views import UserInfoView, RevoleTokenView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # JWT endpoints
-    path('token', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
+    path('token/revoke', RevoleTokenView.as_view(), name="increment-version"),
 
     # User
     path('user/info', UserInfoView.as_view(), name='user_info'),

@@ -17,7 +17,7 @@ export const login = async ({ request, param }) => {
 export const logout = async ({ request, param }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  const revokeTokens = parseInt(data?.revoke_tokens) ? true : false;
+  const revokeTokens = parseInt(data?.revoke_tokens ?? 0) ? true : false;
 
   try {
     const resp = await store.dispatch(logoutThunk({ revokeTokens })).unwrap();

@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from flashcards.mixins import OwnerListModelMixin
 from flashcards.queryset_utils import get_translation_prefetch_related
 from flashcards.serializers import TopicSerializer, VocabularySerializer, VocabularyImportSerializer
-from flashcards.models import Topic, Vocabulary, Translation, LanguageEnums
+from flashcards.models import Topic, Vocabulary, Translation, UserToken
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.permissions import IsOwner
 from rest_framework.decorators import action
@@ -16,8 +16,7 @@ from flashcards.task_utils import generate_vocab_audio_async
 import re
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer
+from django.shortcuts import get_object_or_404
 
 
 class BaseModelViewSet(viewsets.ModelViewSet):
@@ -226,5 +225,9 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkModelMixin):
     # search_fields = ['word', 'translations__translation']
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+class RevoleTokenView(APIView):
+    def post(self, request):
+        user_token = get_object_or_404(UserToken, user_id=request.user.id)
+        user_token.increment_refresh_token_version()
+        return Response({}, status=status.HTTP_200_OK)
+

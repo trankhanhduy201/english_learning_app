@@ -1,10 +1,12 @@
 from django.db import IntegrityError
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenVerifySerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework.exceptions import ValidationError
-from flashcards.models import LanguageEnums
+from rest_framework_simplejwt.settings import api_settings
+from flashcards.models import LanguageEnums, UserToken, Topic, Vocabulary, Translation
 from flashcards.queryset_utils import get_translation_prefetch_related
-from .models import Topic, Vocabulary, Translation
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from flashcards.authentications import check_token_version
 
 
 # PrimaryKeyRelatedField
@@ -183,16 +185,50 @@ class VocabularyImportSerializer(serializers.Serializer):
     translating_lang = serializers.ChoiceField(choices=LanguageEnums.values)
 
 
+class TokenSerializerMixin:
+    def validate(self, attrs):
+        if hasattr(self, 'token_class'):
+            token = self.token_class(attrs[self.token_class.token_type])
+        else:
+            token = UntypedToken(attrs["token"])
+
+        user_id = token.payload.get(api_settings.USER_ID_CLAIM, None)
+        token_version = token.payload.get('token_version', None)
+        if check_token_version(user_id, token_version) is False:
+            raise ValidationError("Token has been revoked")
+        return super().validate(attrs)
+    
+
+class CustomTokenVerifySerializer(TokenSerializerMixin, TokenVerifySerializer):
+    pass
+
+
+class CustomTokenRefreshSerializer(TokenSerializerMixin, TokenRefreshSerializer):
+    pass
+
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
-    def get_token(cls, user):
+    def get_token(self, user):
         token = super().get_token(user)
 
         # Add custom claims
         token['username'] = user.username
         token['email'] = user.email
         token['is_staff'] = user.is_staff
-        full_name = user.get_full_name()
-        token['full_name'] = full_name if full_name else user.username
+        token['full_name'] = self.get_user_full_name(user)
+        token['token_version'] = self.get_refresh_token_version(user)
 
         return token
+    
+    @classmethod
+    def get_user_full_name(self, user):
+        full_name = user.get_full_name()
+        return full_name if full_name else user.username
+    
+    @classmethod
+    def get_refresh_token_version(self, user):
+        if hasattr(user, 'usertoken'):
+            return user.usertoken.refresh_token_version
+        user_token = UserToken.objects.create(user=user, refresh_token_version=1)
+        return user_token.refresh_token_version

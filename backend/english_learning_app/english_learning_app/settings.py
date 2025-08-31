@@ -138,7 +138,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'flashcards.authentications.CustomJWTAuthentication',
     ],
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
@@ -162,11 +163,15 @@ INTERNAL_IPS = [
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=300), # Access token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=120), # Access token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # DEFAULT_AUTHENTICATION_CLASSES Refresh token lifetime
     'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
     'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens
     "SIGNING_KEY": SECRET_KEY,
+    "TOKEN_OBTAIN_SERIALIZER": "flashcards.serializers.CustomTokenObtainPairSerializer",
+    "TOKEN_REFRESH_SERIALIZER": "flashcards.serializers.CustomTokenRefreshSerializer",
+    "TOKEN_VERIFY_SERIALIZER": "flashcards.serializers.CustomTokenVerifySerializer",
+
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
