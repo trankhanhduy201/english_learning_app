@@ -17,18 +17,20 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from rest_framework.routers import DefaultRouter
-from flashcards.views import TopicViewSet, VocabularyViewSet
 from django.conf import settings
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView
 )
-from flashcards.views import UserInfoView, RevoleTokenView
+from flashcards.views.users import UserInfoView
+from flashcards.views.tokens import RevoleTokenView
+from flashcards.views.flashcards import TopicViewSet, VocabularyViewSet
 
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
 
     # JWT endpoints

@@ -1,9 +1,9 @@
+import json
 from gtts import gTTS
 from io import BytesIO
-from flashcards.models import Vocabulary
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-import json
+from flashcards.models import Vocabulary
 
 
 def generate_vocab_audio_binary(vocab_ids, user_id=None):
@@ -28,6 +28,7 @@ def generate_vocab_audio_binary(vocab_ids, user_id=None):
     Vocabulary.objects.bulk_update(vocabs, ['audio'])
     return results
 
+
 def notify_vocab_audio_hook(task):
     """
     Hook for Django Q task completion.
@@ -43,6 +44,7 @@ def notify_vocab_audio_hook(task):
         message = 'generating_vocab_audio_notify'
         data_json = json.dumps(result.get('audios', {}))
         notify_user(user_id, message, data_json)
+
 
 def notify_user(user_id, message, data_json):
     if user_id:

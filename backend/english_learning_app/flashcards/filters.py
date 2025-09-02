@@ -1,7 +1,6 @@
 import django_filters
-from django.db.models import Exists, OuterRef
-from .models import Translation, Vocabulary
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
+from flashcards.models import Translation, Vocabulary
 
 
 class TopicFilter(django_filters.FilterSet):

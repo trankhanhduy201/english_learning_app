@@ -42,10 +42,6 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   };
 
   useEffect(() => {
-    console.log(vocabs);
-  }, [vocabs]);
-
-  useEffect(() => {
     filterVocabs(curSearchText.current);
   }, [vocabDatas]);
 
