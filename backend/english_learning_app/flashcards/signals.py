@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from flashcards.models import Vocabulary
-from flashcards.task_utils import generate_vocab_audio_async
+from flashcards.utilities.tasks import generate_vocab_audio_async
 
 
 @receiver(post_save, sender=Vocabulary)

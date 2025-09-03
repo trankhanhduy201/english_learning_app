@@ -3,7 +3,7 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from flashcards.queryset_utils import get_translation_prefetch_related
+from flashcards.utilities.querysets import get_translation_prefetch_related
 from flashcards.serializers.flashcards import (
     TopicSerializer, 
     VocabularySerializer, 
@@ -14,7 +14,7 @@ from flashcards.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.views.paginations import CustomPageNumberPagination
 from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
-from flashcards.task_utils import generate_vocab_audio_async
+from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
 
 

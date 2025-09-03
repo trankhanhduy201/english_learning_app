@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation
-from flashcards.queryset_utils import get_translation_prefetch_related
+from flashcards.utilities.querysets import get_translation_prefetch_related
 from flashcards.serializers.bases import (
     BaseSerializer, 
     BaseListSerializer, 
