@@ -57,7 +57,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
         if not rq_serializer.is_valid():
             return Response(rq_serializer.errors, status=400)
         
-        import_type = rq_serializer.validated_data.get('import_type')
+        import_type = rq_serializer.validated_data.pop('import_type')
         import_func = f'import_{import_type}'
         data_import = getattr(self, import_func)(request, rq_serializer.validated_data)
         
@@ -70,13 +70,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def import_text(self, request, validated_data):
-        return vocab_import_service.parse_import_text(
-            request.user.id,
-            validated_data.get('topic_id'),
-            validated_data.get('text_data'),
-            validated_data.get('learning_lang'),
-            validated_data.get('translating_lang')
-        )
+        return vocab_import_service.parse_import_text(request.user.id, **validated_data)
 
     # Below code for using simple filtering without defining filterset
     # Note that using filterset_fields and filterset_class together is not supported.

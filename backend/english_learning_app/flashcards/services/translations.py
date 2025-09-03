@@ -19,7 +19,6 @@ class TranslationService:
             for translation in validated_translation:
                 if 'id' not in translation or int(translation['id']) not in _translation_existing_ids:
                     new_translations.append(Translation(vocabulary=vocab_instance, **translation))
-            
 
             if len(_translation_existing_ids) > 0:
                 # For update existed item
@@ -27,19 +26,18 @@ class TranslationService:
                 _update_translations = Translation.objects.filter(
                     pk__in=_translation_existing_ids, vocabulary=vocab_instance
                 )
-                if len(_update_translations) > 0:
-                    for translation in _update_translations:
-                        update_data = next((
-                            item for item in validated_translation
-                            if 'id' in item and int(item['id']) == translation.id
-                        ), None)
-                        if update_data:
-                            updated_ids.append(translation.id)
-                            translation.__dict__.update({
-                                k: v for k, v in update_data.items() 
-                                if k in update_fields
-                            })
-                            update_translations.append(translation)
+                for translation in _update_translations:
+                    update_data = next((
+                        item for item in validated_translation
+                        if 'id' in item and int(item['id']) == translation.id
+                    ), None)
+                    if update_data:
+                        updated_ids.append(translation.id)
+                        translation.__dict__.update({
+                            k: v for k, v in update_data.items() 
+                            if k in update_fields
+                        })
+                        update_translations.append(translation)
                     
                 # For delete item
                 delete_ids = list(set(_translation_existing_ids).difference(updated_ids))

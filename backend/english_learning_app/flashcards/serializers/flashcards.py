@@ -95,6 +95,6 @@ class VocabularySerializer(BaseSerializer):
 class VocabularyImportSerializer(serializers.Serializer):
     import_type = serializers.ChoiceField(choices=["text", "csv", "json"])
     topic_id = serializers.IntegerField()
-    text_data = serializers.CharField()
-    learning_lang = serializers.ChoiceField(choices=LanguageEnums.values)
-    translating_lang = serializers.ChoiceField(choices=LanguageEnums.values)
+    import_text = serializers.CharField()
+    language_from = serializers.ChoiceField(choices=LanguageEnums.values)
+    language_to = serializers.ChoiceField(choices=LanguageEnums.values)

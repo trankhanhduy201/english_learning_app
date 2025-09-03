@@ -32,33 +32,33 @@ const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
             >
               <input type="hidden" name="_form_name" value="importing_vocab" />
               <input type="hidden" name="import_type" value="text" />
-              <input type="hidden" name="learning_lang" value={learningLang} />
+              <input type="hidden" name="language_from" value={learningLang} />
               <div className="mb-3 col-lg-4">
-                <label htmlFor="translating_lang" className="form-label">
+                <label htmlFor="language_to" className="form-label">
                   Which language do you want to translate?
                 </label>
                 <Dropdown
-                  name="translating_lang"
+                  name="language_to"
                   defaultValue={DEFAULT_LANG}
                   options={LANGUAGES}
                 />
-                {fetcher.data?.errors?.translating_lang && (
-                  <FieldErrors errors={fetcher.data.errors.translating_lang} />
+                {fetcher.data?.errors?.language_to && (
+                  <FieldErrors errors={fetcher.data.errors.language_to} />
                 )}
               </div>
               <div className="mb-3">
-                <label htmlFor="text_data" className="form-label">
+                <label htmlFor="import_text" className="form-label">
                   Paste vocabularies here (one per line)
                 </label>
                 <textarea
-                  name="text_data"
+                  name="import_text"
                   className="form-control"
                   rows="15"
                   placeholder="Paste vocabularies here..."
                   disabled={fetcher.state === "submitting"}
                 ></textarea>
-                {fetcher.data?.errors?.text_data && (
-                  <FieldErrors errors={fetcher.data.errors.text_data} />
+                {fetcher.data?.errors?.import_text && (
+                  <FieldErrors errors={fetcher.data.errors.import_text} />
                 )}
               </div>
               <div className="d-flex justify-content-start mt-3 text-end">
@@ -80,8 +80,8 @@ const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
                   {fetcher.state === "submitting" ? "Importing..." : "Import"}
                 </button>
               </div>
-              {fetcher.data?.errors?.learning_lang && (
-                <FieldErrors errors={fetcher.data.errors.learning_lang} />
+              {fetcher.data?.errors?.language_from && (
+                <FieldErrors errors={fetcher.data.errors.language_from} />
               )}
             </fetcher.Form>
           </div>
