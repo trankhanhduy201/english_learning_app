@@ -158,12 +158,13 @@ REST_FRAMEWORK = {
 # Configure the internal IPs to allow the toolbar to display
 INTERNAL_IPS = [
     '172.18.0.1',
+    '172.25.0.1',
     "127.0.0.1",
-    "localhost",
+    "localhost"
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=120), # Access token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=300), # Access token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # DEFAULT_AUTHENTICATION_CLASSES Refresh token lifetime
     'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
     'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens
@@ -191,7 +192,6 @@ Q_CLUSTER = {
     'bulk': 10,
     'orm': 'default',  # <<< This tells Django Q to use the DB
 }
-
 
 CHANNEL_LAYERS = {
     "default": {

@@ -6,3 +6,11 @@ export const getInfo = async (options = {}) => {
     ...options,
   });
 };
+
+export const generateSignature = async (datas, options = {}) => {
+  return await callApi("user/gen-signature", {
+    method: "POST",
+    body: JSON.stringify(datas),
+    ...options,
+  });
+};

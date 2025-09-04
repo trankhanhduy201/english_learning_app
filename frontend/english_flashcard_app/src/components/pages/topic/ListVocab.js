@@ -15,8 +15,7 @@ import LoadingOverlay from "../../LoadingOverlay";
 import DeleteAllButton from "../../DeleteAllButton";
 import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
-import useWebSocket from "../../../hooks/useWebSocket";
-import { WS_BASE_URL } from "../../../configs/apiConfig";
+import useFetchAudioNotification from "../../../hooks/useFetchAudioNotification";
 import { getUser as getUserLocalStorage } from "../../../commons/localStorage";
 
 const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
@@ -139,24 +138,21 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
 const ListVocab = memo(({ vocabDatas, topicId }) => {
   const [vocabs, setVocabs] = useState([]);
   const userInfo = getUserLocalStorage();
-  const wsUrl = userInfo.id ? `${WS_BASE_URL}/ws/notify/${userInfo.id}/` : null;
-  useWebSocket(wsUrl, (message) => {
-    console.log("Message from server:", message);
-    if (message.data) {
-      const audioDatas = JSON.parse(message.data);
-      const updateVocabAudio = item => {
-        if (item.word in audioDatas) {
-          return { ...item, audio: audioDatas[item.word] };
-        }
-        return item;
-      }
-      setVocabs(prev => prev.map(updateVocabAudio));
-    }
-  });
+  const { audioDatas } = useFetchAudioNotification(userInfo?.id)
 
   useEffect(() => {
-    setVocabs(vocabDatas)
+    setVocabs(vocabDatas);
   }, [vocabDatas])
+
+  useEffect(() => {
+    const updateVocabAudio = item => {
+      if (item.word in audioDatas) {
+        return { ...item, audio: audioDatas[item.word] };
+      }
+      return item;
+    }
+    setVocabs(prev => prev.map(updateVocabAudio));
+  }, [audioDatas])
   
   return (
     <ListVocabDetail

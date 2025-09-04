@@ -18,7 +18,7 @@ export default function useWebSocket(url, onMessage) {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data)
+      console.log(data);
       if (onMessage) {
         onMessage(data);
       }
@@ -35,7 +35,7 @@ export default function useWebSocket(url, onMessage) {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [url, onMessage]);
 
   return socketRef.current;
 }

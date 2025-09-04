@@ -74,3 +74,8 @@ class UserToken(models.Model):
 	def increment_refresh_token_version(self):
 		self.refresh_token_version += 1
 		self.save()
+
+
+class UserSalt(models.Model):
+	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	salt = models.CharField(max_length=200, blank=False, null=False)
