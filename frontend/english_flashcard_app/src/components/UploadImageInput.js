@@ -1,31 +1,43 @@
-import { memo, useCallback, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import UploadImage from "./UploadImage";
+import { API_BASE_URL } from "../configs/apiConfig";
 
-const UploadImageInput = memo(({ name, defaultImage = null }) => {
+const UploadImageInput = memo(({ name, imageUrl = null }) => {
 	const [ preview, setPreview ] = useState(null);
+	const [ defaultImage, setDefaultImage ] = useState();
 	const inputRef = useRef(null);
 
 	const onChangeImage = (e) => {
 		const file = e.target.files[0];
 		if (file) {
 			// You can use FileReader instead of URL.createObjectURL if needed
-			const imageUrl = URL.createObjectURL(file);
-			console.log(file, imageUrl);
-			setPreview(imageUrl);
+			const blobImageUrl = URL.createObjectURL(file);
+			console.log(file, blobImageUrl);
+			setPreview(blobImageUrl);
 		}
 	}
 
 	const onRemoveImage = useCallback((e) => {
 		e.preventDefault();
-		inputRef.current.value = '';
+		if (inputRef.current) {
+			inputRef.current.value = '';
+		}
 		URL.revokeObjectURL(preview);
 		setPreview(null);
-	});
+		setDefaultImage(null);
+	}, [preview, inputRef]);
+
+	useEffect(() => {
+		console.log(imageUrl);
+		if (imageUrl) {
+			setDefaultImage(API_BASE_URL + imageUrl);
+		}
+	}, [imageUrl]);
 
 	return (
 		<>
 			{defaultImage ? (
-				<div className="mt-3">
+				<div className="d-block">
 					<UploadImage src={defaultImage} onRemove={onRemoveImage} />
 				</div>
 			) : (

@@ -46,14 +46,6 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
     >
       <input type="hidden" name="_not_revalidate" defaultValue={"1"} />
       <div className="row">
-        <div className="mb-3 col-md-6">
-          <label htmlFor="name" className="form-label">
-            Image
-          </label>
-          <UploadImageInput name="image" defaultImage={topic?.image} />
-        </div>
-      </div>
-      <div className="row">
         <div className="mb-3 col-lg-6">
           <label htmlFor="name" className="form-label">
             Topic name
@@ -99,6 +91,22 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
         {editTopicFetcher.data?.errors?.descriptions && (
           <FieldErrors errors={editTopicFetcher.data.errors.descriptions} />
         )}
+      </div>
+      <div className="row">
+        <div className="mb-3 col-md-6">
+          <label htmlFor="name" className="form-label">
+            Image
+          </label>
+          <UploadImageInput 
+            name="image" 
+            imageUrl={editTopicFetcher?.data?.data?.upload_image?.url ?? topic?.upload_image?.url} 
+          />
+          {editTopicFetcher.data?.errors?.upload_image?.base64 && (
+            <FieldErrors
+              errors={editTopicFetcher.data?.errors?.upload_image?.base64}
+            />
+          )}
+        </div>
       </div>
       <div className="d-flex justify-content-end mt-2">
         <Link to={`/topics`} className={`btn btn-secondary me-2 ${isNew ? "w-sm-50" : ""}`}>

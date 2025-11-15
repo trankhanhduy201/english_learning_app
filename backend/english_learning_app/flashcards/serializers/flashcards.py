@@ -14,11 +14,16 @@ translation_service = TranslationService()
 
 
 class TopicSerializer(BaseSerializer):
-    upload_image = UploadImageSerializer(source='image_path', required=False, allow_null=True)
+    upload_image = UploadImageSerializer(required=False, allow_null=True, write_only=True)
 
     class Meta(BaseSerializer.Meta):
         model = Topic
         fields = ['id', 'name', 'learning_language', 'descriptions', 'created_by', 'upload_image']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if hasattr(self.instance, 'image_path') and self.instance.image_path:
+            self.fields['upload_image'] = UploadImageSerializer(source='image_path', required=False, allow_null=True)
 
     def create(self, validated_data):
         upload_image = validated_data.pop('upload_image', None)
@@ -30,6 +35,8 @@ class TopicSerializer(BaseSerializer):
         upload_image = validated_data.pop('upload_image', None)
         if upload_image:
             validated_data['image_path'] = upload_image.get('base64')
+        elif 'upload_image' in self.initial_data:
+            validated_data['image_path'] = None
         return super().update(instance, validated_data)
 
 

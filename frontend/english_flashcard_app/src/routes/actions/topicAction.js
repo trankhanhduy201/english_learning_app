@@ -29,7 +29,11 @@ const getFormData = async (request) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   if (data?.image && data.image instanceof File) {
-    data.upload_image = await parseImageData(data.image);
+    if (data.image.size > 0) {
+      data.upload_image = await parseImageData(data.image);
+    } else {
+      data.upload_image = null;
+    }
     delete data.image;
   }
   return data;
