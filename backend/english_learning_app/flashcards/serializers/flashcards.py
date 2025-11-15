@@ -7,15 +7,30 @@ from flashcards.serializers.bases import (
     InstancePrimaryKeyRelatedField
 )
 from flashcards.services.translations import TranslationService
+from flashcards.serializers.images import UploadImageSerializer
 
 
 translation_service = TranslationService()
 
 
 class TopicSerializer(BaseSerializer):
+    upload_image = UploadImageSerializer(source='image_path', required=False, allow_null=True)
+
     class Meta(BaseSerializer.Meta):
         model = Topic
-        fields = ['id', 'name', 'learning_language', 'descriptions', 'created_by']
+        fields = ['id', 'name', 'learning_language', 'descriptions', 'created_by', 'upload_image']
+
+    def create(self, validated_data):
+        upload_image = validated_data.pop('upload_image', None)
+        if upload_image:
+            validated_data['image_path'] = upload_image.get('base64')
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        upload_image = validated_data.pop('upload_image', None)
+        if upload_image:
+            validated_data['image_path'] = upload_image.get('base64')
+        return super().update(instance, validated_data)
 
 
 class TranslationSerializer(BaseSerializer):

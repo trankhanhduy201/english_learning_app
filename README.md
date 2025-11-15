@@ -118,11 +118,5 @@ This is a full-stack web application designed to help users learn English throug
 
 ## 🧑‍💻 Author
 
-**Your Name**  
-[GitHub Profile](https://github.com/dendgau)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
+**Duy Tran**  
+[GitHub Profile](https://github.com/trankhanhduy201)

@@ -25,9 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-3_u0uvxb5xx#3x9qi4a8saq8m-lr3pm8_74et-pm(2wmd@la!+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',  # Localhost (useful for testing)
+    'localhost',  # Localhost
+]
 
 
 # Application definition
@@ -129,6 +132,9 @@ USE_I18N = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Make sure BASE_DIR is defined
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -157,8 +163,6 @@ REST_FRAMEWORK = {
 
 # Configure the internal IPs to allow the toolbar to display
 INTERNAL_IPS = [
-    '172.18.0.1',
-    '172.25.0.1',
     "127.0.0.1",
     "localhost"
 ]

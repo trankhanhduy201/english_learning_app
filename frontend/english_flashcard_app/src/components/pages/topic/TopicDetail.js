@@ -4,6 +4,7 @@ import { LANGUAGES } from "../../../configs/langConfig";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import FieldErrors from "../../../components/FieldErrors";
 import Dropdown from "../../../components/Dropdown";
+import UploadImageInput from "../../UploadImageInput";
 
 const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const editTopicFetcher = useFetcher();
@@ -41,8 +42,17 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
     <editTopicFetcher.Form
       action={isNew ? "/topics/new" : `/topic/${topicId}`}
       method={isNew ? "post" : "put"}
+      encType="multipart/form-data"
     >
       <input type="hidden" name="_not_revalidate" defaultValue={"1"} />
+      <div className="row">
+        <div className="mb-3 col-md-6">
+          <label htmlFor="name" className="form-label">
+            Image
+          </label>
+          <UploadImageInput name="image" defaultImage={topic?.image} />
+        </div>
+      </div>
       <div className="row">
         <div className="mb-3 col-lg-6">
           <label htmlFor="name" className="form-label">

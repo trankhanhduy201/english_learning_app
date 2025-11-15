@@ -12,6 +12,7 @@ services:
       - ./logs/supervisord:/var/log/supervisord
       - uvicorn_socket:/run/uvicorn
       - static_volume:/code/static
+      - media_volume:/code/media
     expose:
       - "8000"
     depends_on:
@@ -39,6 +40,7 @@ services:
       - ./logs/nginx:/var/log/nginx
       - uvicorn_socket:/run/uvicorn
       - static_volume:/code/static
+      - media_volume:/code/media
     depends_on:
       - api
     restart: always
@@ -51,3 +53,4 @@ services:
 volumes:
   uvicorn_socket:
   static_volume:
+  media_volume:

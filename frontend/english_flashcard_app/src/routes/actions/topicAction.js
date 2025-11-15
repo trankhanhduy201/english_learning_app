@@ -6,6 +6,7 @@ import {
   deleteTopicThunk,
   deleteTopicsThunk,
 } from "../../stores/actions/topicAction";
+import { parseImageData } from "../../commons/images";
 
 const updateTopic = async (topicId, data) => {
   try {
@@ -22,12 +23,20 @@ const deleteTopic = async (topicId, redirectTo = null) => {
   } catch (err) {
     return err;
   }
-};
+}
 
-export const createTopic = async ({ request }) => {
+const getFormData = async (request) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
+  if (data?.image && data.image instanceof File) {
+    data.upload_image = await parseImageData(data.image);
+    delete data.image;
+  }
+  return data;
+}
 
+export const createTopic = async ({ request }) => {
+  const data = await getFormData(request);
   try {
     const result = await store.dispatch(createTopicThunk({ data })).unwrap();
     return redirect(`/topic/${result.data.id}`);
@@ -37,14 +46,12 @@ export const createTopic = async ({ request }) => {
 };
 
 export const editTopic = async ({ request, params }) => {
-  const formData = await request.formData();
-  const updateData = Object.fromEntries(formData);
-
   if (params.action === "delete") {
     const url = new URL(request.url);
     const redirectTo = url.searchParams.get("redirectTo");
     return deleteTopic(params.topicId, redirectTo);
   }
+  const updateData = await getFormData(request);
   return await updateTopic(params.topicId, updateData);
 };
 
