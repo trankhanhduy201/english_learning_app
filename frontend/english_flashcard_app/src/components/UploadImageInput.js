@@ -12,7 +12,6 @@ const UploadImageInput = memo(({ name, imageUrl = null }) => {
 		if (file) {
 			// You can use FileReader instead of URL.createObjectURL if needed
 			const blobImageUrl = URL.createObjectURL(file);
-			console.log(file, blobImageUrl);
 			setPreview(blobImageUrl);
 		}
 	}
@@ -28,7 +27,6 @@ const UploadImageInput = memo(({ name, imageUrl = null }) => {
 	}, [preview, inputRef]);
 
 	useEffect(() => {
-		console.log(imageUrl);
 		if (imageUrl) {
 			setDefaultImage(API_BASE_URL + imageUrl);
 		}
