@@ -33,7 +33,7 @@ This is a full-stack web application designed to help users learn English throug
 
 ### 🖥️ Frontend (React)
 - Built with **React 19** and **Redux Toolkit**
-- Manage topics, vocabularies and flashcards
+- Manage profiles, topics, vocabularies and flashcards
 - Responsive UI with **Bootstrap 5**
 - Consumes REST APIs for dynamic content
 
