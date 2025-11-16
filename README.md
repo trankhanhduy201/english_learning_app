@@ -33,7 +33,7 @@ This is a full-stack web application designed to help users learn English throug
 
 ### 🖥️ Frontend (React)
 - Built with **React 19** and **Redux Toolkit**
-- Manage topics and flashcards
+- Manage topics, vocabularies and flashcards
 - Responsive UI with **Bootstrap 5**
 - Consumes REST APIs for dynamic content
 
@@ -41,7 +41,6 @@ This is a full-stack web application designed to help users learn English throug
 - RESTful APIs using **Django + DRF**
 - Handles flashcard and topic logic
 - Uses **SQLite** for development
-- Static files managed with `collectstatic`
 
 ### ⚙️ DevOps (Dockerized)
 - Full Docker support via `docker-compose`
@@ -105,14 +104,6 @@ This is a full-stack web application designed to help users learn English throug
   ```bash
   docker exec -it <backend_container_name> python manage.py createsuperuser
   ```
-
----
-
-## 💡 Future Enhancements
-
-- Add Redis support for caching and pub/sub
-- Implement user authentication
-- Add spaced repetition algorithm for flashcards
 
 ---
 
