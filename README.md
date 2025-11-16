@@ -54,7 +54,7 @@ This is a full-stack web application designed to help users learn English throug
 
 | Layer      | Tools                                         |
 |------------|-----------------------------------------------|
-| Frontend   | React, Redux Toolkit, Bootstrap, React Router |
+| Frontend   | React, Redux Toolkit, React Router, Bootstrap |
 | Backend    | Django, Django REST Framework, SQLite         |
 | Production | Docker, Docker Compose, Nginx, Uvicorn        |
 | Optional   | Redis (future enhancement)                    |
