@@ -111,7 +111,3 @@ This is a full-stack web application designed to help users learn English throug
 
 **Duy Tran**  
 [GitHub Profile](https://github.com/trankhanhduy201)
-
-
-# Change user profile 1
-# Change user profile 2 + 3 + 4 + 6 + 7
