@@ -6,7 +6,7 @@ import {
   deleteTopicThunk,
   deleteTopicsThunk,
 } from "../../stores/actions/topicAction";
-import { parseImageData } from "../../commons/images";
+import { blobToBase64 } from "../../commons/images";
 
 const updateTopic = async (topicId, data) => {
   try {
@@ -30,7 +30,7 @@ const getFormData = async (request) => {
   const data = Object.fromEntries(formData);
   if (data?.image && data.image instanceof File) {
     if (data.image.size > 0) {
-      data.upload_image = await parseImageData(data.image);
+      data.upload_image = await blobToBase64(data.image);
     } else {
       data.upload_image = null;
     }

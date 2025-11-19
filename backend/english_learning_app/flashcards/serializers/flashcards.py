@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation
 from flashcards.utilities.querysets import get_translation_prefetch_related
 from flashcards.serializers.bases import (
@@ -14,29 +15,22 @@ translation_service = TranslationService()
 
 
 class TopicSerializer(BaseSerializer):
-    upload_image = UploadImageSerializer(required=False, allow_null=True, write_only=True)
+    # For read-only and involke get_upload_image to return serialized image data
+    image_info = serializers.SerializerMethodField()
+    upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
 
     class Meta(BaseSerializer.Meta):
         model = Topic
-        fields = ['id', 'name', 'learning_language', 'descriptions', 'created_by', 'upload_image']
+        fields = ['id', 'name', 'learning_language', 'descriptions', 'image_info', 'upload_image', 'created_by']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if hasattr(self.instance, 'image_path') and self.instance.image_path:
-            self.fields['upload_image'] = UploadImageSerializer(source='image_path', required=False, allow_null=True)
-
-    def create(self, validated_data):
-        upload_image = validated_data.pop('upload_image', None)
-        if upload_image:
-            validated_data['image_path'] = upload_image.get('base64')
-        return super().create(validated_data)
+    def get_image_info(self, instance):
+        if instance.image_path:
+            return UploadImageSerializer(instance=instance.image_path).data
+        return None
     
     def update(self, instance, validated_data):
-        upload_image = validated_data.pop('upload_image', None)
-        if upload_image:
-            validated_data['image_path'] = upload_image.get('base64')
-        elif 'upload_image' in self.initial_data:
-            validated_data['image_path'] = None
+        if 'image_path' in validated_data and validated_data['image_path'] is None:
+            instance.image_path.delete(save=False)
         return super().update(instance, validated_data)
 
 

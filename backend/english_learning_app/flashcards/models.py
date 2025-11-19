@@ -2,6 +2,9 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
 
+def topic_image_upload_to(instance, filename):
+    return f'uploads/topics/{instance.id}/{filename}'
+
 
 class LanguageEnums(models.TextChoices):
 	EN = ('en', _('English'))
@@ -25,7 +28,7 @@ class Topic(CreatedBy):
 	name = models.CharField(max_length=100)
 	learning_language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
 	descriptions = models.TextField(blank=True, null=True)
-	image_path = models.ImageField(upload_to='uploads/topics', default=None, null=True, blank=True)
+	image_path = models.ImageField(upload_to=topic_image_upload_to, default=None, null=True, blank=True)
 
 	def __str__(self):
 		return self.name

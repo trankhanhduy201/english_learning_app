@@ -99,11 +99,11 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           </label>
           <UploadImageInput 
             name="image" 
-            imageUrl={editTopicFetcher?.data?.data?.upload_image?.url ?? topic?.upload_image?.url} 
+            imageUrl={editTopicFetcher?.data?.data?.image_info?.url ?? topic?.image_info?.url} 
           />
-          {editTopicFetcher.data?.errors?.upload_image?.base64 && (
+          {editTopicFetcher.data?.errors?.upload_image && (
             <FieldErrors
-              errors={editTopicFetcher.data?.errors?.upload_image?.base64}
+              errors={editTopicFetcher.data?.errors?.upload_image}
             />
           )}
         </div>

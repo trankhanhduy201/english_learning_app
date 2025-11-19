@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from flashcards.models import Vocabulary
+from flashcards.models import Vocabulary, Topic
 from flashcards.utilities.tasks import generate_vocab_audio_async
 
 
