@@ -106,7 +106,10 @@ This is a full-stack web application designed to help users learn English throug
   ```bash
   docker exec -it <backend_container_name> python manage.py createsuperuser
   ```
-
+- You can restart the supervisor service by running below command:
+  ```bash
+  docker exec <backend_container_name> supervisorctl restart all
+  ```
 ---
 
 ## 🧑‍💻 Author
