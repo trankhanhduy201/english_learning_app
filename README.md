@@ -71,8 +71,8 @@ This is a full-stack web application designed to help users learn English throug
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/trankhanhduy201/english_learning_app.git
+   cd english_learning_app
    ```
 
 2. Build and start all services:
