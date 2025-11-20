@@ -84,7 +84,11 @@ This is a full-stack web application designed to help users learn English throug
    - Frontend: [http://localhost:3000](http://localhost:3000)
    - Backend API: [http://localhost:80](http://localhost:80)
 
-4. Stop the containers:
+4. Login application:
+   - User: root
+   - Password: root
+
+5. Stop the containers:
    ```bash
    docker-compose down
    ```
