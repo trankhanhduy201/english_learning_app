@@ -94,11 +94,11 @@ This is a full-stack web application designed to help users learn English throug
 ## 📌 Notes
 
 - The SQLite database file (`db.sqlite3`) is **ignored in Git** to prevent leaking sensitive data.
-- The backend container automatically runs:
+- The backend container automatically runs during startup via `entrypoint.sh`:
   - `makemigrations`
   - `migrate`
-  during startup via `entrypoint.sh`.
-- You can create a Django admin user by entering the backend container:
+  - `createsuperuser`
+- You can create a Django admin user manually by entering the backend container:
   ```bash
   docker exec -it <backend_container_name> python manage.py createsuperuser
   ```
