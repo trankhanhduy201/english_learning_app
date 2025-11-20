@@ -33,20 +33,20 @@ This is a full-stack web application designed to help users learn English throug
 
 ### 🖥️ Frontend (React)
 - Built with **React 19** and **Redux Toolkit**
-- Manage profiles, topics, vocabularies and flashcards
+- Manage topics, vocabularies, flashcards, profile and settings...
 - Responsive UI with **Bootstrap 5**
 - Consumes REST APIs for dynamic content
 
 ### 🛠 Backend (Django)
-- RESTful APIs using **Django + DRF**
-- Handles flashcard and topic logic
+- RESTful APIs using **Django + Django REST Framework (DRF)**
+- Implements core logic for topics, vocabularies and user data
 - Uses **SQLite** for development
 
 ### ⚙️ DevOps (Dockerized)
 - Full Docker support via `docker-compose`
 - **Uvicorn** for serving Django
 - **Nginx** as reverse proxy
-- Redis integration planned (caching/pub-sub)
+- **Redis (pub/sub)** for real time communication
 
 ---
 
@@ -57,7 +57,7 @@ This is a full-stack web application designed to help users learn English throug
 | Frontend   | React, Redux Toolkit, React Router, Bootstrap |
 | Backend    | Django, Django REST Framework, SQLite         |
 | Production | Docker, Docker Compose, Nginx, Uvicorn        |
-| Optional   | Redis (future enhancement)                    |
+| Optional   | Redis                                         |
 
 ---
 
@@ -82,7 +82,7 @@ This is a full-stack web application designed to help users learn English throug
 
 3. Access the application:
    - Frontend: [http://localhost:3000](http://localhost:3000)
-   - Backend API: [http://localhost:8000](http://localhost:8000)
+   - Backend API: [http://localhost:80](http://localhost:80)
 
 4. Stop the containers:
    ```bash
@@ -97,9 +97,7 @@ This is a full-stack web application designed to help users learn English throug
 - The backend container automatically runs:
   - `makemigrations`
   - `migrate`
-  - `collectstatic`
   during startup via `entrypoint.sh`.
-- Static files are collected and stored in the `static/` directory.
 - You can create a Django admin user by entering the backend container:
   ```bash
   docker exec -it <backend_container_name> python manage.py createsuperuser

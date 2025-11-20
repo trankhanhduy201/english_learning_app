@@ -18,6 +18,10 @@ services:
     depends_on:
       - redis
     restart: always
+    environment:
+      DJANGO_SUPERUSER_USERNAME: root
+      DJANGO_SUPERUSER_EMAIL: root@example.com
+      DJANGO_SUPERUSER_PASSWORD: root
 
   web:
     build:
