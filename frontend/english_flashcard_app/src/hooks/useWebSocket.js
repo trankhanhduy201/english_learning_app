@@ -17,10 +17,10 @@ export default function useWebSocket(url, onMessage) {
     };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log(data);
-      if (onMessage) {
-        onMessage(data);
+      const message = JSON.parse(event.data);
+      console.log(message);
+      if (message && onMessage) {
+        onMessage(message);
       }
     };
 

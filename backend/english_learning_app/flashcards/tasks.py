@@ -17,6 +17,10 @@ def generate_vocab_audio_binary(vocab_ids, user_id=None):
         return results
 
     for vocab in vocabs:
+        # # For testing purposes, we skip actual TTS generation
+        # results['audios'].update({vocab.word: f"test_audio_for_{vocab.word}"})
+        # continue
+
         tts = gTTS(text=vocab.word, lang=vocab.language)
         buffer = BytesIO()
         tts.write_to_fp(buffer)
@@ -54,7 +58,7 @@ def notify_user(user_id, message, data_json):
             {
                 "type": "send_notification",
                 "message": {
-                    "text": message,
+                    "type": message,
                     "data": data_json
                 },
             },

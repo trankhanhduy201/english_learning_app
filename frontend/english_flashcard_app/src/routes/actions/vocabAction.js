@@ -9,12 +9,16 @@ import {
   updateVocabThunk,
 } from "../../stores/actions/vocabAction";
 
-const getTrans = (trans) => {
+const getTrans = (topic) => {
+  const trans = topic?.translations
   if (!trans) {
-    return [];
+    return [{
+      language: topic.language,
+      translation: topic.word
+    }];
   }
-  return Object.keys(trans).reduce((n, v) => {
-    return [...n, ...trans[v].map((v1) => v1)];
+  return Object.keys(trans).reduce((newTrans, language) => {
+    return [...newTrans, ...trans[language].map(v => v)];
   }, []);
 };
 
@@ -72,7 +76,7 @@ export const editVocab = async ({ request, params }) => {
     updateData.topic = params.topicId;
     return await createVocab(params.topicId, {
       ...updateData,
-      translations: getTrans(updateData?.translations),
+      translations: getTrans(updateData),
     });
   }
 
@@ -83,7 +87,7 @@ export const editVocab = async ({ request, params }) => {
   return await updateVocab(params.topicId, params.vocabId, {
     ...updateData,
     id: params.vocabId,
-    translations: getTrans(updateData?.translations),
+    translations: getTrans(updateData),
   });
 };
 

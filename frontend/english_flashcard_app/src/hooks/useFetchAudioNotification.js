@@ -3,15 +3,19 @@ import useWebSocket from "../hooks/useWebSocket";
 import { generateSignature } from '../services/userApi';
 import { WS_BASE_URL } from "../configs/apiConfig";
 
-
 export default function useFetchAudioNotification(user_id) {
-  const [ audioDatas, setAudioDatas ] = useState([]);
+  const [ audioDatas, setAudioDatas ] = useState(null);
   const [ wsUrl, setWsUrl ] = useState();
 
   useWebSocket(wsUrl, (message) => {
     console.log("Message from server:", message);
-    if (message.data) {
-      setAudioDatas(JSON.parse(message.data));
+    try {
+      const { type, data } = message;
+      if (!type || !data || type !== 'generating_vocab_audio_notify') return;
+      setAudioDatas(JSON.parse(data));
+    } catch (error) {
+      console.error("Error parsing fetching audio message:", error);
+      return;
     }
   });
 

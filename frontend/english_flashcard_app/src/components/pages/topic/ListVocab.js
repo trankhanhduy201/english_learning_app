@@ -17,6 +17,9 @@ import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import useFetchAudioNotification from "../../../hooks/useFetchAudioNotification";
 import { getUser as getUserLocalStorage } from "../../../commons/localStorage";
+import { useDispatch } from "react-redux";
+import { SUCCESS_TYPE } from "../../../configs/alertConfig";
+import { setAlert } from "../../../stores/slices/alertSlice";
 
 const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   const curSearchText = useRef("");
@@ -138,6 +141,7 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
 const ListVocab = memo(({ vocabDatas, topicId }) => {
   const [vocabs, setVocabs] = useState([]);
   const userInfo = getUserLocalStorage();
+  const dispatch = useDispatch();
   const { audioDatas } = useFetchAudioNotification(userInfo?.id)
 
   useEffect(() => {
@@ -145,13 +149,19 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
   }, [vocabDatas])
 
   useEffect(() => {
-    const updateVocabAudio = item => {
+    if (!audioDatas) return;
+    setVocabs(prev => prev.map(item => {
       if (item.word in audioDatas) {
         return { ...item, audio: audioDatas[item.word] };
       }
       return item;
-    }
-    setVocabs(prev => prev.map(updateVocabAudio));
+    }));
+    dispatch(
+      setAlert({
+        type: SUCCESS_TYPE,
+        message: "The audios have been generated successfully.",
+      })
+    );
   }, [audioDatas])
   
   return (
