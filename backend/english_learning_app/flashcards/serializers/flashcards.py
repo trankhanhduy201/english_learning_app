@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from django.db import models
 from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation
 from flashcards.utilities.querysets import get_translation_prefetch_related
 from flashcards.serializers.bases import (
@@ -49,10 +50,7 @@ class VocabularyListSerializer(BaseListSerializer):
         }
         vocab_instances = super().create(validated_data)
         translation_service.bulk_create_update_translations(vocab_instances, validated_translations)
-        vocab_ids = [v.id for v in vocab_instances]
-        return Vocabulary.objects \
-            .prefetch_related(get_translation_prefetch_related()) \
-            .filter(pk__in=vocab_ids).all()
+        return vocab_instances
     
     def to_internal_value(self, data):
         topic_ids = {item.get('topic') for item in data}

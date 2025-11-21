@@ -64,7 +64,8 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
         serializer = self.get_serializer(data=data_import, many=True)
         if serializer.is_valid():
             serializer.save()
-            vocab_ids = list(serializer.instance.values_list('id', flat=True))
+            # vocab_ids = list(serializer.instance.values_list('id', flat=True))
+            vocab_ids = [vocab.id for vocab in serializer.instance]
             generate_vocab_audio_async(vocab_ids, user_id=request.user.pk)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
