@@ -27,14 +27,7 @@ SECRET_KEY = 'django-insecure-3_u0uvxb5xx#3x9qi4a8saq8m-lr3pm8_74et-pm(2wmd@la!+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',  # Localhost (useful for testing)
-    'localhost',  # Localhost
-]
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.admin',
@@ -161,11 +154,15 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 10
 }
 
-# Configure the internal IPs to allow the toolbar to display
+# # Configure the internal IPs to allow the toolbar to display
 INTERNAL_IPS = [
     "127.0.0.1",
     "localhost"
 ]
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(seconds=300), # Access token lifetime
