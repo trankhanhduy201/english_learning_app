@@ -40,7 +40,7 @@ const ImportTextModal = memo(({ topicId, learningLang, onClose }) => {
                 <Dropdown
                   name="language_to"
                   defaultValue={DEFAULT_LANG}
-                  options={LANGUAGES}
+                  options={Object.values(LANGUAGES)}
                 />
                 {fetcher.data?.errors?.language_to && (
                   <FieldErrors errors={fetcher.data.errors.language_to} />

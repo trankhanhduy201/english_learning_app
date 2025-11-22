@@ -32,7 +32,7 @@ const VocabDetail = memo(
             <Dropdown
               name="language"
               defaultValue={defaultLanguage}
-              options={LANGUAGES}
+              options={Object.values(LANGUAGES)}
             />
             {errors?.language && <FieldErrors errors={errors.language} />}
           </div>

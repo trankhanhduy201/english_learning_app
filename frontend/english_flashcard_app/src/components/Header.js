@@ -46,7 +46,7 @@ const Header = memo(() => {
               {globalLang}
             </Dropdown.Toggle>
             <Dropdown.Menu align="end">
-              {LANGUAGES.map((item) => (
+              {Object.values(LANGUAGES).map((item) => (
                 <Dropdown.Item
                   key={item.key}
                   onClick={() => onChangeGlobalLang(item.key)}

@@ -28,7 +28,7 @@ const FormSearch = memo(() => {
                     defaultValue={searchParams.get("learning_language") || ""}
                   >
                     <option key={0} value="">All Languages</option>
-                    {LANGUAGES.map((item) => (
+                    {Object.values(LANGUAGES).map((item) => (
                       <option key={item.key} value={item.key}>{item.text}</option>
                     ))}
                   </select>

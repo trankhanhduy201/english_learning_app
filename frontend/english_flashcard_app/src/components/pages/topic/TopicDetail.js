@@ -70,7 +70,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           <Dropdown
             name="learning_language"
             defaultValue={topic?.learning_language}
-            options={LANGUAGES}
+            options={Object.values(LANGUAGES)}
           />
           {editTopicFetcher.data?.errors?.learning_language && (
             <FieldErrors

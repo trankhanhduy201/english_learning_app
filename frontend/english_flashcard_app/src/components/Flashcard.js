@@ -184,7 +184,7 @@ const WordTypeFilterButtons = memo(({ filterTypes, onFilterVocabsByTypes }) => {
 const LanguageFilterButtons = memo(({ filterLang, onFilterVocabsByLang }) => {
   return (
     <>
-      {LANGUAGES.map((item) => (
+      {Object.values(LANGUAGES).map((item) => (
         <button
           key={item.key}
           className={`btn ${item.key == filterLang ? "btn-primary" : "btn-outline-primary"} d-inline-block ms-2 mt-2`}
