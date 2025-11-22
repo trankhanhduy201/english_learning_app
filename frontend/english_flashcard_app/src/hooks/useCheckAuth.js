@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import * as cookies from "../commons/cookies";
 import * as tokenCommon from "../commons/token";
 
-const useCheckAuth = ({ hasCheckExpired }) => {
+const useCheckAuth = ({ hasCheckExpired, isPassServerAuth }) => {
   const [dataAuth, setDataAuth] = useState({
     isLogged: null,
     isExpired: false,
@@ -24,6 +24,10 @@ const useCheckAuth = ({ hasCheckExpired }) => {
 
   useEffect(() => {
     const verify = async () => {
+      if (isPassServerAuth) {
+        setIsLogged(true);
+        return;
+      }
       const { token, refreshToken } = cookies.getAuthTokens();
       const verified = await tokenCommon.verifyToken(token, refreshToken);
       setIsLogged(verified);
@@ -44,7 +48,7 @@ const useCheckAuth = ({ hasCheckExpired }) => {
       const interval = setInterval(() => checkExpired(), 5000);
       return () => clearInterval(interval);
     }
-  }, []);
+  }, [hasCheckExpired, isPassServerAuth]);
 
   return {
     ...dataAuth,

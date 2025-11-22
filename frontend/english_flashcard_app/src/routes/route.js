@@ -9,8 +9,6 @@ import Error from "../components/errors/Error";
 import Login from "../pages/Login";
 import Layout from "../pages/Layout";
 import PrivatePage from "../components/PrivatePage";
-import VocabModal from "../pages/VocabModal";
-import TopicModal from "../pages/TopicModal";
 import Test from "../pages/Test";
 
 const isShouldNotRevalidate = (formData, actionResult) => {
@@ -104,7 +102,7 @@ const routes = createBrowserRouter(
               children: [
                 {
                   path: "new",
-                  element: <TopicModal />,
+                  element: <PrivatePage pageName="TopicModal" />,
                   action: topicsAction.createTopic,
                 },
                 {
@@ -130,7 +128,7 @@ const routes = createBrowserRouter(
                 },
                 {
                   path: "vocab/:vocabId/:action?",
-                  element: <VocabModal />,
+                  element: <PrivatePage pageName="VocabModal" />,
                   loader: vocabsLoader.getVocab,
                   action: vocabsAction.editVocab,
                   shouldRevalidate: defaultShouldRevalidate,

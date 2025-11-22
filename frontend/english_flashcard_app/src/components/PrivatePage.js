@@ -1,14 +1,22 @@
+import { memo, lazy, Suspense } from "react";
 import { Navigate } from "react-router-dom";
-import LoadingOverlay from "../components/LoadingOverlay";
-import Dashboard from "../pages/Dashboard";
-import Topics from "../pages/Topics";
-import Topic from "../pages/Topic";
-import TopicLearn from "../pages/TopicLearn";
-import Vocab from "../pages/Vocab";
-import useCheckAuth from "../hooks/useCheckAuth";
-import { memo } from "react";
 import { useSelector } from "react-redux";
-import Settings from "../pages/Settings";
+import LoadingOverlay from "../components/LoadingOverlay";
+import useCheckAuth from "../hooks/useCheckAuth";
+
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+const Topics = lazy(() => import("../pages/Topics"));
+const Topic = lazy(() => import("../pages/Topic"));
+const TopicLearn = lazy(() => import("../pages/TopicLearn"));
+const Vocab = lazy(() => import("../pages/Vocab"));
+const Settings = lazy(() => import("../pages/Settings"));
+const VocabModal = lazy(() => import("../pages/VocabModal"));
+const TopicModal = lazy(() => import("../pages/TopicModal"));
+
+const isPassServerAuth = pageName => [
+  "TopicModal",
+  "VocabModal"
+].includes(pageName);
 
 const Page = memo(({ pageName }) => {
   switch (pageName) {
@@ -20,8 +28,12 @@ const Page = memo(({ pageName }) => {
       return <Topics />;
     case "Topic":
       return <Topic />;
+    case "TopicModal":
+      return <TopicModal />;
     case "Vocab":
       return <Vocab />;
+    case "VocabModal":
+      return <VocabModal />;
     case "TopicLearn":
       return <TopicLearn />;
     default:
@@ -33,6 +45,7 @@ const PrivatePage = memo(({ pageName }) => {
   const globalLang = useSelector((state) => state.lang);
   const { isLogged } = useCheckAuth({
     hasCheckExpired: false,
+    isPassServerAuth: isPassServerAuth(pageName)
   });
 
   if (isLogged === null) {
@@ -43,7 +56,11 @@ const PrivatePage = memo(({ pageName }) => {
     return <Navigate to="/login" />;
   }
 
-  return <Page key={globalLang} pageName={pageName} />;
+  return (
+    <Suspense fallback={<LoadingOverlay />}>
+      <Page key={globalLang} pageName={pageName} />
+    </Suspense>
+  )
 });
 
 export default PrivatePage;
