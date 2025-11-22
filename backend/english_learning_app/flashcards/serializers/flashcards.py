@@ -22,7 +22,7 @@ class TopicSerializer(BaseSerializer):
 
     class Meta(BaseSerializer.Meta):
         model = Topic
-        fields = ['id', 'name', 'learning_language', 'descriptions', 'image_info', 'upload_image', 'created_by']
+        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by']
 
     def get_image_info(self, instance):
         if instance.image_path:

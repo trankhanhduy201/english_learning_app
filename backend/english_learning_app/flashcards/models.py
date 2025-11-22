@@ -27,10 +27,15 @@ class CreatedBy(models.Model):
 
 
 class Topic(CreatedBy):
+	class TopicStatusEnums(models.TextChoices):
+		PRIVATE = ('private', _('Private'))
+		PUBLIC = ('public', _('Public'))
+
 	name = models.CharField(max_length=100)
 	learning_language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
 	descriptions = models.TextField(blank=True, null=True)
 	image_path = models.ImageField(upload_to=topic_image_upload_to, default=None, null=True, blank=True)
+	status = models.CharField(max_length=15, choices=TopicStatusEnums.choices, default=TopicStatusEnums.PRIVATE)
 
 	def __str__(self):
 		return self.name

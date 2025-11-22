@@ -5,6 +5,8 @@ import { useTopicContext } from "../../../contexts/TopicContext";
 import FieldErrors from "../../../components/FieldErrors";
 import Dropdown from "../../../components/Dropdown";
 import UploadImageInput from "../../UploadImageInput";
+import RadioButtons from "../../RadioButtons";
+import { TOPIC_STATUS } from "../../../configs/appConfig";
 
 const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const editTopicFetcher = useFetcher();
@@ -77,20 +79,41 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           )}
         </div>
       </div>
-      <div className="mb-3">
-        <label htmlFor="descriptions" className="form-label">
-          Descriptions
-        </label>
-        <textarea
-          rows={5}
-          className="form-control"
-          name="descriptions"
-          defaultValue={topic?.descriptions}
-          placeholder="Description..."
-        ></textarea>
-        {editTopicFetcher.data?.errors?.descriptions && (
-          <FieldErrors errors={editTopicFetcher.data.errors.descriptions} />
-        )}
+      <div className="row">
+        <div className="mb-3">
+          <label htmlFor="descriptions" className="form-label">
+            Descriptions
+          </label>
+          <textarea
+            rows={5}
+            className="form-control"
+            name="descriptions"
+            defaultValue={topic?.descriptions}
+            placeholder="Description..."
+          ></textarea>
+          {editTopicFetcher.data?.errors?.descriptions && (
+            <FieldErrors errors={editTopicFetcher.data.errors.descriptions} />
+          )}
+        </div>
+      </div>
+      <div className="row">
+        <div className="mb-3">
+          <label htmlFor="status" className="form-label">
+            Status
+          </label>
+          <div className="d-block">
+            <RadioButtons 
+              name="status"
+              options={Object.values(TOPIC_STATUS)}
+              selectedOption={topic?.status ?? 'private'}
+            />
+          </div>
+          {editTopicFetcher.data?.errors?.status && (
+            <FieldErrors
+              errors={editTopicFetcher.data?.errors?.status}
+            />
+          )}
+        </div>
       </div>
       <div className="row">
         <div className="mb-3 col-md-6">
