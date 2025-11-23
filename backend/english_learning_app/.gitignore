@@ -1,2 +1,5 @@
 db.sqlite3
 !.gitignore
+media/*
+static/*
+flashcards/migrations/*
