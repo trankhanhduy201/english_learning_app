@@ -27,6 +27,11 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
     filterset_class = TopicFilter
     pagination_class = CustomPageNumberPagination
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.prefetch_related('members').select_related('created_by')
+        return qs
+
 
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
     queryset = Vocabulary.objects.all()

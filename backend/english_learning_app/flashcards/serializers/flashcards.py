@@ -1,28 +1,51 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-from django.db import models
+from django.contrib.auth import get_user_model
 from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation
-from flashcards.utilities.querysets import get_translation_prefetch_related
 from flashcards.serializers.bases import (
     BaseSerializer, 
     BaseListSerializer, 
-    InstancePrimaryKeyRelatedField
+    CustomPrimaryKeyRelatedField
 )
 from flashcards.services.translations import TranslationService
 from flashcards.serializers.images import UploadImageSerializer
 
+User = get_user_model()
 
 translation_service = TranslationService()
+
+
+class UserSerializer(BaseSerializer):
+    class Meta(BaseSerializer.Meta):
+        model = User
+        fields = '__all__'
+
+
+class MemberSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = ['id', 'username']
 
 
 class TopicSerializer(BaseSerializer):
     # For read-only and involke get_upload_image to return serialized image data
     image_info = serializers.SerializerMethodField()
-    upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
+    members = MemberSerializer(many=True, read_only=True)
 
+    upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
+    updated_members = CustomPrimaryKeyRelatedField(
+        source='members',
+        many=True,
+        queryset=User.objects.all(),
+        allow_null=True,
+        required=False,
+        write_only=True
+    )
+    
     class Meta(BaseSerializer.Meta):
         model = Topic
-        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by']
+        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members']
+        read_only_fields = ['created_by', 'upload_image']
 
     def get_image_info(self, instance):
         if instance.image_path:
@@ -30,6 +53,10 @@ class TopicSerializer(BaseSerializer):
         return None
     
     def update(self, instance, validated_data):
+        updated_members = validated_data.pop('updated_members', None)
+        if updated_members:
+            instance.members.set(updated_members)
+
         if 'image_path' in validated_data and validated_data['image_path'] is None:
             instance.image_path.delete(save=False)
         return super().update(instance, validated_data)
@@ -63,7 +90,7 @@ class VocabularyListSerializer(BaseListSerializer):
 
 class VocabularySerializer(BaseSerializer):
     translations = TranslationSerializer(many=True)
-    topic = InstancePrimaryKeyRelatedField(
+    topic = CustomPrimaryKeyRelatedField(
         queryset=Topic.objects.all(),
         allow_null=True,
         required=False
@@ -74,15 +101,7 @@ class VocabularySerializer(BaseSerializer):
         fields = ['id', 'word', 'topic', 'audio', 'language', 'translations', 'descriptions', 'created_by']
         list_serializer_class = VocabularyListSerializer
         read_only_fields = ['audio']
-
-    def get_fields(self):
-        fields = super().get_fields()
-
-        # Make 'topic' read-only on update
-        if self.instance is not None:
-            fields['topic'].read_only = True
-
-        return fields
+        read_only_fields_on_update = ['topic']
     
     def create(self, validated_data):
         validated_data.pop('translations', [])

@@ -37,8 +37,32 @@ class Topic(CreatedBy):
 	image_path = models.ImageField(upload_to=topic_image_upload_to, default=None, null=True, blank=True)
 	status = models.CharField(max_length=15, choices=TopicStatusEnums.choices, default=TopicStatusEnums.PRIVATE)
 
+	members = models.ManyToManyField(
+		settings.AUTH_USER_MODEL,
+		through="TopicMember",
+		related_name="topics"
+	)
+
 	def __str__(self):
 		return self.name
+
+
+class TopicMember(models.Model):
+	class TopicMemberStatusEnums(models.TextChoices):
+		READ_ONLY = ('read_only', _('Read only'))
+		EDITABLE = ('editable', _('Editable'))
+		BLOCK = ('block', _('Block'))
+
+	member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="topic_members")
+	topic = models.ForeignKey("Topic", on_delete=models.CASCADE, related_name="topic_members")
+	status = models.CharField(max_length=20, choices=TopicMemberStatusEnums.choices, default=TopicMemberStatusEnums.READ_ONLY)
+	joined_at = models.DateField(auto_now_add=True)
+
+	class Meta:
+		unique_together = ("member", "topic")  # prevent duplicates
+
+	def __str__(self):
+		return f"{self.member} ↔ {self.topic}"
 
 
 class Vocabulary(CreatedBy):
