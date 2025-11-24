@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 # https://books.agiliq.com/projects/django-orm-cookbook/en/latest/index.html
 
 def topic_image_upload_to(instance, filename):
-    return f'uploads/topics/{instance.id}/{filename}'
+    return f'uploads/topics/{filename}'
 
 
 class LanguageEnums(models.TextChoices):

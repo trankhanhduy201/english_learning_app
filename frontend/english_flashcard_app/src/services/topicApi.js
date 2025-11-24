@@ -8,6 +8,14 @@ export const getTopics = async (filters, options = {}) => {
   });
 };
 
+export const getMembers = async (id, options = {}) => {
+  return await callApi(`topics/${id}/members`, {
+    method: "GET",
+    ...options,
+  });
+};
+
+
 export const getTopicById = async (id, options = {}) => {
   return await callApi(`topics/${id}`, {
     method: "GET",

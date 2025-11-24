@@ -30,7 +30,7 @@ class MemberSerializer(UserSerializer):
 class TopicSerializer(BaseSerializer):
     # For read-only and involke get_upload_image to return serialized image data
     image_info = serializers.SerializerMethodField()
-    members = MemberSerializer(many=True, read_only=True)
+    members = serializers.SerializerMethodField()
 
     upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
     updated_members = CustomPrimaryKeyRelatedField(
@@ -45,12 +45,15 @@ class TopicSerializer(BaseSerializer):
     class Meta(BaseSerializer.Meta):
         model = Topic
         fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members']
-        read_only_fields = ['created_by', 'upload_image']
+        read_only_fields = ['created_by']
 
     def get_image_info(self, instance):
         if instance.image_path:
             return UploadImageSerializer(instance=instance.image_path).data
         return None
+    
+    def get_members(self, instance):
+        return MemberSerializer(instance=instance.members.all()[:10], many=True).data
     
     def update(self, instance, validated_data):
         updated_members = validated_data.pop('updated_members', None)

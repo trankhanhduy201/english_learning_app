@@ -1,5 +1,6 @@
 import re
-from django.db.models import Q
+from django.db.models import Q, Prefetch
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,7 +8,8 @@ from flashcards.utilities.querysets import get_translation_prefetch_related
 from flashcards.serializers.flashcards import (
     TopicSerializer, 
     VocabularySerializer, 
-    VocabularyImportSerializer
+    VocabularyImportSerializer,
+    MemberSerializer
 )
 from flashcards.views.bases import BaseModelViewSet
 from flashcards.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
@@ -17,6 +19,8 @@ from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
 
+
+User = get_user_model()
 
 vocab_import_service = VocabularyImportService()
 
@@ -29,8 +33,17 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.prefetch_related('members').select_related('created_by')
+        qs = qs.prefetch_related(
+            Prefetch('members', queryset=User.objects.order_by('-topic_members__joined_at'))
+        ).select_related('created_by')
         return qs
+    
+    @action(detail=True, methods=['get'], url_path='members')
+    def get_members(self, request, *args, **kwargs):
+        instance = self.get_object()
+        members = instance.members.all()
+        serializer = MemberSerializer(members, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
