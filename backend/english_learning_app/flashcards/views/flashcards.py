@@ -9,12 +9,12 @@ from flashcards.serializers.flashcards import (
     TopicSerializer, 
     VocabularySerializer, 
     VocabularyImportSerializer,
-    MemberSerializer
+    TopicMemberSerializer
 )
 from flashcards.views.bases import BaseModelViewSet
 from flashcards.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.views.paginations import CustomPageNumberPagination
-from flashcards.models import Topic, Vocabulary
+from flashcards.models import Topic, Vocabulary, TopicMember
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
@@ -34,16 +34,24 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.prefetch_related(
-            Prefetch('members', queryset=User.objects.order_by('-topic_members__joined_at'))
+            Prefetch(
+                'topic_members', 
+                queryset=TopicMember.objects
+                    .select_related('member')
+                    .order_by('-joined_at')
+                    .only('id', 'status', 'joined_at', 'member', 'topic','member__id', 'member__username')
+            )
         ).select_related('created_by')
         return qs
     
     @action(detail=True, methods=['get'], url_path='members')
     def get_members(self, request, *args, **kwargs):
         instance = self.get_object()
-        members = instance.members.all()
-        serializer = MemberSerializer(members, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        members = instance.topic_members.all()
+        return Response(
+            TopicMemberSerializer(members, many=True).data, 
+            status=status.HTTP_200_OK
+        )
 
 
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth import get_user_model
-from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation
+from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation, TopicMember
 from flashcards.serializers.bases import (
     BaseSerializer, 
     BaseListSerializer, 
@@ -21,10 +21,13 @@ class UserSerializer(BaseSerializer):
         fields = '__all__'
 
 
-class MemberSerializer(UserSerializer):
+class TopicMemberSerializer(UserSerializer):
+    member_id = serializers.CharField(source='member.id')
+    member_name = serializers.DateField(source='member.username')
+    
     class Meta(UserSerializer.Meta):
-        model = User
-        fields = ['id', 'username']
+        model = TopicMember
+        fields = ['id', 'status', 'joined_at', 'member_id', 'member_name']
 
 
 class TopicSerializer(BaseSerializer):
@@ -36,7 +39,7 @@ class TopicSerializer(BaseSerializer):
     updated_members = CustomPrimaryKeyRelatedField(
         source='members',
         many=True,
-        queryset=User.objects.all(),
+        queryset=User.objects.all(), # This will be run at the end in case not being used when reading
         allow_null=True,
         required=False,
         write_only=True
@@ -53,7 +56,7 @@ class TopicSerializer(BaseSerializer):
         return None
     
     def get_members(self, instance):
-        return MemberSerializer(instance=instance.members.all()[:15], many=True).data
+        return TopicMemberSerializer(instance=instance.topic_members.all()[:15], many=True).data
     
     def update(self, instance, validated_data):
         updated_members = validated_data.pop('updated_members', None)

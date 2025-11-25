@@ -4,7 +4,7 @@ import { throttle } from "lodash";
 import { setAlert } from "../stores/slices/alertSlice";
 import * as alertConfig from "../configs/alertConfig";
 
-const useFetch = ({ callApiFunc, manualFetch = false, throttleSeconds = 0.5 }) => {
+const useFetch = ({ callApiFunc, manualFetch = false, throttlingFetch = 0.5 }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,10 +20,10 @@ const useFetch = ({ callApiFunc, manualFetch = false, throttleSeconds = 0.5 }) =
           allowFetch.current = true;
           setReload(prev => prev + 1);
         }, 
-        throttleSeconds * 1000,
+        throttlingFetch * 1000,
         { leading: true, trailing: false }
       ),
-    [throttleSeconds]
+    [throttlingFetch]
   )
 
   useEffect(() => {

@@ -7,11 +7,11 @@ import { getMembers } from "../../../services/topicApi";
 export default function Subscribers({ defaultMembers, topicId, onRemoveMember }) {
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
-  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [modalMembers, setModalMembers] = useState([]);
 
   const callApiFunc = useCallback((options = {}) => getMembers(topicId, options), [topicId]);
   const { data: allMembers, loading, refetch } = useFetch({ 
-    callApiFunc, manualFetch: true, throttleSeconds: 60
+    callApiFunc, manualFetch: true, throttlingFetch: 60
   });
 
   const handleSearch = useMemo(
@@ -32,11 +32,11 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
     if (!allMembers) return;
 
     if (search.trim() === "") {
-      setFilteredMembers(allMembers);
+      setModalMembers(allMembers);
       return;
     }
 
-    setFilteredMembers(
+    setModalMembers(
       allMembers.filter((user) =>
         user.username.toLowerCase().includes(search.toLowerCase())
       )
@@ -57,8 +57,8 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
               user?.avartar ??
               "https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=30"
             }
-            alt={user.username}
-            title={user.username}
+            alt={user.member_name}
+            title={user.member_name}
             className="rounded-circle subcriber-avatar me-2"
           />
         ))}
@@ -77,7 +77,7 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
       </div>
 
       {displayedMembers.length === 0 && (
-        <div className="text-muted">No subscribers yet.</div>
+        <div className="text-muted text-center">No subscribers yet.</div>
       )}
 
       {/* Modal */}
@@ -102,11 +102,11 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
             </div>
-          ) : filteredMembers.length > 0 ? (
+          ) : modalMembers.length > 0 ? (
             <div className="list-group">
-              {filteredMembers.map((user) => (
+              {modalMembers.map((user) => (
                 <div
-                  key={user.id}
+                  key={user.member_id}
                   className="d-flex align-items-center justify-content-between list-group-item"
                 >
                   <div className="d-flex align-items-center">
@@ -115,11 +115,11 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
                         user.avartar ??
                         "https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=40"
                       }
-                      alt={user.username}
+                      alt={user.member_name}
                       className="rounded-circle subcriber-avatar me-2"
                       style={{ width: "40px", height: "40px", objectFit: "cover" }}
                     />
-                    <span>{user.username}</span>
+                    <span>{user.member_name}</span>
                   </div>
 
                   <Button
