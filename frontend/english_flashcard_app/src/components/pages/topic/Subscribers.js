@@ -11,7 +11,7 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
 
   const callApiFunc = useCallback((options = {}) => getMembers(topicId, options), [topicId]);
   const { data: allMembers, loading, refetch } = useFetch({ 
-    callApiFunc, manualFetch: true, throttleSeconds: 5 
+    callApiFunc, manualFetch: true, throttleSeconds: 60
   });
 
   const handleSearch = useMemo(
