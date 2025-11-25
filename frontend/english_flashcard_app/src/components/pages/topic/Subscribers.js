@@ -43,9 +43,8 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
     );
   }, [allMembers, search]);
 
-  // First 5 members for top row
   const displayedMembers = useMemo(() => {
-    return allMembers ? allMembers.slice(0, 10) : defaultMembers;
+    return allMembers ? allMembers.slice(0, 15) : defaultMembers;
   }, [allMembers, defaultMembers]);
 
   return (

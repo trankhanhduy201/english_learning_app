@@ -53,7 +53,7 @@ class TopicSerializer(BaseSerializer):
         return None
     
     def get_members(self, instance):
-        return MemberSerializer(instance=instance.members.all()[:10], many=True).data
+        return MemberSerializer(instance=instance.members.all()[:15], many=True).data
     
     def update(self, instance, validated_data):
         updated_members = validated_data.pop('updated_members', None)
