@@ -6,6 +6,7 @@ import {
   useTransition,
   useRef,
   startTransition,
+  useMemo,
 } from "react";
 import { Link, useFetcher } from "react-router-dom";
 import ImportTextModal from "../topic/ImportTextModal";
@@ -66,14 +67,15 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
     [topicId],
   );
 
-  const onSearchVocab = useCallback(
-    debounce((searchText) => {
-      curSearchText.current = searchText.toLowerCase();
-      startTransition(() => {
-        filterVocabs(searchText);
-      });
-    }, 300),
-    [vocabDatas],
+  const onSearchVocab = useMemo(
+    () =>
+      debounce((searchText) => {
+        curSearchText.current = searchText.toLowerCase();
+        startTransition(() => {
+          filterVocabs(searchText);
+        });
+      }, 300),
+    []
   );
 
   useEffect(() => {

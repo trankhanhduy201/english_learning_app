@@ -10,7 +10,9 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
   const [filteredMembers, setFilteredMembers] = useState([]);
 
   const callApiFunc = useCallback((options = {}) => getMembers(topicId, options), [topicId]);
-  const { data: allMembers, loading, refetch } = useFetch({ callApiFunc, manual: false });
+  const { data: allMembers, loading, refetch } = useFetch({ 
+    callApiFunc, manualFetch: true, throttleSeconds: 5 
+  });
 
   const handleSearch = useMemo(
     () =>
@@ -43,7 +45,7 @@ export default function Subscribers({ defaultMembers, topicId, onRemoveMember })
 
   // First 5 members for top row
   const displayedMembers = useMemo(() => {
-    return allMembers ? allMembers.slice(0, 5) : defaultMembers;
+    return allMembers ? allMembers.slice(0, 10) : defaultMembers;
   }, [allMembers, defaultMembers]);
 
   return (
