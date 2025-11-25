@@ -19,7 +19,9 @@ const useFetch = ({ callApiFunc, manualFetch = false, throttleSeconds = 0.5 }) =
         () => {
           allowFetch.current = true;
           setReload(prev => prev + 1);
-        }, throttleSeconds * 1000
+        }, 
+        throttleSeconds * 1000,
+        { leading: true, trailing: false }
       ),
     [throttleSeconds]
   )
