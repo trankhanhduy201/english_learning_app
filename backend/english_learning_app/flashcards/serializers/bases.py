@@ -36,23 +36,53 @@ class CustomPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 class BaseListSerializer(serializers.ListSerializer):
+    def run_child_validation(self, data):
+        child_instance = None
+        for item in self.instance:
+            if item.pk == data['id']:
+                child_instance = item
+                break
+
+        self.child.instance = child_instance
+        self.child.initial_data = data
+        return self.child.run_validation(data)
+
     def update(self, instances, validated_data):
-        instance_hash = {index: instance for index, instance in enumerate(instances)}
-        result = [
-            self.child.update(instance_hash[index], attrs)
-            for index, attrs in enumerate(validated_data)
-        ]
-        
-        writable_fields = [
-            x for x in self.child.Meta.fields
-            if x not in self.child.Meta.read_only_fields
-        ]
-        try:
-            self.child.Meta.model.objects.bulk_update(result, writable_fields)
-        except IntegrityError as e:
-            raise ValidationError(e)
-        
-        return result
+        # instance_hash = {index: instance for index, instance in enumerate(instances)}
+        # result = [
+        #     self.child.update(instance_hash[index], attrs)
+        #     for index, attrs in enumerate(validated_data)
+        # ]
+        updating_data = []
+        if isinstance(validated_data, list) and len(validated_data) > 0:
+            instance_hash = {instance.pk: instance for index, instance in enumerate(instances)}
+            validated_keys = [key for key, value in (validated_data[0]).items()]
+            for data in self.initial_data:
+                new_data = {'id': data['id'] if 'id' in data else None}
+                for key, value in data.items():
+                    if key in validated_keys:
+                        new_data[key] = value
+
+                child_instance = instance_hash[new_data['id']]
+                child_instance.__dict__.update(new_data)
+                updating_data.append(child_instance)
+                                
+            """
+            There are some ways to get items
+            1. self.child.Meta.fields.items() -> List[str]
+            2. self.child.get_fields() -> Dict(<key>:<field>)
+            """
+            read_only_fields = getattr(self.child.Meta, 'read_only_fields', [])
+            writable_fields = [
+                name for name, field in self.child.get_fields().items()
+                if name not in read_only_fields and not getattr(field, 'read_only', False)
+            ]
+            try:
+                self.child.Meta.model.objects.bulk_update(updating_data, writable_fields)
+            except IntegrityError as e:
+                raise ValidationError(e)
+            
+        return updating_data
     
     def create(self, validated_data):
         model_class = self.child.Meta.model

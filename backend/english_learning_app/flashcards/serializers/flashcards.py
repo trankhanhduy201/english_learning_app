@@ -22,12 +22,13 @@ class UserSerializer(BaseSerializer):
 
 
 class TopicMemberSerializer(UserSerializer):
-    member_id = serializers.CharField(source='member.id')
-    member_name = serializers.DateField(source='member.username')
+    member_id = serializers.CharField(source='member.id', read_only=True)
+    member_name = serializers.CharField(source='member.username', read_only=True)
     
     class Meta(UserSerializer.Meta):
         model = TopicMember
-        fields = ['id', 'status', 'joined_at', 'member_id', 'member_name']
+        fields = ['id', 'status', 'joined_at', 'topic', 'member', 'member_id', 'member_name']
+        read_only_fields_on_update = ['topic', 'member']
 
 
 class TopicSerializer(BaseSerializer):

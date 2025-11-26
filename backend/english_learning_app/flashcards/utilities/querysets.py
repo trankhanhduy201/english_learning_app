@@ -1,5 +1,5 @@
 from django.db.models import Prefetch
-from flashcards.models import Translation
+from flashcards.models import Translation, TopicMember
 
 
 def get_translation_prefetch_related(params=None):
@@ -9,3 +9,14 @@ def get_translation_prefetch_related(params=None):
 		if lang:
 			qs = qs.filter(language=lang)
 	return Prefetch('translations', queryset=qs)
+
+def get_topic_member_prefetch_related(params=None):
+	qs = TopicMember.objects \
+		.select_related('member') \
+		.order_by('-joined_at') \
+		.filter(pk__in=[1,2]) \
+		.only('id', 'status', 'joined_at', 'member', 'topic','member__id', 'member__username')
+
+	return Prefetch('topic_members', queryset=qs)
+	
+

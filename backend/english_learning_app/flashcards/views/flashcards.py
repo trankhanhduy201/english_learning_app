@@ -4,12 +4,15 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from flashcards.utilities.querysets import get_translation_prefetch_related
+from flashcards.utilities.querysets import (
+	get_translation_prefetch_related,
+	get_topic_member_prefetch_related
+)
 from flashcards.serializers.flashcards import (
-    TopicSerializer, 
-    VocabularySerializer, 
-    VocabularyImportSerializer,
-    TopicMemberSerializer
+	TopicSerializer, 
+	VocabularySerializer, 
+	VocabularyImportSerializer,
+	TopicMemberSerializer
 )
 from flashcards.views.bases import BaseModelViewSet
 from flashcards.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
@@ -18,41 +21,66 @@ from flashcards.models import Topic, Vocabulary, TopicMember
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
+from flashcards.services.topics import TopicService
 
 
 User = get_user_model()
 
 vocab_import_service = VocabularyImportService()
 
+topic_service = TopicService()
+
 
 class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
-    queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
-    filterset_class = TopicFilter
-    pagination_class = CustomPageNumberPagination
+	queryset = Topic.objects.all()
+	serializer_class = TopicSerializer
+	member_serializer_class = TopicMemberSerializer
+	filterset_class = TopicFilter
+	pagination_class = CustomPageNumberPagination
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.prefetch_related(
-            Prefetch(
-                'topic_members', 
-                queryset=TopicMember.objects
-                    .select_related('member')
-                    .order_by('-joined_at')
-                    .only('id', 'status', 'joined_at', 'member', 'topic','member__id', 'member__username')
-            )
-        ).select_related('created_by')
-        return qs
-    
-    @action(detail=True, methods=['get'], url_path='members')
-    def get_members(self, request, *args, **kwargs):
-        instance = self.get_object()
-        members = instance.topic_members.all()
-        return Response(
-            TopicMemberSerializer(members, many=True).data, 
-            status=status.HTTP_200_OK
-        )
+	def get_queryset(self):
+		qs = super().get_queryset()
+		qs = qs.prefetch_related(get_topic_member_prefetch_related())
+		qs = qs.select_related('created_by')
+		return qs
+	
+	@action(detail=True, methods=['get', 'post'], url_path='members')
+	def members(self, request, *args, **kwargs):
+		instance = self.get_object()
 
+		if request.method == 'GET':
+			return self.get_members(instance)
+		
+		if request.method in ['PUT', 'POST']:
+			return self.create_update_members(instance, request.data)
+		
+		return Response(
+			'The method is not allowed',
+			status=status.HTTP_400_BAD_REQUEST
+		)
+
+	def get_members(self, topic):
+		return Response(
+			self.member_serializer_class(topic.topic_members.all(), many=True).data, 
+			status=status.HTTP_200_OK
+		)
+	
+	def create_update_members(self, topic, updated_members):
+		serializers = self.member_serializer_class(
+			instance=topic.topic_members.all(), 
+			data=topic_service.get_create_update_members(
+				topic=topic, 
+				updating_members=updated_members
+			), 
+			many=True
+		)
+		serializers.is_valid(raise_exception=True)
+		serializers.save()
+		return Response(
+			serializers.data,
+			status=status.HTTP_200_OK
+		)
+		
 
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
     queryset = Vocabulary.objects.all()
