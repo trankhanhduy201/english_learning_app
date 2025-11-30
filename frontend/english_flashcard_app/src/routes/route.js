@@ -119,6 +119,10 @@ const routes = createBrowserRouter(
               shouldRevalidate: topicShouldRevalidate,
               children: [
                 {
+                  path: "members/update",
+                  action: topicsAction.updateMembers,
+                },
+                {
                   path: "vocab/import",
                   action: vocabsAction.importVocabs,
                 },

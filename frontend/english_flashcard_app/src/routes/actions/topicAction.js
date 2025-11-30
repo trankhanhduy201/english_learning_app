@@ -67,3 +67,11 @@ export const deleteTopics = async () => {
     return err;
   }
 };
+
+export const updateMembers = async ({ request }) => {
+  const formData = await request.formData();
+  const updateData = Object.fromEntries(formData);
+  console.log(JSON.parse(updateData?.updating_member_data ?? ''));
+  return {}
+};
+
