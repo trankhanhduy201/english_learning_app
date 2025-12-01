@@ -5,8 +5,17 @@ import {
   updateTopicThunk,
   deleteTopicThunk,
   deleteTopicsThunk,
+  updateTopicMembersThunk,
 } from "../../stores/actions/topicAction";
 import { blobToBase64 } from "../../commons/images";
+
+const updateTopicMembers = async (topicId, data) => {
+  try {
+    return await store.dispatch(updateTopicMembersThunk({ topicId, data })).unwrap();
+  } catch (err) {
+    return err;
+  }
+};
 
 const updateTopic = async (topicId, data) => {
   try {
@@ -68,10 +77,21 @@ export const deleteTopics = async () => {
   }
 };
 
-export const updateMembers = async ({ request }) => {
+export const updateMembers = async ({ request, params }) => {
   const formData = await request.formData();
   const updateData = Object.fromEntries(formData);
-  console.log(JSON.parse(updateData?.updating_member_data ?? ''));
-  return {}
+  try {
+    const parseJsonData = Object.values(
+      JSON.parse(updateData?.updating_member_data ?? '')
+    );
+    if (parseJsonData.length > 0) {
+      return await updateTopicMembers(params.topicId, parseJsonData)
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return {
+    error: 'Can not update topic members'
+  }
 };
 

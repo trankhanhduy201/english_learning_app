@@ -8,11 +8,13 @@ import RadioButtons from "../../RadioButtons";
 import { SUBCRIBER_STATUS } from "../../../configs/appConfig";
 
 export default function Subscribers({ defaultMembers, topicId }) {
+  const fetcher = useFetcher();
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
-  const [modalMembers, setModalMembers] = useState([]);
-
-  const fetcher = useFetcher();
+  const [modalMembers, setModalMembers] = useState({
+    'displayedMembers': [],
+    'updatedMembers': {}
+  });
 
   const callApiFunc = useCallback(
     (options = {}) => getMembers(topicId, options),
@@ -24,6 +26,14 @@ export default function Subscribers({ defaultMembers, topicId }) {
     manualFetch: true,
     throttlingFetch: 60,
   });
+
+  const initialMap = useMemo(() => {
+    const map = {};
+    (allMembers || []).forEach((m) => {
+      map[m.member_id] = m;
+    });
+    return map;
+  }, [allMembers]);
 
   const handleSearch = useMemo(
     () =>
@@ -41,64 +51,54 @@ export default function Subscribers({ defaultMembers, topicId }) {
     if (!allMembers) return;
 
     let filtered = allMembers;
-
     if (search.trim() !== "") {
       filtered = allMembers.filter((u) =>
-        u.username.toLowerCase().includes(search.toLowerCase())
+        u.member_name.toLowerCase().includes(search.toLowerCase())
       );
     }
 
-    setModalMembers(filtered);
+    setModalMembers(prev => ({ ...prev, displayedMembers: filtered }));
   }, [allMembers, search]);
 
-  const toggleRemove = useCallback((index) => {
-    setModalMembers((prev) => {
-      const arr = [...prev];
-      const user = arr[index];
-      arr[index] = {
-        ...user,
-        is_remove: !user?.is_remove,
-      };
-      return arr;
-    });
-  });
+  useEffect(() => {
+    if (fetcher.state === 'idle' && 
+        fetcher.data?.status === 'success') {
+      setModalMembers(prev => ({ ...prev, updatedMembers: {} }));
+    }
+  }, [fetcher.state, fetcher.data]);
 
-  const onChangeStatus = useCallback((index, status) => {
-    setModalMembers((prev) => {
-      const arr = [...prev];
-      arr[index] = { ...arr[index], status };
-      return arr;
-    });
-  })
+  const changeSettings = useCallback(
+    (index, updatedData) => {
+      setModalMembers((prev) => {
+        const { displayedMembers, updatedMembers } = { ...prev };
+        const oldSettings = displayedMembers[index];
+        const newSettings = { ...oldSettings, ...updatedData }
+        const memberId = oldSettings.member_id
+        updatedMembers[memberId] = displayedMembers[index] = newSettings;
+        if (!newSettings.is_remove && newSettings.status == initialMap[memberId]['status']) {
+          delete updatedMembers[memberId]
+        }
+        return {
+          displayedMembers,
+          updatedMembers
+        };
+      });
+    },
+    [initialMap]
+  );
+
+  const toggleRemove = useCallback(
+    (index, isRemove) => changeSettings(index, { is_remove: isRemove })
+  );
+
+  const onChangeStatus = useCallback(
+    (index, status) => changeSettings(index, { status })
+  );
 
   const displayedMembers = useMemo(
     () => (allMembers ? allMembers.slice(0, 15) : defaultMembers),
     [allMembers, defaultMembers]
   );
-
-  const initialMap = useMemo(() => {
-    const map = {};
-    (allMembers || []).forEach((m) => {
-      map[m.member_id] = m;
-    });
-    return map;
-  }, [allMembers]);
-
-  const changedItems = useMemo(() => {
-    return (modalMembers || [])
-      .filter((u) => {
-        const initial = initialMap[u.member_id];
-        if (!initial) return true;
-        if (u.is_remove) return true;
-        if (u.status !== initial.status) return true;
-        return false;
-      })
-      .map((u) => ({
-        member_id: u.member_id,
-        status: u.status,
-        is_remove: u.is_remove ? 1 : 0,
-      }));
-  }, [modalMembers, initialMap]);
 
   return (
     <>
@@ -142,21 +142,26 @@ export default function Subscribers({ defaultMembers, topicId }) {
           </InputGroup>
         </Modal.Header>
 
-        <Modal.Body>
-          {loading ? (
+        <Modal.Body style={{ minHeight: 67 }}>
+          {(loading || fetcher.state === 'submitting') && (
             <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ height: 200 }}
+              className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+              style={{
+                backdropFilter: "blur(2px)",
+                background: "rgba(255,255,255,0.6)",
+                zIndex: 50,
+              }}
             >
               <Spinner animation="border" />
             </div>
-          ) : modalMembers && modalMembers.length > 0 ? (
+          )}
+          {(modalMembers.displayedMembers && modalMembers.displayedMembers.length > 0) ? (
             <div className="list-group">
-              {modalMembers.map((user, index) => (
+              {modalMembers.displayedMembers.map((user, index) => (
                 <div
                   key={user.member_id}
                   className="list-group-item position-relative"
-                  style={{ minHeight: "50px" }}
+                  style={{ minHeight: 50 }}
                 >
                   {user.is_remove && (
                     <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center">
@@ -207,7 +212,7 @@ export default function Subscribers({ defaultMembers, topicId }) {
 
                       <a
                         className="btn p-0 ms-2"
-                        onClick={() => toggleRemove(index)}
+                        onClick={() => toggleRemove(index, !user.is_remove)}
                         style={{ cursor: "pointer" }}
                       >
                         <i className="bi bi-trash"></i>
@@ -228,10 +233,17 @@ export default function Subscribers({ defaultMembers, topicId }) {
             <input
               type="hidden"
               name="updating_member_data"
-              value={JSON.stringify(changedItems)}
+              value={JSON.stringify(modalMembers.updatedMembers)}
             />
-            <Button type="submit" variant="primary">
-              <i className="bi bi-pencil-square text-white"></i> Save
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={Object.values(modalMembers.updatedMembers).length == 0}
+            >
+              <i className="bi bi-pencil-square text-white"></i>{" "}
+              <span className="btn-text">
+                {fetcher.state === "submitting" ? "Saving..." : "Save"}
+              </span>
             </Button>
           </fetcher.Form>
 

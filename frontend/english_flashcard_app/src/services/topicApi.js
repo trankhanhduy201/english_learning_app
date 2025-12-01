@@ -52,3 +52,11 @@ export const deleteTopics = async (options = {}) => {
     ...options,
   });
 };
+
+export const updateTopicMembers = async (id, datas, options = {}) => {
+  return await callApi(`topics/${id}/members/`, {
+    method: "PUT",
+    body: JSON.stringify(datas),
+    ...options,
+  });
+};

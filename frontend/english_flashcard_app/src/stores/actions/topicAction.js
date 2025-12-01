@@ -74,3 +74,15 @@ export const deleteTopicsThunk = createThunkWithCallback(
     };
   },
 );
+
+export const updateTopicMembersThunk = createThunkWithCallback(
+  "topic/members/update",
+  async ({ topicId, data }, { dispatch, rejectWithValue }) => {
+    const response = await topicApi.updateTopicMembers(topicId, data);
+    if (response.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
+    }
+    dispatchSuccessAlert(dispatch, "Topic members are updated successfully");
+    return response;
+  },
+);

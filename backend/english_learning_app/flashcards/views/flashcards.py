@@ -44,7 +44,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		qs = qs.select_related('created_by')
 		return qs
 	
-	@action(detail=True, methods=['get', 'post'], url_path='members')
+	@action(detail=True, methods=['get', 'post', 'put'], url_path='members')
 	def members(self, request, *args, **kwargs):
 		instance = self.get_object()
 
