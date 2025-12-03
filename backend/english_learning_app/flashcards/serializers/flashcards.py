@@ -35,6 +35,8 @@ class TopicSerializer(BaseSerializer):
     # For read-only and involke get_upload_image to return serialized image data
     image_info = serializers.SerializerMethodField()
     members = serializers.SerializerMethodField()
+    is_subcribing = serializers.SerializerMethodField()
+    is_allow_subcribe = serializers.SerializerMethodField()
 
     upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
     updated_members = CustomPrimaryKeyRelatedField(
@@ -48,7 +50,7 @@ class TopicSerializer(BaseSerializer):
     
     class Meta(BaseSerializer.Meta):
         model = Topic
-        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members']
+        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members', 'is_subcribing', 'is_allow_subcribe']
         read_only_fields = ['created_by']
 
     def get_image_info(self, instance):
@@ -59,6 +61,41 @@ class TopicSerializer(BaseSerializer):
     def get_members(self, instance):
         return TopicMemberSerializer(instance=instance.topic_members.all()[:15], many=True).data
     
+    def _get_current_topic_member(self, instance):
+        if hasattr(self, '_current_topic_member'):
+            return self._current_topic_member
+        
+        user = self.context.get('request').user
+        topic_member = next((
+            item for item in instance.topic_members.all()
+            if item.member == user.pk
+        ), None)
+        setattr(self, '_current_topic_member', topic_member)
+        return topic_member
+    
+    def get_is_subcribing(self, instance):
+        current_topic_member = self._get_current_topic_member(instance)
+        if not current_topic_member:
+            return False
+        
+        if current_topic_member.status == TopicMember.TopicMemberStatusEnums.BLOCK:
+            return False
+        
+        return True
+    
+    def get_is_allow_subcribe(self, instance):
+        if instance.status != Topic.TopicStatusEnums.PUBLIC:
+            return False
+
+        current_topic_member = self._get_current_topic_member(instance)
+        if not current_topic_member:
+            return False
+        
+        if current_topic_member.status == TopicMember.TopicMemberStatusEnums.BLOCK:
+            return False
+        
+        return True
+        
     def update(self, instance, validated_data):
         updated_members = validated_data.pop('updated_members', None)
         if updated_members:

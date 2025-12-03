@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { memo, Suspense, useEffect } from "react";
 import {
   useLoaderData,
   Await,
@@ -11,8 +11,25 @@ import TopicDetail from "../components/pages/topic/TopicDetail";
 import ListVocab from "../components/pages/topic/ListVocab";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { TopicProvider } from "../contexts/TopicContext";
+import { isTopicOwner } from "../commons/topic";
 
-const Topic = () => {
+const TopicHeader = memo(({ topic=null }) => {
+  return (
+    <>
+      <div className="d-flex align-item-center">
+        <h2>Topic info</h2>
+        {!isTopicOwner(topic?.created_by) && (
+          <button className="btn btn-primary ms-auto">
+            <i className="bi bi-plus-circle text-white"></i> Subscribe
+          </button>
+        )}
+      </div>
+      <hr />
+    </>
+  )
+});
+
+const Topic = memo(() => {
   const { topicId } = useParams();
   const isNew = () => isNaN(topicId);
   const loaderData = useLoaderData();
@@ -23,12 +40,11 @@ const Topic = () => {
         <div className={`${isNew() ? "col-12" : "col-lg-12"} text-start mb-4`}>
           {!isNew() ? (
             <>
-              <h2>Topic info</h2>
-              <hr />
               <ErrorBoundary fallback={<Navigate to="/topics" />}>
                 <Suspense
                   fallback={
                     <>
+                      <TopicHeader />
                       <TopicDetail isNew={true} />
                       <LoadingOverlay />
                     </>
@@ -38,11 +54,16 @@ const Topic = () => {
                     {(topic) => (
                       <>
                         {topic ? (
-                          <TopicDetail
-                            topic={topic}
-                            topicId={topicId}
-                            isNew={isNew()}
-                          />
+                          <>
+                            <TopicHeader
+                              topic={topic}
+                            />
+                            <TopicDetail
+                              topic={topic}
+                              topicId={topicId}
+                              isNew={isNew()}
+                            />
+                          </>
                         ) : (
                           <Navigate to="/topics" />
                         )}
@@ -53,9 +74,10 @@ const Topic = () => {
               </ErrorBoundary>
             </>
           ) : (
-            <TopicDetail
-              isNew={true}
-            />
+            <>
+              <TopicHeader />
+              <TopicDetail isNew={true} />
+            </>
           )}
         </div>
         {!isNew() && (
@@ -81,6 +103,6 @@ const Topic = () => {
       </div>
     </TopicProvider>
   );
-};
+});
 
 export default Topic;
