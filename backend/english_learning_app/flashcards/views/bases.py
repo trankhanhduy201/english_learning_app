@@ -1,3 +1,4 @@
+from django.db import connection
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,7 +8,40 @@ from django_filters.rest_framework import DjangoFilterBackend
 from flashcards.permissions import IsOwner
 
 
-class BaseModelViewSet(viewsets.ModelViewSet):
+class QueryLoggingMixin:
+    """
+    Mixin to log all DB queries for each request.
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        # Before handling the request: clear query log
+        # For Django ≥ 5.0
+        if hasattr(connection, "queries_log"):
+            connection.queries_log.clear()
+        else:
+            connection.queries.clear()
+
+        response = super().dispatch(request, *args, **kwargs)
+
+        # After view + serializer + rendering
+        total = len(
+            connection.queries 
+            if not hasattr(connection, "queries_log")
+            else connection.queries_log
+        )
+        print(f"[QueryLoggingMixin] {request.method} {request.get_full_path()} — SQL queries: {total}")
+
+        for idx, q in enumerate(
+            connection.queries 
+            if not hasattr(connection, "queries_log")
+            else connection.queries_log, start=1
+        ):
+            print(f"  {idx}. {q.get('sql')}")
+
+        return response
+
+
+class BaseModelViewSet(QueryLoggingMixin, viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated, IsOwner]
     filter_backends = [DjangoFilterBackend]
     

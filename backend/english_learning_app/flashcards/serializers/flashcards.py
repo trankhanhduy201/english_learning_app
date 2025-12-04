@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation, TopicMember
 from flashcards.serializers.bases import (
@@ -31,47 +32,13 @@ class TopicMemberSerializer(UserSerializer):
         read_only_fields_on_update = ['topic', 'member']
 
 
-class TopicSerializer(BaseSerializer):
-    # For read-only and involke get_upload_image to return serialized image data
-    image_info = serializers.SerializerMethodField()
-    members = serializers.SerializerMethodField()
+class CurrentTopicMemberSerializer(serializers.Serializer):
     is_subcribing = serializers.SerializerMethodField()
     is_allow_subcribe = serializers.SerializerMethodField()
 
-    upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
-    updated_members = CustomPrimaryKeyRelatedField(
-        source='members',
-        many=True,
-        queryset=User.objects.all(), # This will be run at the end in case not being used when reading
-        allow_null=True,
-        required=False,
-        write_only=True
-    )
-    
-    class Meta(BaseSerializer.Meta):
-        model = Topic
-        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members', 'is_subcribing', 'is_allow_subcribe']
-        read_only_fields = ['created_by']
-
-    def get_image_info(self, instance):
-        if instance.image_path:
-            return UploadImageSerializer(instance=instance.image_path).data
-        return None
-    
-    def get_members(self, instance):
-        return TopicMemberSerializer(instance=instance.topic_members.all()[:15], many=True).data
-    
     def _get_current_topic_member(self, instance):
-        if hasattr(self, '_current_topic_member'):
-            return self._current_topic_member
-        
         user = self.context.get('request').user
-        topic_member = next((
-            item for item in instance.topic_members.all()
-            if item.member == user.pk
-        ), None)
-        setattr(self, '_current_topic_member', topic_member)
-        return topic_member
+        return instance.topic_members.filter(member=user).first()
     
     def get_is_subcribing(self, instance):
         current_topic_member = self._get_current_topic_member(instance)
@@ -95,6 +62,42 @@ class TopicSerializer(BaseSerializer):
             return False
         
         return True
+
+
+class TopicSerializer(BaseSerializer):
+    # For read-only and involke get_upload_image to return serialized image data
+    image_info = serializers.SerializerMethodField()
+    members = serializers.SerializerMethodField()
+    current_member = serializers.SerializerMethodField()
+
+    upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
+    updated_members = CustomPrimaryKeyRelatedField(
+        source='members',
+        many=True,
+        queryset=User.objects.all(), # This will be run at the end in case not being used when reading
+        allow_null=True,
+        required=False,
+        write_only=True
+    )
+    
+    class Meta(BaseSerializer.Meta):
+        model = Topic
+        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members', 'current_member']
+        read_only_fields = ['created_by']
+
+    def get_image_info(self, instance):
+        if instance.image_path:
+            return UploadImageSerializer(instance=instance.image_path).data
+        return None
+    
+    def get_members(self, instance):
+        return TopicMemberSerializer(instance=instance.topic_members.all()[:15], many=True).data
+    
+    def get_current_member(self, instance):
+        user = self.context.get('request').user
+        if user != instance.created_by:
+            return CurrentTopicMemberSerializer(instance=instance, read_only=True, context=self.context).data
+        return None
         
     def update(self, instance, validated_data):
         updated_members = validated_data.pop('updated_members', None)
