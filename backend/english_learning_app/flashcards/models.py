@@ -49,6 +49,7 @@ class Topic(CreatedBy):
 
 class TopicMember(models.Model):
 	class TopicMemberStatusEnums(models.TextChoices):
+		PENDING = ('pending', _('Pending'))
 		READ_ONLY = ('read_only', _('Read only'))
 		EDITABLE = ('editable', _('Editable'))
 		BLOCK = ('block', _('Block'))

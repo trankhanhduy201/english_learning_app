@@ -33,35 +33,55 @@ class TopicMemberSerializer(UserSerializer):
 
 
 class CurrentTopicMemberSerializer(serializers.Serializer):
+    is_owner = serializers.SerializerMethodField()
+    is_accepted = serializers.SerializerMethodField()
     is_subcribing = serializers.SerializerMethodField()
-    is_allow_subcribe = serializers.SerializerMethodField()
+    is_blocking = serializers.SerializerMethodField()
+
+    def get_is_owner(self, instance):
+        user = self.context.get('request').user
+        return user == instance.created_by
 
     def _get_current_topic_member(self, instance):
         user = self.context.get('request').user
         return instance.topic_members.filter(member=user).first()
     
-    def get_is_subcribing(self, instance):
+    def get_is_accepted(self, instance):
+        if self.get_is_owner(instance):
+            return False
+        
         current_topic_member = self._get_current_topic_member(instance)
         if not current_topic_member:
             return False
         
-        if current_topic_member.status == TopicMember.TopicMemberStatusEnums.BLOCK:
-            return False
-        
-        return True
+        pending_status = [
+            TopicMember.TopicMemberStatusEnums.PENDING,
+            TopicMember.TopicMemberStatusEnums.BLOCK
+        ]
+        return not current_topic_member.status in pending_status
     
-    def get_is_allow_subcribe(self, instance):
-        if instance.status != Topic.TopicStatusEnums.PUBLIC:
+    def get_is_subcribing(self, instance):
+        if self.get_is_owner(instance):
             return False
 
         current_topic_member = self._get_current_topic_member(instance)
         if not current_topic_member:
             return False
         
-        if current_topic_member.status == TopicMember.TopicMemberStatusEnums.BLOCK:
+        return True
+    
+    def get_is_blocking(self, instance):
+        if self.get_is_owner(instance):
             return False
         
-        return True
+        current_topic_member = self._get_current_topic_member(instance)
+        if not current_topic_member:
+            return False
+        
+        blocking_status = [
+            TopicMember.TopicMemberStatusEnums.BLOCK
+        ]
+        return current_topic_member.status in blocking_status
 
 
 class TopicSerializer(BaseSerializer):
@@ -94,10 +114,7 @@ class TopicSerializer(BaseSerializer):
         return TopicMemberSerializer(instance=instance.topic_members.all()[:15], many=True).data
     
     def get_current_member(self, instance):
-        user = self.context.get('request').user
-        if user != instance.created_by:
-            return CurrentTopicMemberSerializer(instance=instance, read_only=True, context=self.context).data
-        return None
+        return CurrentTopicMemberSerializer(instance=instance, read_only=True, context=self.context).data
         
     def update(self, instance, validated_data):
         updated_members = validated_data.pop('updated_members', None)

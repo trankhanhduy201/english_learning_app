@@ -11,16 +11,28 @@ import TopicDetail from "../components/pages/topic/TopicDetail";
 import ListVocab from "../components/pages/topic/ListVocab";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { TopicProvider } from "../contexts/TopicContext";
-import { isTopicOwner } from "../commons/topic";
 
-const TopicHeader = memo(({ topic=null }) => {
+const TopicHeader = memo(({ current_member = null }) => {
+  if (current_member?.is_blocking) {
+    return <Navigate to="/topics" />
+  }
+
   return (
     <>
       <div className="d-flex align-item-center">
         <h2>Topic info</h2>
-        {!isTopicOwner(topic?.created_by) && (
-          <button className="btn btn-primary ms-auto">
-            <i className="bi bi-plus-circle text-white"></i> Subscribe
+        {(current_member && !current_member.is_owner) && (
+          <button className={`btn btn-${current_member.is_subcribing ? 'danger' : 'primary'} ms-auto`}>
+            {current_member.is_subcribing ? (
+              <>
+                <i className="bi bi-dash-circle text-white me-1"></i> 
+                {current_member.is_accepted ? 'Unsubcribe' : 'Pending'}
+              </>
+            ) : (
+              <>
+                <i className="bi bi-plus-circle text-white"></i> Subcribe
+              </>
+            )}
           </button>
         )}
       </div>
@@ -56,7 +68,7 @@ const Topic = memo(() => {
                         {topic ? (
                           <>
                             <TopicHeader
-                              topic={topic}
+                              current_member={topic?.current_member}
                             />
                             <TopicDetail
                               topic={topic}
