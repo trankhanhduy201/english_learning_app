@@ -19,8 +19,7 @@ translation_service = TranslationService()
 class UserSerializer(BaseSerializer):
     class Meta(BaseSerializer.Meta):
         model = User
-        fields = '__all__'
-
+        fields = ['id', 'username', 'first_name', 'last_name', 'email']
 
 class TopicMemberSerializer(UserSerializer):
     member_id = serializers.CharField(source='member.id', read_only=True)
@@ -44,8 +43,13 @@ class CurrentTopicMemberSerializer(serializers.Serializer):
 
     def _get_current_topic_member(self, instance):
         user = self.context.get('request').user
-        return instance.topic_members.filter(member=user).first()
-    
+        if not hasattr(self, '_current_topic_member'):
+            self._current_topic_member = next((
+                member for member in instance.topic_members.all()
+                if member.id == user.id and member.topic == instance.id
+            ), None)
+        return self._current_topic_member
+
     def get_is_accepted(self, instance):
         if self.get_is_owner(instance):
             return False
@@ -87,8 +91,10 @@ class CurrentTopicMemberSerializer(serializers.Serializer):
 class TopicSerializer(BaseSerializer):
     # For read-only and involke get_upload_image to return serialized image data
     image_info = serializers.SerializerMethodField()
+    member_count = serializers.IntegerField(read_only=True)
     members = serializers.SerializerMethodField()
     current_member = serializers.SerializerMethodField()
+    created_by = UserSerializer()
 
     upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
     updated_members = CustomPrimaryKeyRelatedField(
@@ -102,7 +108,7 @@ class TopicSerializer(BaseSerializer):
     
     class Meta(BaseSerializer.Meta):
         model = Topic
-        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members', 'current_member']
+        fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members', 'current_member', 'member_count']
         read_only_fields = ['created_by']
 
     def get_image_info(self, instance):

@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Subquery, OuterRef, Count, IntegerField
 from flashcards.models import Translation, TopicMember
 
 
@@ -17,5 +17,15 @@ def get_topic_member_prefetch_related(params=None):
 		.only('id', 'status', 'joined_at', 'member', 'topic','member__id', 'member__username')
 
 	return Prefetch('topic_members', queryset=qs)
-	
+
+def get_member_count_subquery():
+	return Subquery(
+		TopicMember.objects
+			.filter(topic=OuterRef('id'))
+			.values('topic_id')
+			.annotate(count=Count('id'))
+			.values('count')
+		, output_field=IntegerField()
+	)
+
 

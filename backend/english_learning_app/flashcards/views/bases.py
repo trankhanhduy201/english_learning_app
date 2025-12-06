@@ -1,11 +1,33 @@
 from django.db import connection
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from flashcards.permissions import IsOwner
+
+User = get_user_model()
+
+
+class MockUserMixin:
+    mock_user_id = None   # change this to whatever user you want to mock
+
+    def initialize_request(self, request, *args, **kwargs) -> Request:
+        # Let DRF build the standard Request object
+        drf_request = super().initialize_request(request, *args, **kwargs)
+
+        # Inject mocked user
+        if self.mock_user_id:
+            try:
+                drf_request.user = User.objects.get(pk=self.mock_user_id)
+            except User.DoesNotExist:
+                # fallback: create a temporary in-memory user object
+                drf_request.user = User(id=self.mock_user_id)
+
+        return drf_request
 
 
 class QueryLoggingMixin:
@@ -41,8 +63,8 @@ class QueryLoggingMixin:
         return response
 
 
-class BaseModelViewSet(QueryLoggingMixin, viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated, IsOwner]
+class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, IsOwner]
     filter_backends = [DjangoFilterBackend]
     
     def update(self, request, *args, **kwargs):

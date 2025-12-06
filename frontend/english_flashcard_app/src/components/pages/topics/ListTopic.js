@@ -10,6 +10,9 @@ const Topics = memo(({ topics, removeTopic }) => {
             <th>#</th>
             <th>Topic</th>
             <th>Description</th>
+            <th>Members</th>
+            <th>Status</th>
+            <th>Author</th>
             <th></th>
           </tr>
         </thead>
@@ -20,6 +23,9 @@ const Topics = memo(({ topics, removeTopic }) => {
                 <td>{index + 1}</td>
                 <td>{topic.name}</td>
                 <td>{topic.descriptions}</td>
+                <td>{topic.member_count} peoples</td>
+                <td>{topic.status}</td>
+                <td>{topic.created_by?.username}</td>
                 <td>
                   <Link to={`/topic/${topic.id}/learn`} className="me-2">
                     <i className="bi bi-clipboard-pulse text-dark"></i>

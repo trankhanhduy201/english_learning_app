@@ -7,15 +7,18 @@ from rest_framework.response import Response
 
 class OwnerListModelMixin:
 	owner_identify_field = 'created_by'
+	  
+	def get_owner_filters(self):
+		field_name = self.owner_identify_field
+		filters = Q(**{f"{field_name}": self.request.user})
+		return filters
 
-	def get_queryset(self):
+	def get_queryset(self, **kwargs):
 		qs = super().get_queryset()
-		if isinstance(self.request.user, User) and not self.request.user.is_staff:
-			field_name = self.owner_identify_field
-			return qs.filter(
-				Q(**{f"{field_name}__isnull": False}) |
-				Q(**{f"{field_name}": self.request.user})
-			)
+		skip_owner_filter = kwargs.get('skip_owner_filter', False)
+		if not skip_owner_filter:
+			owner_filters = self.get_owner_filters()
+			return qs.filter(owner_filters)
 		return qs
 
 
