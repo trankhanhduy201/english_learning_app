@@ -64,7 +64,7 @@ class QueryLoggingMixin:
 
 
 class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsOwner]
     filter_backends = [DjangoFilterBackend]
     
     def update(self, request, *args, **kwargs):

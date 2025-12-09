@@ -1,5 +1,5 @@
 import re
-from django.db.models import Q, Prefetch, OuterRef, Count, Subquery, IntegerField
+from django.db.models import Q
 from django.db.models.functions import Coalesce
 from django.contrib.auth import get_user_model
 from rest_framework import status
@@ -24,6 +24,7 @@ from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
 from flashcards.services.topics import TopicService
+from flashcards.permissions import IsTopicAccess
 
 
 User = get_user_model()
@@ -39,6 +40,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	member_serializer_class = TopicMemberSerializer
 	filterset_class = TopicFilter
 	pagination_class = CustomPageNumberPagination
+	permission_classes = [IsTopicAccess]
 
 	def get_owner_filters(self):
 		filters = super().get_owner_filters()
@@ -52,9 +54,6 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 			])
 		)
 		return filters
-	
-	def get_member_count_subquery(self):
-		return 
 
 	def get_queryset(self):
 		qs = super().get_queryset(skip_owner_filter=True)
@@ -107,6 +106,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
     queryset = Vocabulary.objects.all()
     serializer_class = VocabularySerializer
     filterset_class = VocabularyFilter
+    permission_classes = [IsTopicAccess]
 
     def get_queryset(self):
         qs = super().get_queryset()

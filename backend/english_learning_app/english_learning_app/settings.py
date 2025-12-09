@@ -140,9 +140,9 @@ REST_FRAMEWORK = {
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'flashcards.authentications.CustomJWTAuthentication',
     ],
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     'DEFAULT_RENDERER_CLASSES': [
         'flashcards.renderers.CustomJSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
