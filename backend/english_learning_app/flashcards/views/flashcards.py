@@ -5,11 +5,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from flashcards.utilities.querysets import (
-	get_translation_prefetch_related,
-	get_topic_member_prefetch_related,
-	get_member_count_subquery
-)
 from flashcards.serializers.flashcards import (
 	TopicSerializer, 
 	VocabularySerializer, 
@@ -19,7 +14,7 @@ from flashcards.serializers.flashcards import (
 from flashcards.views.bases import BaseModelViewSet
 from flashcards.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.views.paginations import CustomPageNumberPagination
-from flashcards.models import Topic, Vocabulary, TopicMember
+from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
@@ -42,25 +37,12 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	pagination_class = CustomPageNumberPagination
 	permission_classes = [IsTopicAccess]
 
-	def get_owner_filters(self):
-		filters = super().get_owner_filters()
-		filters |= Q(
-			Q(status=Topic.TopicStatusEnums.PUBLIC) &
-			Q(topic_members__member=self.request.user) &
-			Q(topic_members__status__in=[
-				TopicMember.TopicMemberStatusEnums.PENDING,
-				TopicMember.TopicMemberStatusEnums.READ_ONLY,
-				TopicMember.TopicMemberStatusEnums.EDITABLE
-			])
-		)
-		return filters
-
 	def get_queryset(self):
 		qs = super().get_queryset(skip_owner_filter=True)
-		qs = qs.prefetch_related(get_topic_member_prefetch_related())
-		qs = qs.select_related('created_by')
-		qs = qs.annotate(member_count=Coalesce(get_member_count_subquery(), 0))
-		qs = qs.filter(self.get_owner_filters())
+		qs = qs.with_topic_members()
+		qs = qs.with_owner()
+		qs = qs.with_member_count()
+		qs = qs.accessible_by(self.request.user)
 		qs = qs.distinct()
 		return qs
 	
@@ -110,9 +92,9 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.prefetch_related(
-            get_translation_prefetch_related(self.request.GET.dict())
-        )
+        qs = qs.with_translations(
+			self.request.GET.dict()
+		)
         return qs
     
     @action(detail=False, methods=['post'], url_path='generate-audio')

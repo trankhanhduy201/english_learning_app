@@ -94,7 +94,7 @@ class TopicSerializer(BaseSerializer):
     member_count = serializers.IntegerField(read_only=True)
     members = serializers.SerializerMethodField()
     current_member = serializers.SerializerMethodField()
-    created_by = UserSerializer()
+    created_by = UserSerializer(read_only=True)
 
     upload_image = Base64ImageField(source='image_path', write_only=True, required=False, allow_null=True)
     updated_members = CustomPrimaryKeyRelatedField(
@@ -109,7 +109,6 @@ class TopicSerializer(BaseSerializer):
     class Meta(BaseSerializer.Meta):
         model = Topic
         fields = ['id', 'name', 'learning_language', 'status', 'descriptions', 'image_info', 'upload_image', 'created_by', 'members', 'updated_members', 'current_member', 'member_count']
-        read_only_fields = ['created_by']
 
     def get_image_info(self, instance):
         if instance.image_path:

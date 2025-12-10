@@ -1,6 +1,10 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
+from flashcards.managers.topics import TopicManager
+from flashcards.managers.topic_members import TopicMemberManager
+from flashcards.managers.translations import TranslationManager
+from flashcards.managers.vocabs import VocabManager
 
 # https://books.agiliq.com/projects/django-orm-cookbook/en/latest/index.html
 
@@ -43,8 +47,16 @@ class Topic(CreatedBy):
 		related_name="topics"
 	)
 
+	objects = TopicManager()
+
 	def __str__(self):
 		return self.name
+	
+	@classmethod
+	def get_accessible_statuses(cls):
+		return [
+			cls.TopicStatusEnums.PUBLIC
+		]
 
 
 class TopicMember(models.Model):
@@ -59,11 +71,21 @@ class TopicMember(models.Model):
 	status = models.CharField(max_length=20, choices=TopicMemberStatusEnums.choices, default=TopicMemberStatusEnums.READ_ONLY)
 	joined_at = models.DateField(auto_now_add=True)
 
+	objects = TopicMemberManager()
+
 	class Meta:
 		unique_together = ("member", "topic")  # prevent duplicates
 
 	def __str__(self):
 		return f"{self.member} ↔ {self.topic}"
+	
+	@classmethod
+	def get_accessible_statuses(cls):
+		return [
+			cls.TopicMemberStatusEnums.PENDING,
+			cls.TopicMemberStatusEnums.READ_ONLY,
+			cls.TopicMemberStatusEnums.EDITABLE
+		]
 
 
 class Vocabulary(CreatedBy):
@@ -72,6 +94,8 @@ class Vocabulary(CreatedBy):
 	language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
 	audio = models.BinaryField(null=True)
 	descriptions = models.TextField(blank=True, null=True)
+
+	objects = VocabManager()
 
 	def __str__(self):
 		return self.word
@@ -91,6 +115,8 @@ class Translation(CreatedBy):
 	language = models.CharField(max_length=10, choices=LanguageEnums.choices, default=LanguageEnums.EN)
 	type = models.CharField(max_length=10, choices=TranslationTypeEnums.choices, default=None, null=True, blank=True)
 	note = models.TextField(blank=True, null=True)
+
+	objects = TranslationManager()
 	
 	class Meta:
 		indexes = [
