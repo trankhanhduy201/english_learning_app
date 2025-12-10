@@ -38,10 +38,11 @@ class CustomPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 class BaseListSerializer(serializers.ListSerializer):
     def run_child_validation(self, data):
         child_instance = None
-        for item in self.instance:
-            if item.pk == data['id']:
-                child_instance = item
-                break
+        if 'id' in data:
+            for item in self.child.Meta.model.objects.all():
+                if item.pk == data['id']:
+                    child_instance = item
+                    break
 
         self.child.instance = child_instance
         self.child.initial_data = data
