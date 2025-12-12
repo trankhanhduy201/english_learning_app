@@ -36,6 +36,9 @@ class CustomPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 class BaseListSerializer(serializers.ListSerializer):
+    def get_delete_field_name(self):
+        return 'is_remove'
+
     def run_child_validation(self, data):
         child_instance = None
         if 'id' in data:
@@ -56,18 +59,6 @@ class BaseListSerializer(serializers.ListSerializer):
         # ]
         updating_data = []
         if isinstance(validated_data, list) and len(validated_data) > 0:
-            instance_hash = {instance.pk: instance for index, instance in enumerate(instances)}
-            validated_keys = [key for key, value in (validated_data[0]).items()]
-            for data in self.initial_data:
-                new_data = {'id': data['id'] if 'id' in data else None}
-                for key, value in data.items():
-                    if key in validated_keys:
-                        new_data[key] = value
-
-                child_instance = instance_hash[new_data['id']]
-                child_instance.__dict__.update(new_data)
-                updating_data.append(child_instance)
-                                
             """
             There are some ways to get items
             1. self.child.Meta.fields.items() -> List[str]
@@ -78,8 +69,36 @@ class BaseListSerializer(serializers.ListSerializer):
                 name for name, field in self.child.get_fields().items()
                 if name not in read_only_fields and not getattr(field, 'read_only', False)
             ]
+            
+            delete_field_name = self.get_delete_field_name()
+            has_delete_field_db = delete_field_name in [
+                field.name for field in self.child.Meta.model._meta.get_fields()
+            ]
+
+            enable_delete = False
+            if not has_delete_field_db and delete_field_name in writable_fields:
+                idx = next((index for index, item in enumerate(writable_fields) if item == delete_field_name), None)
+                writable_fields.pop(idx)
+                enable_delete = True
+                
+            delete_ids = []
+            instance_hash = {instance.pk: instance for index, instance in enumerate(instances)}
+            for data in self.initial_data:
+                new_data = {'id': data['id'] if 'id' in data else None}
+                for key, value in data.items():
+                    if key == delete_field_name and enable_delete:
+                        delete_ids.append(new_data['id'])
+                    if key in writable_fields:
+                        new_data[key] = value
+                    
+                child_instance = instance_hash[new_data['id']]
+                child_instance.__dict__.update(new_data)
+                updating_data.append(child_instance)
+
             try:
                 self.child.Meta.model.objects.bulk_update(updating_data, writable_fields)
+                print(delete_ids)
+                self.child.Meta.model.objects.bulk_delete(delete_ids)
             except IntegrityError as e:
                 raise ValidationError(e)
             

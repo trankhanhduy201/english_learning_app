@@ -51,7 +51,7 @@ class TranslationService:
             Translation.objects.bulk_update(update_translations, update_fields)
         
         if len(delete_translations) > 0:
-            Translation.objects.filter(pk__in=delete_translations).delete()
+            Translation.objects.bulk_delete(delete_translations)
         
         return (
             new_translations,

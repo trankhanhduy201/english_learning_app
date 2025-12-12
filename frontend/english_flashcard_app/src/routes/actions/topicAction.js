@@ -84,6 +84,7 @@ export const updateMembers = async ({ request, params }) => {
     const parseJsonData = Object.values(
       JSON.parse(updateData?.updating_member_data ?? '')
     );
+    console.log(parseJsonData);
     if (parseJsonData.length > 0) {
       return await updateTopicMembers(params.topicId, parseJsonData)
     }
@@ -94,4 +95,3 @@ export const updateMembers = async ({ request, params }) => {
     error: 'Can not update topic members'
   }
 };
-

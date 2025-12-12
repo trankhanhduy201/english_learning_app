@@ -21,13 +21,16 @@ class UserSerializer(BaseSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email']
 
-class TopicMemberSerializer(UserSerializer):
+
+class TopicMemberSerializer(BaseSerializer):
     member_id = serializers.CharField(source='member.id', read_only=True)
     member_name = serializers.CharField(source='member.username', read_only=True)
+
+    is_remove = serializers.BooleanField(write_only=True, required=False, default=False)
     
-    class Meta(UserSerializer.Meta):
+    class Meta(BaseSerializer.Meta):
         model = TopicMember
-        fields = ['id', 'status', 'joined_at', 'topic', 'member', 'member_id', 'member_name']
+        fields = ['id', 'status', 'joined_at', 'topic', 'member', 'member_id', 'member_name', 'is_remove']
         read_only_fields_on_update = ['topic', 'member']
 
 
