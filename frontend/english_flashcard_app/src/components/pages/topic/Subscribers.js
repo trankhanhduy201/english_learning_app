@@ -11,6 +11,7 @@ export default function Subscribers({ defaultMembers, topicId }) {
   const fetcher = useFetcher();
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
+  const [initialMap, setInitialMap] = useState();
   const [modalMembers, setModalMembers] = useState({
     'displayedMembers': [],
     'updatedMembers': {}
@@ -24,16 +25,8 @@ export default function Subscribers({ defaultMembers, topicId }) {
   const { data: allMembers, loading, refetch } = useFetch({
     callApiFunc,
     manualFetch: true,
-    throttlingFetch: 60,
+    throttlingFetch: 60
   });
-
-  const initialMap = useMemo(() => {
-    const map = {};
-    (allMembers || []).forEach((m) => {
-      map[m.member_id] = m;
-    });
-    return map;
-  }, [allMembers]);
 
   const handleSearch = useMemo(
     () =>
@@ -44,48 +37,97 @@ export default function Subscribers({ defaultMembers, topicId }) {
   );
 
   useEffect(() => {
+    // For first assignment
+    setInitialMap(prev =>
+      (allMembers || []).reduce((data, item) => {
+        data[item.member_id] = item;
+        return data;
+      }, {}));
+  }, [allMembers]);
+
+  useEffect(() => {
     if (showModal) refetch();
   }, [showModal, refetch]);
 
   useEffect(() => {
-    if (!allMembers) return;
+    if (!initialMap) return;
 
-    let filtered = allMembers;
+    let filtered = [...Object.values(initialMap)];
     if (search.trim() !== "") {
-      filtered = allMembers.filter((u) =>
+      filtered = filtered.filter((u) =>
         u.member_name.toLowerCase().includes(search.toLowerCase())
       );
     }
 
     setModalMembers(prev => ({ ...prev, displayedMembers: filtered }));
-  }, [allMembers, search]);
+  }, [initialMap, search]);
 
   useEffect(() => {
-    if (fetcher.state === 'idle' && 
-        fetcher.data?.status === 'success') {
-      setModalMembers(prev => ({ ...prev, updatedMembers: {} }));
-    }
+    if (fetcher.state !== 'idle') return;
+    if (fetcher.data?.status !== 'success') return;
+
+    // Reset updated data in modal
+    setModalMembers(prev => ({ ...prev, updatedMembers: {} }));
+
+    if (!Array.isArray(fetcher.data?.data)) return;
+
+    // Set data for initial mapping for second time when settings are changed
+    setInitialMap(prev => {
+      const newMemberDatas = { ...prev };
+      fetcher.data.data.forEach(item => {
+        if (item?.is_remove) {
+          delete newMemberDatas[item.member];
+        } else {
+          newMemberDatas[item.member] = {...item}
+        }
+      });
+      return newMemberDatas;
+    });
   }, [fetcher.state, fetcher.data]);
 
   const changeSettings = useCallback(
     (index, updatedData) => {
-      setModalMembers((prev) => {
-        const { displayedMembers, updatedMembers } = { ...prev };
-        const oldSettings = displayedMembers[index];
-        const newSettings = { ...oldSettings, ...updatedData }
-        const memberId = oldSettings.member_id
-        updatedMembers[memberId] = displayedMembers[index] = newSettings;
-        if (!newSettings.is_remove && newSettings.status == initialMap[memberId]['status']) {
-          delete updatedMembers[memberId]
+      setModalMembers(prev => {
+        const oldSettings = prev.displayedMembers[index];
+        if (!oldSettings) return prev;
+
+        const memberId = oldSettings.member_id;
+        const baseStatus = initialMap?.[memberId]?.status;
+
+        const newSettings = {
+          ...oldSettings,
+          ...updatedData
+        };
+
+        // Clone state safely
+        const nextDisplayedMembers = [...prev.displayedMembers];
+        const nextUpdatedMembers = {
+          ...prev.updatedMembers
+        };
+
+        // Apply updates
+        nextDisplayedMembers[index] = newSettings;
+        nextUpdatedMembers[memberId] = newSettings;
+
+        // Remove from updatedMembers if unchanged
+        if (
+          !newSettings.is_remove &&
+          baseStatus !== undefined &&
+          newSettings.status === baseStatus
+        ) {
+          delete nextUpdatedMembers[memberId];
         }
+
         return {
-          displayedMembers,
-          updatedMembers
+          ...prev,
+          displayedMembers: nextDisplayedMembers,
+          updatedMembers: nextUpdatedMembers
         };
       });
     },
     [initialMap]
   );
+
 
   const toggleRemove = useCallback(
     (index, isRemove) => changeSettings(index, { is_remove: isRemove })
@@ -95,15 +137,22 @@ export default function Subscribers({ defaultMembers, topicId }) {
     (index, status) => changeSettings(index, { status })
   );
 
-  const displayedMembers = useMemo(
-    () => (allMembers ? allMembers.slice(0, 15) : defaultMembers),
-    [allMembers, defaultMembers]
+  const defaultDisplayedMembers = useMemo(
+    () => {
+      const sliceMembers = initialMap
+        ? [...Object.values(initialMap)]
+        : [];
+      return sliceMembers.length > 0
+        ? sliceMembers.slice(0, 15)
+        : defaultMembers;
+    },
+    [initialMap, defaultMembers]
   );
 
   return (
     <>
       <div className="d-flex align-items-center">
-        {displayedMembers.map((user) => (
+        {defaultDisplayedMembers.map((user) => (
           <img
             key={user.id}
             src={
@@ -116,7 +165,7 @@ export default function Subscribers({ defaultMembers, topicId }) {
           />
         ))}
 
-        {displayedMembers.length > 0 && (
+        {defaultDisplayedMembers.length > 0 && (
           <button
             type="button"
             className="btn p-0 text-secondary ms-1"
@@ -128,7 +177,7 @@ export default function Subscribers({ defaultMembers, topicId }) {
         )}
       </div>
 
-      {displayedMembers.length === 0 && (
+      {defaultDisplayedMembers.length === 0 && (
         <div className="text-muted text-center">No subscribers yet.</div>
       )}
 

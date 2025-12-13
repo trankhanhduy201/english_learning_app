@@ -33,6 +33,19 @@ class TopicMemberSerializer(BaseSerializer):
         fields = ['id', 'status', 'joined_at', 'topic', 'member', 'member_id', 'member_name', 'is_remove']
         read_only_fields_on_update = ['topic', 'member']
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if hasattr(self, 'initial_data'):
+            if isinstance(self.initial_data, dict):
+                data['is_remove'] = self.initial_data.get('is_remove', False)
+            else:
+                data['is_remove'] = next((
+                    item.get('is_remove', False) 
+                    for item in self.initial_data 
+                    if item['id'] == instance.id
+                ), False)
+        return data
+
 
 class CurrentTopicMemberSerializer(serializers.Serializer):
     is_owner = serializers.SerializerMethodField()

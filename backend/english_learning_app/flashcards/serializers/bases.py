@@ -39,17 +39,13 @@ class BaseListSerializer(serializers.ListSerializer):
     def get_delete_field_name(self):
         return 'is_remove'
 
-    def run_child_validation(self, data):
-        child_instance = None
-        if 'id' in data:
-            for item in self.child.Meta.model.objects.all():
-                if item.pk == data['id']:
-                    child_instance = item
-                    break
-
-        self.child.instance = child_instance
-        self.child.initial_data = data
-        return self.child.run_validation(data)
+    # def run_child_validation(self, data):
+    #     for item in self.child.Meta.model.objects.all():
+    #         if 'id' in data and item.pk == data['id']:
+    #             self.child.instance = item
+    #             self.child.initial_data = data
+    #             break
+    #     return self.child.run_validation(data)
 
     def update(self, instances, validated_data):
         # instance_hash = {index: instance for index, instance in enumerate(instances)}
@@ -86,7 +82,7 @@ class BaseListSerializer(serializers.ListSerializer):
             for data in self.initial_data:
                 new_data = {'id': data['id'] if 'id' in data else None}
                 for key, value in data.items():
-                    if key == delete_field_name and enable_delete:
+                    if enable_delete and key == delete_field_name and value:
                         delete_ids.append(new_data['id'])
                     if key in writable_fields:
                         new_data[key] = value
@@ -97,7 +93,6 @@ class BaseListSerializer(serializers.ListSerializer):
 
             try:
                 self.child.Meta.model.objects.bulk_update(updating_data, writable_fields)
-                print(delete_ids)
                 self.child.Meta.model.objects.bulk_delete(delete_ids)
             except IntegrityError as e:
                 raise ValidationError(e)
