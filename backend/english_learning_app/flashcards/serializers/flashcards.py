@@ -35,15 +35,8 @@ class TopicMemberSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if hasattr(self, 'initial_data'):
-            if isinstance(self.initial_data, dict):
-                data['is_remove'] = self.initial_data.get('is_remove', False)
-            else:
-                data['is_remove'] = next((
-                    item.get('is_remove', False) 
-                    for item in self.initial_data 
-                    if item['id'] == instance.id
-                ), False)
+        if hasattr(self, 'initial_data') and self.initial_data:
+            data['is_remove'] = self.initial_data.get('is_remove', False)
         return data
 
 

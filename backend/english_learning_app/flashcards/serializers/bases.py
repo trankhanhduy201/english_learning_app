@@ -1,4 +1,4 @@
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import ManyRelatedField, MANY_RELATION_KWARGS
@@ -38,6 +38,23 @@ class CustomPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 class BaseListSerializer(serializers.ListSerializer):
     def get_delete_field_name(self):
         return 'is_remove'
+    
+    def to_representation(self, data):
+        iterable = data.all() if isinstance(data, models.manager.BaseManager) else data
+        
+        mapping_initial_data = {}
+        for item in getattr(self, 'initial_data', []):
+            if 'id' in item:
+                mapping_initial_data[item['id']] = item
+
+        results = []
+        for item in iterable:
+            item_id = item.id if isinstance(item, self.child.Meta.model) else item.get('id', None)
+            if item_id:
+                self.child.initial_data = mapping_initial_data.get(item_id, None)
+            results.append(self.child.to_representation(item))
+
+        return results
 
     # def run_child_validation(self, data):
     #     for item in self.child.Meta.model.objects.all():
@@ -78,7 +95,7 @@ class BaseListSerializer(serializers.ListSerializer):
                 enable_delete = True
                 
             delete_ids = []
-            instance_hash = {instance.pk: instance for index, instance in enumerate(instances)}
+            instance_hash = {instance.id: instance for index, instance in enumerate(instances)}
             for data in self.initial_data:
                 new_data = {'id': data['id'] if 'id' in data else None}
                 for key, value in data.items():
