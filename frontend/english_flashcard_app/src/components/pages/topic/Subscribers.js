@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { Modal, Button, Form, InputGroup, Spinner } from "react-bootstrap";
 import { debounce } from "lodash";
 import { useFetcher } from "react-router-dom";
@@ -7,7 +7,7 @@ import { getMembers } from "../../../services/topicApi";
 import RadioButtons from "../../RadioButtons";
 import { SUBCRIBER_STATUS } from "../../../configs/appConfig";
 
-export default function Subscribers({ defaultMembers, topicId }) {
+const Subscribers = memo(({ defaultMembers, topicId }) => {
   const fetcher = useFetcher();
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -303,4 +303,6 @@ export default function Subscribers({ defaultMembers, topicId }) {
       </Modal>
     </>
   );
-}
+});
+
+export default Subscribers;
