@@ -4,8 +4,18 @@ from flashcards.models import Translation, Vocabulary
 
 
 class TopicFilter(django_filters.FilterSet):
-	text_search = django_filters.CharFilter(method='filter_text_search', label='Search by text')
-	learning_language = django_filters.CharFilter(field_name='learning_language', lookup_expr='iexact')
+	text_search = django_filters.CharFilter(
+		method='filter_text_search', 
+		label='Search by text'
+	)
+	learning_language = django_filters.CharFilter(
+		field_name='learning_language', 
+		lookup_expr='iexact'
+	)
+	only_my_topic = django_filters.CharFilter(
+		method='filter_only_my_topic',
+		label='Only my topics'
+	)
 	
 	def filter_text_search(self, queryset, name, value):
 		if not value:
@@ -16,6 +26,12 @@ class TopicFilter(django_filters.FilterSet):
 			Q(descriptions__icontains=value) | 
 			Q(Exists(vocab_qs))
 		)
+	
+	def filter_only_my_topic(self, queryset, name, value):
+		if not value:
+			return queryset
+		user = self.request.user
+		return queryset.accessible_by(user)
 
 
 class VocabularyFilter(django_filters.FilterSet):

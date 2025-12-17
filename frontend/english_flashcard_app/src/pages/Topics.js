@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect } from "react";
+import { memo, Suspense, useCallback, useEffect } from "react";
 import ListTopic from "../components/pages/topics/ListTopic";
 import {
   useLoaderData,
@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import TopicFormSearch from "../components/pages/topics/FormSearch";
 import TopicHeader from "../components/pages/topics/Header";
 
-const Topics = () => {
+const Topics = memo(() => {
   const deleteTopicFetcher = useFetcher();
   const [ searchParams ] = useSearchParams();
   const { topicDatas } = useLoaderData();
@@ -75,6 +75,6 @@ const Topics = () => {
       <Outlet />
     </>
   );
-};
+});
 
 export default Topics;

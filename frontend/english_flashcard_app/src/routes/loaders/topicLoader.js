@@ -9,6 +9,7 @@ export const getFilters = ({ request }) => {
     'page': searchParams.get('page') || 1,
     'text_search': searchParams.get('text_search') || '',
     'learning_language': searchParams.get('learning_language') || '',
+    'only_my_topic': searchParams.get('only_my_topic') || ''
   }
 }
 

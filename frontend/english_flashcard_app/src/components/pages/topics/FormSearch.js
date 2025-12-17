@@ -12,7 +12,7 @@ const FormSearch = memo(() => {
           <div className="row">
             <div className="col-md-10 col-sm-9">
               <div className="row">
-                <div className="col-sm-6 mb-2 mb-sm-0">
+                <div className="col-md-5 col-sm-4 mb-2 mb-md-0">
                   <input
                     type="text"
                     name="text_search"
@@ -21,7 +21,7 @@ const FormSearch = memo(() => {
                     defaultValue={searchParams.get("text_search") || ""}
                   />
                 </div>
-                <div className="col-sm-6 mb-2 mb-sm-0">
+                <div className="col-md-5 col-sm-4 mb-2 mb-md-0">
                   <select
                     name="learning_language"
                     className="form-select"
@@ -32,6 +32,19 @@ const FormSearch = memo(() => {
                       <option key={item.key} value={item.key}>{item.text}</option>
                     ))}
                   </select>
+                </div>
+                <div className="col-md-2 col-sm-4 mb-2 mb-md-0 d-flex align-items-center">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value="true"
+                      defaultChecked={searchParams.get("only_my_topic") == "true"}
+                      id="onlyMyTopic"
+                      name="only_my_topic"
+                    />
+                    <label class="form-check-label ms-2" for="onlyMyTopic">
+                      Only my topics
+                    </label>
                 </div>
               </div>
             </div>
