@@ -6,6 +6,7 @@ import {
   deleteTopicThunk,
   deleteTopicsThunk,
   updateTopicMembersThunk,
+  memberInteractTopicThunk
 } from "../../stores/actions/topicAction";
 import { blobToBase64 } from "../../commons/images";
 
@@ -29,6 +30,14 @@ const deleteTopic = async (topicId, redirectTo = null) => {
   try {
     const data = await store.dispatch(deleteTopicThunk({ topicId })).unwrap();
     return redirectTo ? redirect(`/${redirectTo}`) : data;
+  } catch (err) {
+    return err;
+  }
+}
+
+const memberInteractTopic = async (topicId, action) => {
+  try {
+    return await store.dispatch(memberInteractTopicThunk({ topicId, action })).unwrap();
   } catch (err) {
     return err;
   }
@@ -64,6 +73,11 @@ export const editTopic = async ({ request, params }) => {
     const redirectTo = url.searchParams.get("redirectTo");
     return deleteTopic(params.topicId, redirectTo);
   }
+
+  if (['subcribe', 'unsubcribe'].includes(params.action)) {
+    return await memberInteractTopic(params.topicId, params.action);
+  }
+
   const updateData = await getFormData(request);
   return await updateTopic(params.topicId, updateData);
 };

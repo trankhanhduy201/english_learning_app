@@ -46,6 +46,21 @@ export const deleteTopic = async (id, options = {}) => {
   });
 };
 
+export const subcribeTopic = async (id, options = {}) => {
+  return await callApi(`topics/${id}/subcribe/`, {
+    method: "POST",
+    ...options,
+  });
+};
+
+export const unsubcribeTopic = async (id, options = {}) => {
+  return await callApi(`topics/${id}/unsubcribe/`, {
+    method: "POST",
+    ...options,
+  });
+};
+
+
 export const deleteTopics = async (options = {}) => {
   return await callApi(`topics/delete/`, {
     method: "POST",

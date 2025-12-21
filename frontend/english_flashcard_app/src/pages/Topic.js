@@ -1,4 +1,4 @@
-import { memo, Suspense, useEffect } from "react";
+import { memo, Suspense, useCallback } from "react";
 import {
   useLoaderData,
   Await,
@@ -10,10 +10,22 @@ import { ErrorBoundary } from "react-error-boundary";
 import TopicDetail from "../components/pages/topic/TopicDetail";
 import ListVocab from "../components/pages/topic/ListVocab";
 import LoadingOverlay from "../components/LoadingOverlay";
-import { TopicProvider } from "../contexts/TopicContext";
+import { TopicProvider, useTopicContext } from "../contexts/TopicContext";
+import SubcribeButton from "../components/pages/topic/SubcribeButton";
 
-const TopicHeader = memo(({ current_member = null }) => {
-  if (current_member?.is_blocking) {
+const TopicHeader = memo(() => {
+  const { topic, setTopic } = useTopicContext();
+  const updateTopicMember = useCallback((newTopicMember) => {
+    setTopic(prev => ({
+      ...prev,
+      current_member: {
+        ...prev.current_member,
+        ...newTopicMember
+      }
+    }));
+  });
+
+  if (topic?.current_member?.is_blocking) {
     return <Navigate to="/topics" />
   }
 
@@ -21,20 +33,13 @@ const TopicHeader = memo(({ current_member = null }) => {
     <>
       <div className="d-flex align-item-center">
         <h2>Topic info</h2>
-        {(current_member && !current_member.is_owner) && (
-          <button className={`btn btn-${current_member.is_subcribing ? 'danger' : 'primary'} ms-auto`}>
-            {current_member.is_subcribing ? (
-              <>
-                <i className="bi bi-dash-circle text-white me-1"></i> 
-                {current_member.is_accepted ? 'Unsubcribe' : 'Pending'}
-              </>
-            ) : (
-              <>
-                <i className="bi bi-plus-circle text-white"></i> Subcribe
-              </>
-            )}
-          </button>
-        )}
+        {topic?.current_member && 
+          <SubcribeButton
+            topicId={topic.id}
+            topicMember={topic.current_member} 
+            updateTopicMember={updateTopicMember}
+          />
+        }
       </div>
       <hr />
     </>
@@ -67,9 +72,7 @@ const Topic = memo(() => {
                       <>
                         {topic ? (
                           <>
-                            <TopicHeader
-                              current_member={topic?.current_member}
-                            />
+                            <TopicHeader />
                             <TopicDetail
                               topic={topic}
                               topicId={topicId}

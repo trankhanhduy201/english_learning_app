@@ -86,3 +86,26 @@ export const updateTopicMembersThunk = createThunkWithCallback(
     return response;
   },
 );
+
+export const memberInteractTopicThunk = createThunkWithCallback(
+  "topic/member/interact",
+  async ({ topicId, action }, { dispatch }) => {
+    const params = { id: topicId };
+    switch (action) {
+      case "subcribe":
+        await topicApi.subcribeTopic(topicId);
+        dispatchSuccessAlert(dispatch, "Subcribed topic successfully");
+        break;
+      case "unsubcribe":
+        await topicApi.unsubcribeTopic(topicId);
+        dispatchSuccessAlert(dispatch, "Unsubcribed topic successfully");
+        break;
+      default:
+        throw new Error("Invalid action for interactTopicThunk");
+    }
+    return {
+      status: "success",
+      data: params,
+    };
+  },
+);
