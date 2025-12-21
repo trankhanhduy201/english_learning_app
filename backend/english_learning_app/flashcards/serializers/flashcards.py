@@ -27,6 +27,12 @@ class TopicMemberSerializer(BaseSerializer):
     member_name = serializers.CharField(source='member.username', read_only=True)
 
     is_remove = serializers.BooleanField(write_only=True, required=False, default=False)
+
+    topic = CustomPrimaryKeyRelatedField(
+        queryset=Topic.objects.all(),
+        allow_null=True,
+        required=False
+    )
     
     class Meta(BaseSerializer.Meta):
         model = TopicMember
@@ -54,8 +60,8 @@ class CurrentTopicMemberSerializer(serializers.Serializer):
         user = self.context.get('request').user
         if not hasattr(self, '_current_topic_member'):
             self._current_topic_member = next((
-                member for member in instance.topic_members.all()
-                if member.id == user.id and member.topic == instance.id
+                topic_member for topic_member in instance.topic_members.all()
+                if topic_member.member.id == user.id and topic_member.topic.id == instance.id
             ), None)
         return self._current_topic_member
 

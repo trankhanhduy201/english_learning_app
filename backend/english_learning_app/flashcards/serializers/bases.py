@@ -38,6 +38,12 @@ class CustomPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 class BaseListSerializer(serializers.ListSerializer):
     def get_delete_field_name(self):
         return 'is_remove'
+
+    def has_delete_field_db(self):
+        delete_field_name = self.get_delete_field_name()
+        return delete_field_name in [
+            field.name for field in self.child.Meta.model._meta.get_fields()
+        ]
     
     def to_representation(self, data):
         iterable = data.all() if isinstance(data, models.manager.BaseManager) else data
@@ -84,9 +90,7 @@ class BaseListSerializer(serializers.ListSerializer):
             ]
             
             delete_field_name = self.get_delete_field_name()
-            has_delete_field_db = delete_field_name in [
-                field.name for field in self.child.Meta.model._meta.get_fields()
-            ]
+            has_delete_field_db = self.has_delete_field_db()
 
             enable_delete = False
             if not has_delete_field_db and delete_field_name in writable_fields:
@@ -117,10 +121,15 @@ class BaseListSerializer(serializers.ListSerializer):
         return updating_data
     
     def create(self, validated_data):
-        model_class = self.child.Meta.model
-        instances = [model_class(**item) for item in validated_data]
-        model_class.objects.bulk_create(instances)
-        return instances
+        delete_field_name = self.get_delete_field_name()
+        has_delete_field_db = self.has_delete_field_db()
+        create_instances = []
+        for item in validated_data:
+            if not has_delete_field_db and delete_field_name in item:
+                item.pop(delete_field_name)
+            create_instances.append(self.child.Meta.model(**item))
+        self.child.Meta.model.objects.bulk_create(create_instances)
+        return create_instances
 
 
 class BaseSerializer(serializers.ModelSerializer):

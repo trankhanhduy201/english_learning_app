@@ -11,6 +11,7 @@ from flashcards.serializers.flashcards import (
 	VocabularyImportSerializer,
 	TopicMemberSerializer
 )
+from flashcards.models import TopicMember
 from flashcards.views.bases import BaseModelViewSet
 from flashcards.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.views.paginations import CustomPageNumberPagination
@@ -44,7 +45,18 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		qs = qs.with_member_count()
 		qs = qs.distinct()
 		return qs
-	
+      
+	@action(detail=True, methods=['post'], url_path='subcribe')
+	def subcribe(self, request, *args, **kwargs):
+		instance = self.get_object()
+		return self.create_update_members(
+			topic=instance, 
+            updated_members=[{
+				'member': request.user.id,
+				'topic': instance,
+				'status': TopicMember.TopicMemberStatusEnums.PENDING
+			}])
+      
 	@action(detail=True, methods=['get', 'post', 'put'], url_path='members')
 	def members(self, request, *args, **kwargs):
 		instance = self.get_object()
@@ -53,7 +65,11 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 			return self.get_members(instance)
 		
 		if request.method in ['PUT', 'POST']:
-			return self.create_update_members(instance, request.data)
+			return self.create_update_members(
+				topic=instance, 
+				updated_members=request.data, 
+				is_create=False
+			)	
 		
 		return Response(
 			'The method is not allowed',
@@ -66,9 +82,9 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 			status=status.HTTP_200_OK
 		)
 	
-	def create_update_members(self, topic, updated_members):
+	def create_update_members(self, topic, updated_members, is_create=True):
 		serializers = self.member_serializer_class(
-			instance=topic.topic_members.all(), 
+			instance=None if is_create else topic.topic_members.all(), 
 			data=topic_service.get_create_update_members(
 				topic=topic, 
 				updating_members=updated_members
