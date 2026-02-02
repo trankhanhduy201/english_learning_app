@@ -35,14 +35,14 @@ const FormSearch = memo(() => {
                 </div>
                 <div className="col-md-2 col-sm-4 mb-2 mb-md-0 d-flex align-items-center">
                     <input
-                      class="form-check-input"
+                      className="form-check-input"
                       type="checkbox"
                       value="true"
                       defaultChecked={searchParams.get("only_my_topic") == "true"}
                       id="onlyMyTopic"
                       name="only_my_topic"
                     />
-                    <label class="form-check-label ms-2" for="onlyMyTopic">
+                    <label className="form-check-label ms-2" htmlFor="onlyMyTopic">
                       Only my topics
                     </label>
                 </div>

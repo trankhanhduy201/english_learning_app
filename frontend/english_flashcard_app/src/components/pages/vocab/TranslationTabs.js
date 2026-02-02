@@ -120,8 +120,8 @@ const TranslationTabs = ({ data }) => {
       id="my-tabs"
       className="mb-3"
     >
-      {Object.keys(translations).map((lang, index) => (
-        <Tab key={index} eventKey={lang} title={lang}>
+      {Object.keys(translations).map((lang) => (
+        <Tab key={lang} eventKey={lang} title={lang}>
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -246,7 +246,7 @@ const TranslationTabs = ({ data }) => {
         </Tab>
       ))}
       <Tab
-        key={Object.keys(translations).length + 1}
+        key={EVENT_KEY_NEW_TAB}
         eventKey={EVENT_KEY_NEW_TAB}
         title={"＋"}
       >
