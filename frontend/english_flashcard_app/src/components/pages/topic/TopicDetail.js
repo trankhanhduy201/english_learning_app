@@ -170,13 +170,17 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
         </div>
       </editTopicFetcher.Form>
 
-      <h2>Subscribers</h2>
-      <hr />
-      <div className="row">
-        <div className="mb-3">
-          <Subscribers topicId={topicId} defaultMembers={topic?.members ?? []} />
-        </div>
-      </div>
+      {!isNew && (
+        <>
+          <h2>Subscribers</h2>
+          <hr />
+          <div className="row">
+            <div className="mb-3">
+              <Subscribers topicId={topicId} defaultMembers={topic?.members ?? []} />
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 });
