@@ -156,7 +156,7 @@ const TranslationTabs = ({ data }) => {
                     {translations[lang].length > 0 ? (
                       <>
                         {translations[lang].map((item, index) => (
-                          <SortableTr key={item.idx} id={item.idx}>
+                          <SortableTr key={item.id} id={item.idx}>
                             <td className="align-middle">{index + 1}</td>
                             <td>
                               <input
@@ -187,9 +187,9 @@ const TranslationTabs = ({ data }) => {
                                 name={`translations[${lang}][${item.idx}][type]`}
                                 defaultValue={item.type}
                               >
-                                <option key={0}></option>
-                                {transType.getDatas().map((v, i) => (
-                                  <option key={i} value={v.key}>
+                                <option></option>
+                                {transType.getDatas().map((v) => (
+                                  <option key={v.key} value={v.key}>
                                     {v.text}
                                   </option>
                                 ))}
@@ -284,9 +284,9 @@ const TranslationTabs = ({ data }) => {
                 Type
               </label>
               <select id="type" className="form-control">
-                <option key={0}>-- No choice --</option>
-                {transType.getDatas().map((v, i) => (
-                  <option key={i + 1} value={v.key}>
+                <option>-- No choice --</option>
+                {transType.getDatas().map((v) => (
+                  <option key={v.key} value={v.key}>
                     {v.text}
                   </option>
                 ))}

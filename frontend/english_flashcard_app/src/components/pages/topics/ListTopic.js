@@ -19,7 +19,7 @@ const Topics = memo(({ topics, removeTopic }) => {
         <tbody>
           {topics &&
             topics.map((topic, index) => (
-              <tr key={index}>
+              <tr key={topic.id}>
                 <td>{index + 1}</td>
                 <td>{topic.name}</td>
                 <td>{topic.descriptions}</td>
