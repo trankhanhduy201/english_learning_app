@@ -156,7 +156,7 @@ const TranslationTabs = ({ data }) => {
                     {translations[lang].length > 0 ? (
                       <>
                         {translations[lang].map((item, index) => (
-                          <SortableTr key={item.id} id={item.idx}>
+                          <SortableTr key={item.idx} id={item.idx}>
                             <td className="align-middle">{index + 1}</td>
                             <td>
                               <input
