@@ -31,10 +31,16 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
   const handleSearch = useMemo(
     () =>
       debounce((value) => {
-        setSearch(value);
+        setSearch((value ?? "").toString());
       }, 300),
     []
   );
+
+  useEffect(() => {
+    return () => {
+      handleSearch.cancel();
+    };
+  }, [handleSearch]);
 
   useEffect(() => {
     // For first assignment
