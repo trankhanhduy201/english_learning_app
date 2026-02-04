@@ -20,7 +20,7 @@ from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
 from flashcards.services.topics import TopicService
-from flashcards.permissions import IsTopicAccess
+from flashcards.permissions import IsAccessable
 
 
 User = get_user_model()
@@ -36,7 +36,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	member_serializer_class = TopicMemberSerializer
 	filterset_class = TopicFilter
 	pagination_class = CustomPageNumberPagination
-	permission_classes = [IsTopicAccess]
+	permission_classes = [IsAccessable]
 
 	def get_queryset(self):
 		qs = super().get_queryset(skip_owner_filter=True)
@@ -103,10 +103,10 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
     queryset = Vocabulary.objects.all()
     serializer_class = VocabularySerializer
     filterset_class = VocabularyFilter
-    permission_classes = [IsTopicAccess]
+    permission_classes = [IsAccessable]
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_queryset(skip_owner_filter=True)
         qs = qs.with_translations(
 			self.request.GET.dict()
 		)

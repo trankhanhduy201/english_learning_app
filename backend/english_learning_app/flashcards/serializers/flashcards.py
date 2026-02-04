@@ -173,6 +173,8 @@ class VocabularyListSerializer(BaseListSerializer):
 
 
 class VocabularySerializer(BaseSerializer):
+    created_by = UserSerializer(read_only=True)
+
     translations = TranslationSerializer(many=True)
     topic = CustomPrimaryKeyRelatedField(
         queryset=Topic.objects.all(),
