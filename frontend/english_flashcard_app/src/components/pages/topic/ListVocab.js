@@ -31,18 +31,19 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   const delVocabFetcher = useFetcher();
   const { topic } = useTopicContext();
 
-  const filterVocabs = (searchText) => {
+  const filterVocabs = useCallback((searchText) => {
+    const normalized = (searchText ?? "").toString().trim().toLowerCase();
     transition(() => {
-      setVocabs(oldState => {
-        if (!searchText) {
+      setVocabs(() => {
+        if (!normalized) {
           return [...vocabDatas];
         }
         return vocabDatas.filter((vocab) =>
-          vocab.word.toLowerCase().includes(searchText),
+          vocab.word.toLowerCase().includes(normalized),
         );
       });
     });
-  };
+  }, [vocabDatas]);
 
   useEffect(() => {
     filterVocabs(curSearchText.current);
@@ -67,16 +68,22 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
     [topicId],
   );
 
-  const onSearchVocab = useMemo(
-    () =>
-      debounce((searchText) => {
-        curSearchText.current = searchText.toLowerCase();
-        startTransition(() => {
-          filterVocabs(searchText);
-        });
-      }, 300),
-    []
-  );
+  const onSearchVocab = useMemo(() => {
+    const debounced = debounce((searchText) => {
+      const normalized = (searchText ?? "").toString().trim().toLowerCase();
+      curSearchText.current = normalized;
+      startTransition(() => {
+        filterVocabs(normalized);
+      });
+    }, 300);
+    return debounced;
+  }, [filterVocabs]);
+
+  useEffect(() => {
+    return () => {
+      onSearchVocab.cancel();
+    };
+  }, [onSearchVocab]);
 
   useEffect(() => {
     if (delVocabFetcher.data?.status === "success") {

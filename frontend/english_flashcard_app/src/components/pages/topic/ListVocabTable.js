@@ -34,10 +34,11 @@ const ListVocabTable = memo(
               <th>#</th>
               <th>Word</th>
               <th>Descriptions</th>
+              <th>Author</th>
               <th></th>
             </tr>
             <tr>
-              <th colSpan="4">
+              <th colSpan="5">
                 <div className="input-group mb-3">
                   <input
                     type="text"
@@ -76,6 +77,7 @@ const ListVocabTable = memo(
                     {vocab.word}
                   </td>
                   <td>{vocab.descriptions}</td>
+                  <td>{vocab?.created_by?.username}</td>
                   <td>
                     <div className="d-flex justify-content-end">
                       <Link
