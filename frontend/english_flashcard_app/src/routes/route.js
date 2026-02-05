@@ -5,8 +5,10 @@ import * as topicsAction from "./actions/topicAction";
 import * as vocabsAction from "./actions/vocabAction";
 import * as transAction from "./actions/transAction";
 import * as loginAction from "./actions/loginAction";
+import * as registerAction from "./actions/registerAction";
 import Error from "../components/errors/Error";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
 import Layout from "../pages/Layout";
 import PrivatePage from "../components/PrivatePage";
 import Test from "../pages/Test";
@@ -73,6 +75,11 @@ const routes = createBrowserRouter(
       path: "/login",
       element: <Login />,
       action: loginAction.login,
+    },
+    {
+      path: "/register",
+      element: <Register />,
+      action: registerAction.register,
     },
     {
       path: "/logout",

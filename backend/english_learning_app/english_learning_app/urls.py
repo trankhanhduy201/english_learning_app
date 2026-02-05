@@ -24,7 +24,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
-from flashcards.views.users import UserInfoView, UserSignature
+from flashcards.views.users import UserInfoView, UserSignature, UserRegisterView
 from flashcards.views.tokens import RevoleTokenView
 from flashcards.views.flashcards import TopicViewSet, VocabularyViewSet
 
@@ -40,6 +40,7 @@ urlpatterns = [
     path('token/revoke', RevoleTokenView.as_view(), name="token_revoke"),
 
     # User
+    path('user/register', UserRegisterView.as_view(), name='user_register'),
     path('user/info', UserInfoView.as_view(), name='user_info'),
     path('user/gen-signature', UserSignature.as_view(), name='user_gen_signature'),
 ]

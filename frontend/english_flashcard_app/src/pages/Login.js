@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useFetcher } from "react-router-dom";
 import useCheckAuth from "../hooks/useCheckAuth";
 import LoadingOverlay from "../components/LoadingOverlay";
@@ -23,7 +23,7 @@ const Login = () => {
         <h3 className="text-center mb-4">Login</h3>
         {loginFetcher.data?.status === "error" && (
           <div className="alert alert-danger text-center">
-            Invalid email or password.
+            Invalid username or password.
           </div>
         )}
         <loginFetcher.Form action={"/login"} method={"post"}>
@@ -63,6 +63,12 @@ const Login = () => {
           <a href="/forgot-password" className="text-decoration-none">
             Forgot Password?
           </a>
+        </div>
+        <div className="mt-2 text-center">
+          <span className="me-1">Don’t have an account?</span>
+          <Link to="/register" className="text-decoration-none">
+            Register
+          </Link>
         </div>
       </div>
     </div>

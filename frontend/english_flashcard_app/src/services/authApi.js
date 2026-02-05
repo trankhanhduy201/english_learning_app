@@ -37,3 +37,11 @@ export const getUserInfo = async (token, options = {}) => {
     ...options,
   });
 };
+
+export const registerUser = async (userInfo, options = {}) => {
+  return await callApi("user/register", {
+    method: "POST",
+    body: JSON.stringify(userInfo),
+    ...options,
+  });
+};

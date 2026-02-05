@@ -1,5 +1,5 @@
 import { createThunkWithCallback, rejectWithErrorValue, dispatchSuccessAlert } from "./commonAction";
-import { getToken as getTokenApi } from "../../services/authApi";
+import { getToken as getTokenApi, registerUser as registerUserApi } from "../../services/authApi";
 import { 
   setAuthTokens as setAuthTokensCookie,
   clearAuthTokens as clearAuthTokensCookie
@@ -50,5 +50,23 @@ export const logoutThunk = createThunkWithCallback(
     return {
       status: 'success',
     };
+  },
+);
+
+export const registerThunk = createThunkWithCallback(
+  "auth/register",
+  async ({ username, password, first_name, last_name }, { dispatch, rejectWithValue }) => {
+    const response = await registerUserApi({
+      username,
+      password,
+      first_name,
+      last_name,
+    });
+    if (response.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
+    }
+
+    dispatchSuccessAlert(dispatch, "Account created successfully");
+    return response;
   },
 );
