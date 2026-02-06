@@ -6,8 +6,29 @@ export const login = async ({ request, param }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
+  const username = (data.username ?? "").trim();
+  const password = data.password ?? "";
+
+  const errors = {};
+  if (!username) errors.username = ["Username is required."];
+  if (!password) errors.password = ["Password is required."];
+
+  if (Object.keys(errors).length > 0) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
+
   try {
-    const resp = await store.dispatch(loginThunk(data)).unwrap();
+    const resp = await store
+      .dispatch(
+        loginThunk({
+          username,
+          password,
+        }),
+      )
+      .unwrap();
     return redirect(`/dashboard`);
   } catch (err) {
     return err;

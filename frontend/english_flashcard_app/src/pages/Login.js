@@ -1,13 +1,21 @@
+import { useMemo } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useFetcher } from "react-router-dom";
 import useCheckAuth from "../hooks/useCheckAuth";
 import LoadingOverlay from "../components/LoadingOverlay";
+import FieldErrors from "../components/FieldErrors";
+import { login } from "../routes/actions/loginAction";
 
 const Login = () => {
   const loginFetcher = useFetcher();
   const { isLogged } = useCheckAuth({
     hasCheckExpired: false,
   });
+
+  const apiErrors = useMemo(() => {
+    if (loginFetcher.data?.status !== "error") return {};
+    return loginFetcher.data?.errors ?? {};
+  }, [loginFetcher.data]);
 
   if (isLogged === null) {
     return <LoadingOverlay />;
@@ -17,13 +25,22 @@ const Login = () => {
     return <Navigate to="/dashboard" />;
   }
 
+  const getFieldErrors = (fieldName) => {
+    const errors = apiErrors?.[fieldName];
+    if (!errors) return [];
+    return Array.isArray(errors) ? errors : [String(errors)];
+  };
+
+  const isSubmitting = loginFetcher.state === "submitting";
+  const hasErrors = loginFetcher.data?.status === "error";
+
   return (
     <div className="d-flex align-items-center justify-content-center vh-100">
       <div className="card shadow p-4" style={{ width: "24rem" }}>
         <h3 className="text-center mb-4">Login</h3>
-        {loginFetcher.data?.status === "error" && (
+        {hasErrors && loginFetcher.data?.errors?.detail && (
           <div className="alert alert-danger text-center">
-            Invalid username or password.
+            Login failed. Please try again.
           </div>
         )}
         <loginFetcher.Form action={"/login"} method={"post"}>
@@ -36,8 +53,9 @@ const Login = () => {
               className="form-control"
               name="username"
               placeholder="Enter your username"
-              required
+              disabled={isSubmitting}
             />
+            <FieldErrors errors={getFieldErrors("username")} />
           </div>
           <div className="mb-3">
             <label htmlFor="password" className="form-label">
@@ -48,15 +66,16 @@ const Login = () => {
               className="form-control"
               name="password"
               placeholder="Enter your password"
-              required
+              disabled={isSubmitting}
             />
+            <FieldErrors errors={getFieldErrors("password")} />
           </div>
           <button
             type="submit"
             className="btn btn-primary w-100"
-            disabled={loginFetcher.state === "submitting"}
+            disabled={isSubmitting}
           >
-            {loginFetcher.state === "submitting" ? "Logging in..." : "Login"}
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </loginFetcher.Form>
         <div className="mt-3 text-center">

@@ -46,7 +46,7 @@ const Register = () => {
 
         {registerFetcher.data?.status === "error" && (
           <div className="alert alert-danger text-center">
-            Please fix the errors below.
+            Registeration failed. Please try again.
           </div>
         )}
 
@@ -60,7 +60,6 @@ const Register = () => {
               className="form-control"
               name="username"
               placeholder="Enter your username"
-              required
               disabled={isSubmitting}
             />
             <FieldErrors errors={getFieldErrors("username")} />
@@ -76,7 +75,6 @@ const Register = () => {
                 className="form-control"
                 name="firstname"
                 placeholder="First name"
-                required
                 disabled={isSubmitting}
               />
               <FieldErrors errors={getFieldErrors("first_name")} />
@@ -90,7 +88,6 @@ const Register = () => {
                 className="form-control"
                 name="lastname"
                 placeholder="Last name"
-                required
                 disabled={isSubmitting}
               />
               <FieldErrors errors={getFieldErrors("last_name")} />
@@ -106,7 +103,6 @@ const Register = () => {
               className="form-control"
               name="password"
               placeholder="Create a password"
-              required
               disabled={isSubmitting}
             />
             <FieldErrors errors={getFieldErrors("password")} />
@@ -121,7 +117,6 @@ const Register = () => {
               className="form-control"
               name="re_password"
               placeholder="Repeat your password"
-              required
               disabled={isSubmitting}
             />
           </div>
