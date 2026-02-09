@@ -12,6 +12,10 @@ def topic_image_upload_to(instance, filename):
     return f'uploads/topics/{filename}'
 
 
+def user_avatar_upload_to(instance, filename):
+	return f'uploads/avatars/user_{instance.user_id}/{filename}'
+
+
 class LanguageEnums(models.TextChoices):
 	EN = ('en', _('English'))
 	VN = ('vn', _('Vietnamese'))
@@ -117,7 +121,7 @@ class Translation(CreatedBy):
 	note = models.TextField(blank=True, null=True)
 
 	objects = TranslationManager()
-	
+
 	class Meta:
 		indexes = [
 			models.Index(fields=['language', 'vocabulary'])
@@ -125,7 +129,20 @@ class Translation(CreatedBy):
 
 	def __str__(self):
 		return f"{self.translation} ({self.language})"
-	
+
+
+class UserProfile(models.Model):
+	user = models.OneToOneField(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.CASCADE,
+		related_name='profile'
+	)
+	avatar = models.ImageField(upload_to=user_avatar_upload_to, default=None, null=True, blank=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return f"Profile({self.user_id})"
+
 
 class UserToken(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

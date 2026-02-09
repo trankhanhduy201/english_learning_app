@@ -10,6 +10,7 @@ const Topic = lazy(() => import("../pages/Topic"));
 const TopicLearn = lazy(() => import("../pages/TopicLearn"));
 const Vocab = lazy(() => import("../pages/Vocab"));
 const Settings = lazy(() => import("../pages/Settings"));
+const Profile = lazy(() => import("../pages/Profile"));
 const VocabModal = lazy(() => import("../pages/VocabModal"));
 const TopicModal = lazy(() => import("../pages/TopicModal"));
 
@@ -24,6 +25,8 @@ const Page = memo(({ pageName }) => {
       return <Dashboard />;
     case "Settings":
       return <Settings />;
+    case "Profile":
+      return <Profile />;
     case "Topics":
       return <Topics />;
     case "Topic":

@@ -66,11 +66,31 @@ class QueryLoggingMixin:
 class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
     permission_classes = [IsOwner]
     filter_backends = [DjangoFilterBackend]
+
+    create_serializer_class = None
+    update_serializer_class = None
+
+    auto_add_created_by = False
+
+    def get_create_serializer_class(self):
+        return self.create_serializer_class or self.serializer_class
+    
+    def get_update_serializer_class(self):
+        return self.update_serializer_class or self.serializer_class
+    
+    def create(self, request, *args, **kwargs):
+        create_serializer_class = self.get_create_serializer_class()
+        serializer = create_serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        update_serializer_class = self.get_update_serializer_class()
+        serializer = update_serializer_class(instance, data=request.data, partial=partial, context={'request': request})
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -86,7 +106,7 @@ class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
 
     def perform_create_or_update(self, serializer):
         additional = {}
-        if self.request.user.is_anonymous is False:
+        if self.auto_add_created_by and self.request.user.is_anonymous is False:
             additional['created_by'] = self.request.user
         serializer.save(**additional)
 

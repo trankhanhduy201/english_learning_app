@@ -6,6 +6,8 @@ import * as vocabsAction from "./actions/vocabAction";
 import * as transAction from "./actions/transAction";
 import * as loginAction from "./actions/loginAction";
 import * as registerAction from "./actions/registerAction";
+import * as profileLoader from "./loaders/profileLoader";
+import * as profileAction from "./actions/profileAction";
 import Error from "../components/errors/Error";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
@@ -100,6 +102,13 @@ const routes = createBrowserRouter(
             {
               path: "/settings",
               element: <PrivatePage pageName="Settings" />,
+            },
+            {
+              path: "/profile",
+              element: <PrivatePage pageName="Profile" />,
+              loader: profileLoader.getProfile,
+              action: profileAction.updateProfile,
+              shouldRevalidate: defaultShouldRevalidate,
             },
             {
               path: "/topics",

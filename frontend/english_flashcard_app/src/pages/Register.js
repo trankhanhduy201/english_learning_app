@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useFetcher } from "react-router-dom";
 import FieldErrors from "../components/FieldErrors";
@@ -7,6 +7,7 @@ import useCheckAuth from "../hooks/useCheckAuth";
 
 const Register = () => {
   const registerFetcher = useFetcher();
+  const formRef = useRef(null);
   const { isLogged } = useCheckAuth({
     hasCheckExpired: false,
   });
@@ -15,6 +16,15 @@ const Register = () => {
     if (registerFetcher.data?.status !== "error") return {};
     return registerFetcher.data?.errors ?? {};
   }, [registerFetcher.data]);
+
+  const isSubmitting = registerFetcher.state === "submitting";
+  const isSuccess = registerFetcher.data?.status === "success";
+
+  useEffect(() => {
+    if (isSuccess) {
+      formRef.current?.reset();
+    }
+  }, [isSuccess]);
 
   if (isLogged === null) {
     return <LoadingOverlay />;
@@ -29,9 +39,6 @@ const Register = () => {
     if (!errors) return [];
     return Array.isArray(errors) ? errors : [String(errors)];
   };
-
-  const isSubmitting = registerFetcher.state === "submitting";
-  const isSuccess = registerFetcher.data?.status === "success";
 
   return (
     <div className="d-flex align-items-center justify-content-center vh-100">
@@ -50,7 +57,7 @@ const Register = () => {
           </div>
         )}
 
-        <registerFetcher.Form action="/register" method="post">
+        <registerFetcher.Form ref={formRef} action="/register" method="post">
           <div className="mb-3">
             <label htmlFor="username" className="form-label">
               Username

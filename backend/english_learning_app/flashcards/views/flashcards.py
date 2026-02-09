@@ -37,6 +37,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	filterset_class = TopicFilter
 	pagination_class = CustomPageNumberPagination
 	permission_classes = [IsAccessable]
+	auto_add_created_by = True
 
 	def get_queryset(self):
 		qs = super().get_queryset(skip_owner_filter=True)
@@ -104,6 +105,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
     serializer_class = VocabularySerializer
     filterset_class = VocabularyFilter
     permission_classes = [IsAccessable]
+    auto_add_created_by = True
 
     def get_queryset(self):
         qs = super().get_queryset(skip_owner_filter=True)

@@ -18,13 +18,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView
 )
-from flashcards.views.users import UserInfoView, UserSignature, UserRegisterView
+from flashcards.views.users import UserSignature, UserProfileViewSet
 from flashcards.views.tokens import RevoleTokenView
 from flashcards.views.flashcards import TopicViewSet, VocabularyViewSet
 
@@ -40,8 +41,16 @@ urlpatterns = [
     path('token/revoke', RevoleTokenView.as_view(), name="token_revoke"),
 
     # User
-    path('user/register', UserRegisterView.as_view(), name='user_register'),
-    path('user/info', UserInfoView.as_view(), name='user_info'),
+    path(
+        'user/profile',
+        UserProfileViewSet.as_view({
+            'get': 'retrieve',
+            'post': 'create',
+            'put': 'update',
+            'patch': 'partial_update',
+        }),
+        name='user_profile',
+    ),
     path('user/gen-signature', UserSignature.as_view(), name='user_gen_signature'),
 ]
 
@@ -57,3 +66,5 @@ if settings.DEBUG:
     urlpatterns += [
         path('__debug__/', include(debug_toolbar.urls)),
     ]
+
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -31,15 +31,8 @@ export const revokeTokens = async (options = {}) => {
   });
 };
 
-export const getUserInfo = async (token, options = {}) => {
-  return await callApi("user", {
-    method: "GET",
-    ...options,
-  });
-};
-
 export const registerUser = async (userInfo, options = {}) => {
-  return await callApi("user/register", {
+  return await callApi("user/profile", {
     method: "POST",
     body: JSON.stringify(userInfo),
     ...options,
