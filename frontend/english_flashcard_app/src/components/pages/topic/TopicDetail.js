@@ -50,13 +50,15 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
       >
         <input type="hidden" name="_not_revalidate" defaultValue={"1"} />
         <div className="row">
-          <div className="mb-3 col-md-6">
+          <div className="mb-3 col-md-12">
             <label htmlFor="name" className="form-label">
               Image
             </label>
             <UploadImageInput
               name="image"
               imageUrl={editTopicFetcher?.data?.data?.image_info?.url ?? topic?.image_info?.url}
+              placeholderUrl={null}
+              shape="circle"
             />
             {editTopicFetcher.data?.errors?.upload_image && (
               <FieldErrors

@@ -9,6 +9,7 @@ export const updateProfile = async ({ request }) => {
   const lastName = (formData.get("last_name") ?? "").toString().trim();
   const email = (formData.get("email") ?? "").toString().trim();
   const avatar = formData.get("avatar");
+  const avatarRemove = (formData.get("avatar_remove") ?? "").toString() === "1";
 
   const errors = {};
   if (!firstName) errors.first_name = ["First name is required."];
@@ -37,12 +38,10 @@ export const updateProfile = async ({ request }) => {
       email,
     };
 
-    if (avatar && avatar instanceof File) {
-      if (avatar.size > 0) {
-        data.avatar = await blobToBase64(avatar);
-      } else {
-        data.avatar = null;
-      }
+    if (avatarRemove) {
+      data.avatar = null;
+    } else if (hasAvatarFile) {
+      data.avatar = await blobToBase64(avatar);
     }
     
     return await store.dispatch(

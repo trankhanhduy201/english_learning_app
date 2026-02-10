@@ -40,11 +40,12 @@ const Profile = memo(() => {
               >
                 <input type="hidden" name="_not_revalidate" defaultValue={"1"} />
                 <div className="row">
-                  <div className="mb-3 col-md-6">
+                  <div className="mb-3 col-md-12">
                     <label className="form-label">Avatar</label>
                     <UploadImageInput
                       name="avatar"
                       imageUrl={resolvedUser?.avatar ?? null}
+                      shape="circle"
                     />
                     {actionData?.errors?.avatar && (
                       <FieldErrors errors={actionData.errors.avatar} />

@@ -46,13 +46,17 @@ const memberInteractTopic = async (topicId, action) => {
 const getFormData = async (request) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
+  const imageRemove = (data?.image_remove ?? "").toString() === "1";
   if (data?.image && data.image instanceof File) {
     if (data.image.size > 0) {
       data.upload_image = await blobToBase64(data.image);
-    } else {
+    } else if (imageRemove) {
       data.upload_image = null;
     }
     delete data.image;
+  }
+  if (data?.image_remove) {
+    delete data.image_remove;
   }
   return data;
 }
