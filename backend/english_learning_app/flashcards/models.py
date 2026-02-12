@@ -138,6 +138,7 @@ class UserProfile(models.Model):
 		related_name='profile'
 	)
 	avatar = models.ImageField(upload_to=user_avatar_upload_to, default=None, null=True, blank=True)
+	bio = models.TextField(blank=True, null=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
 	def __str__(self):

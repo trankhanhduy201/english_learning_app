@@ -7,8 +7,8 @@ const UploadImageInput = memo(({
   name,
   imageUrl = null,
   placeholderUrl = DEFAULT_PLACEHOLDER_URL,
-  width = 200,
-  height = 200,
+  width = 150,
+  height = 150,
   shape = "rounded", // "rounded" | "circle"
 }) => {
   const [ preview, setPreview ] = useState(null);
@@ -38,7 +38,6 @@ const UploadImageInput = memo(({
     if (preview) {
       URL.revokeObjectURL(preview);
       setPreview(null);
-      return;
     }
 
     if (defaultImage) {
@@ -52,12 +51,20 @@ const UploadImageInput = memo(({
   }, []);
 
   useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+
     if (!imageUrl) {
       setDefaultImage(null);
       setRemoveRequested(false);
       return;
     }
-    setDefaultImage(API_BASE_URL + imageUrl);
+    setDefaultImage(
+      imageUrl.startsWith('http') 
+        ? imageUrl 
+        : API_BASE_URL + imageUrl
+    );
     setRemoveRequested(false);
   }, [imageUrl]);
 

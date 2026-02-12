@@ -8,6 +8,7 @@ from flashcards.models import UserProfile
 
 class RetrieveUserSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(source='profile.avatar', read_only=True)
+    bio = serializers.CharField(source="profile.bio", read_only=True)
 
     class Meta:
         model = get_user_model()
@@ -18,6 +19,7 @@ class RetrieveUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "avatar",
+            "bio",
         ]
         read_only_fields = [
             "id",
@@ -26,6 +28,7 @@ class RetrieveUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "avatar",
+            "bio",
         ]
 
 
@@ -59,11 +62,12 @@ class CreateUserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         validate_password(value)
         return make_password(value)
-    
+
 
 class UpdateUserSerializer(serializers.ModelSerializer):
     # Accept avatar uploads via JSON (data URL base64), same pattern as TopicSerializer.upload_image
-    avatar = Base64ImageField(source="profile.avatar", write_only=True, required=False, allow_null=True)
+    avatar = Base64ImageField(write_only=True, required=False, allow_null=True)
+    bio = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = get_user_model()
@@ -71,35 +75,22 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
-            "avatar",
+            "avatar",   
+            "bio",
         ]
 
     def update(self, instance, validated_data):
-        profile_data = validated_data.pop("profile", None)
+        self.update_profile(instance, validated_data)
+        return super().update(instance, validated_data)
+    
+    def update_profile(self, instance, validated_data):
+        profile, _ = UserProfile.objects.get_or_create(user=instance)
+        profile.bio = validated_data.pop("bio", None)
 
-        user_update_fields = []
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-            user_update_fields.append(attr)
-        if user_update_fields:
-            instance.save(update_fields=user_update_fields)
-
-        if profile_data is not None and "avatar" in profile_data:
-            try:
-                profile = instance.profile
-            except UserProfile.DoesNotExist:
-                profile = UserProfile(user=instance)
-
-            avatar_value = profile_data.get("avatar")
-            if avatar_value is None and getattr(profile, "avatar", None):
-                # Ensure old file is removed from storage when explicitly clearing.
+        if "avatar" in validated_data:
+            if getattr(profile, "avatar", None):
                 profile.avatar.delete(save=False)
+            profile.avatar = validated_data.pop("avatar", None)
 
-            profile.avatar = avatar_value
-
-            if profile.pk:
-                profile.save(update_fields=["avatar"])
-            else:
-                profile.save()
-
-        return instance
+        profile.save()
+        return profile

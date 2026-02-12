@@ -65,7 +65,9 @@ const Profile = memo(() => {
                     />
                   </div>
                   <div className="mb-3 col-lg-6">
-                    <label className="form-label">Email</label>
+                    <label className="form-label">
+                      Email <span className="text-danger">*</span>
+                    </label>
                     <input
                       type="email"
                       className="form-control"
@@ -82,7 +84,9 @@ const Profile = memo(() => {
 
                 <div className="row">
                   <div className="mb-3 col-lg-6">
-                    <label className="form-label">First name</label>
+                    <label className="form-label">
+                      First name <span className="text-danger">*</span>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -96,7 +100,9 @@ const Profile = memo(() => {
                     )}
                   </div>
                   <div className="mb-3 col-lg-6">
-                    <label className="form-label">Last name</label>
+                    <label className="form-label">
+                      Last name <span className="text-danger">*</span>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -107,6 +113,23 @@ const Profile = memo(() => {
                     />
                     {actionData?.errors?.last_name && (
                       <FieldErrors errors={actionData.errors.last_name} />
+                    )}
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="mb-3 col-lg-12">
+                    <label className="form-label">About me</label>
+                    <textarea
+                      className="form-control"
+                      name="bio"
+                      defaultValue={resolvedUser?.bio ?? ""}
+                      placeholder="Write something about yourself..."
+                      rows={4}
+                      disabled={isSubmitting}
+                    />
+                    {actionData?.errors?.bio && (
+                      <FieldErrors errors={actionData.errors.bio} />
                     )}
                   </div>
                 </div>
