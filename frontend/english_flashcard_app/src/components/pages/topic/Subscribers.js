@@ -5,6 +5,7 @@ import { useFetcher } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
 import { getMembers } from "../../../services/topicApi";
 import RadioButtons from "../../RadioButtons";
+import FieldErrors from "../../FieldErrors";
 import { SUBCRIBER_STATUS } from "../../../configs/appConfig";
 
 const Subscribers = memo(({ defaultMembers, topicId }) => {
@@ -155,6 +156,23 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
     [initialMap, defaultMembers]
   );
 
+  const updateMemberErrors = useMemo(() => {
+    if (fetcher.data?.status !== "error") return {};
+    return fetcher.data?.errors ?? {};
+  }, [fetcher.data]);
+
+  const getMemberErrors = useCallback((index) => {
+    const itemErrors = updateMemberErrors?.updating_member_data?.[index];
+    if (!itemErrors || typeof itemErrors !== "object") return [];
+
+    return Object.values(itemErrors).reduce((acc, fieldErrors) => {
+      if (Array.isArray(fieldErrors)) {
+        acc.push(...fieldErrors);
+      }
+      return acc;
+    }, []);
+  }, [updateMemberErrors]);
+
   return (
     <>
       <div className="d-flex align-items-center">
@@ -274,6 +292,10 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
                       </a>
                     </div>
                   </div>
+
+                  {getMemberErrors(index).length > 0 && (
+                    <FieldErrors errors={getMemberErrors(index)} />
+                  )}
                 </div>
               ))}
             </div>

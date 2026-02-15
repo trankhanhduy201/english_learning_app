@@ -28,3 +28,16 @@ export const getNextMaxId = (items, field) => {
   }
   return Math.max(...items.map(v => v[field])) + 1;
 }
+
+export const parseJsonObjectValues = (rawValue) => {
+  if (typeof rawValue !== "string" || rawValue.trim() === "") return null;
+
+  try {
+    const parsed = JSON.parse(rawValue);
+    if (!parsed || typeof parsed !== "object") return null;
+
+    return Object.values(parsed);
+  } catch {
+    return null;
+  }
+};

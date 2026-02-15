@@ -10,6 +10,7 @@ import {
 } from "../../stores/actions/topicAction";
 import { blobToBase64 } from "../../commons/images";
 import { validateTopicDetail } from "../../validations/topicValidation";
+import { validateTopicMemberUpdate } from "../../validations/topicMemberValidation";
 
 const updateTopicMembers = async (topicId, data) => {
   try {
@@ -108,19 +109,21 @@ export const deleteTopics = async () => {
 
 export const updateMembers = async ({ request, params }) => {
   const formData = await request.formData();
-  const updateData = Object.fromEntries(formData);
-  try {
-    const parseJsonData = Object.values(
-      JSON.parse(updateData?.updating_member_data ?? '')
-    );
+  const rawData = Object.fromEntries(formData);
 
-    if (parseJsonData.length > 0) {
-      return await updateTopicMembers(params.topicId, parseJsonData)
-    }
-  } catch (e) {
-    console.error(e);
+  const { validatedData, errors } = await validateTopicMemberUpdate(rawData);
+  if (errors) {
+    return {
+      status: "error",
+      errors,
+    };
   }
-  return {
-    error: 'Can not update topic members'
+
+  try {
+    return await updateTopicMembers(params.topicId, validatedData.updating_member_data);
+  } catch (_e) {
+    return {
+      error: "Can not update topic members",
+    };
   }
 };
