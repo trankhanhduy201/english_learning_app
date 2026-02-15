@@ -35,3 +35,13 @@ export const validateWithSchema = async (schema, data, options = {}) => {
     return { validatedData: null, errors: yupToFieldErrors(err) };
   }
 };
+
+export const isImageFile = (file) => {
+  if (!(file instanceof File)) return false;
+
+  const mimeType = (file.type ?? "").toLowerCase();
+  if (mimeType) return mimeType.startsWith("image/");
+
+  const name = (file.name ?? "").toLowerCase();
+  return /\.(png|jpe?g|gif|webp|bmp|svg)$/.test(name);
+};

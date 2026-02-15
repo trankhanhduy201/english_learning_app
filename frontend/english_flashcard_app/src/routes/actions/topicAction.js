@@ -9,6 +9,7 @@ import {
   memberInteractTopicThunk
 } from "../../stores/actions/topicAction";
 import { blobToBase64 } from "../../commons/images";
+import { validateTopicDetail } from "../../validations/topicValidation";
 
 const updateTopicMembers = async (topicId, data) => {
   try {
@@ -43,26 +44,35 @@ const memberInteractTopic = async (topicId, action) => {
   }
 }
 
-const getFormData = async (request) => {
+const getValidatedTopicPayload = async (request) => {
   const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  const imageRemove = (data?.image_remove ?? "").toString() === "1";
-  if (data?.image && data.image instanceof File) {
-    if (data.image.size > 0) {
-      data.upload_image = await blobToBase64(data.image);
-    } else if (imageRemove) {
-      data.upload_image = null;
-    }
-    delete data.image;
+  const rawData = Object.fromEntries(formData);
+
+  const { validatedData, errors } = await validateTopicDetail(rawData);
+  if (errors) {
+    return {
+      status: "error",
+      errors,
+    };
   }
-  if (data?.image_remove) {
-    delete data.image_remove;
+
+  const removeAvatar = validatedData.image_remove;
+  delete validatedData.image_remove;
+
+  if (removeAvatar) {
+    validatedData.upload_image = null;
+  } else if (validatedData.upload_image) {
+    validatedData.upload_image = await blobToBase64(validatedData.upload_image);
+  } else {
+    delete validatedData.upload_image;
   }
-  return data;
-}
+
+  return validatedData;
+};
 
 export const createTopic = async ({ request }) => {
-  const data = await getFormData(request);
+  const data = await getValidatedTopicPayload(request);
+  if (data?.status === "error") return data;
   try {
     const result = await store.dispatch(createTopicThunk({ data })).unwrap();
     return redirect(`/topic/${result.data.id}`);
@@ -82,7 +92,8 @@ export const editTopic = async ({ request, params }) => {
     return await memberInteractTopic(params.topicId, params.action);
   }
 
-  const updateData = await getFormData(request);
+  const updateData = await getValidatedTopicPayload(request);
+  if (updateData?.status === "error") return updateData;
   return await updateTopic(params.topicId, updateData);
 };
 
@@ -102,7 +113,7 @@ export const updateMembers = async ({ request, params }) => {
     const parseJsonData = Object.values(
       JSON.parse(updateData?.updating_member_data ?? '')
     );
-    console.log(parseJsonData);
+
     if (parseJsonData.length > 0) {
       return await updateTopicMembers(params.topicId, parseJsonData)
     }

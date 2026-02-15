@@ -1,17 +1,7 @@
 import * as yup from "yup";
-import { validateWithSchema } from "./base";
+import { isImageFile, validateWithSchema } from "./base";
 
 const MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024;
-
-const isImageFile = (file) => {
-  if (!(file instanceof File)) return false;
-
-  const mimeType = (file.type ?? "").toLowerCase();
-  if (mimeType) return mimeType.startsWith("image/");
-
-  const name = (file.name ?? "").toLowerCase();
-  return /\.(png|jpe?g|gif|webp|bmp|svg)$/.test(name);
-};
 
 export const updateProfileSchema = yup
   .object({
