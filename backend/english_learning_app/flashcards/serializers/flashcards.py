@@ -37,7 +37,7 @@ class TopicMemberSerializer(BaseSerializer):
     class Meta(BaseSerializer.Meta):
         model = TopicMember
         fields = ['id', 'status', 'joined_at', 'topic', 'member', 'member_id', 'member_name', 'is_remove']
-        read_only_fields_on_update = ['topic', 'member']
+        read_only_fields_on_update = ['topic', 'member', 'joined_at']
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

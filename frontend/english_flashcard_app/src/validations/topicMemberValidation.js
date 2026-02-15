@@ -7,11 +7,10 @@ const MEMBER_STATUS_KEYS = Object.values(SUBCRIBER_STATUS).map((item) => item.ke
 
 const topicMemberItemSchema = yup
   .object({
-    member_id: yup
+    id: yup
       .number()
-      .typeError("Member id is invalid.")
-      .required("Member id is required."),
-    member: yup.number().typeError("Member is invalid.").nullable(),
+      .typeError("Id is invalid.")
+      .required("Id is required."),
     status: yup
       .string()
       .transform((value) => (value ?? "").toString().trim())
@@ -34,6 +33,7 @@ export const topicMemberUpdateSchema = yup
       .array()
       .transform((_value, originalValue) => {
         const parsedValues = parseJsonObjectValues(originalValue);
+        console.log(parsedValues)
         return Array.isArray(parsedValues) ? parsedValues : null;
       })
       .of(topicMemberItemSchema)
