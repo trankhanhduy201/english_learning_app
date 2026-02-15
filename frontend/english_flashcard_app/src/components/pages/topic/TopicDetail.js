@@ -70,7 +70,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
         <div className="row">
           <div className="mb-3 col-lg-6">
             <label htmlFor="name" className="form-label">
-              Topic name
+              Topic name <span className="text-danger">*</span>
             </label>
             <input
               type="text"
@@ -85,7 +85,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           </div>
           <div className="mb-3 col-lg-6">
             <label htmlFor="learning_language" className="form-label">
-              Which language are you learning?
+              Which language are you learning? <span className="text-danger">*</span>
             </label>
             <Dropdown
               name="learning_language"
@@ -119,7 +119,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
         <div className="row">
           <div className="mb-3">
             <label htmlFor="status" className="form-label">
-              Status
+              Status <span className="text-danger">*</span>
             </label>
             <div className="d-block">
               <RadioButtons
