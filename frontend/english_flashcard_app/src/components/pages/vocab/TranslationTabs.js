@@ -24,6 +24,7 @@ const EVENT_KEY_NEW_TAB = "new";
 const TranslationTabs = ({ data }) => {
   const textRef = useRef(null);
   const languageRef = useRef(null);
+  const typeRef = useRef(null);
   const [activeTab, setActiveTab] = useState("en");
   const [translations, setTranslations] = useState(
     _.groupBy(
@@ -84,9 +85,12 @@ const TranslationTabs = ({ data }) => {
   const handleAddLang = () => {
     const nWord = textRef.current.value;
     const sLang = languageRef.current.value;
-    if (!nWord || !sLang) {
+    const sType = typeRef.current?.value;
+
+    if (!nWord || !sLang || !sType) {
       textRef.current.style.borderColor = !nWord ? "red" : "";
       languageRef.current.style.borderColor = !sLang ? "red" : "";
+      typeRef.current.style.borderColor = !sType ? "red" : "";
       return;
     }
 
@@ -94,6 +98,7 @@ const TranslationTabs = ({ data }) => {
       let newVocab = {
         translation: nWord,
         language: sLang,
+        type: sType,
         idx: 0,
       };
 
@@ -108,8 +113,12 @@ const TranslationTabs = ({ data }) => {
     // Reset input fields
     textRef.current.value = "";
     languageRef.current.value = "";
+    typeRef.current.value = "";
+
     textRef.current.style.borderColor = "";
     languageRef.current.style.borderColor = "";
+    typeRef.current.style.borderColor = "";
+
     setActiveTab(sLang);
   };
 
@@ -283,8 +292,8 @@ const TranslationTabs = ({ data }) => {
               <label htmlFor="type" className="form-label">
                 Type
               </label>
-              <select id="type" className="form-control">
-                <option>-- No choice --</option>
+              <select id="type" className="form-control" ref={typeRef}>
+                <option value="">-- No choice --</option>
                 {transType.getDatas().map((v) => (
                   <option key={v.key} value={v.key}>
                     {v.text}
