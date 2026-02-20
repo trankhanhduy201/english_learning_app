@@ -14,7 +14,9 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const delTopicFetcher = useFetcher();
   const { setTopic } = useTopicContext();
 
-  const isSubmitting = editTopicFetcher.state === "submitting";
+  const isSubmitting = 
+    editTopicFetcher.state === "submitting" ||
+    delTopicFetcher.state === "submitting";
 
   const handleDelTopic = () => {
     const formData = new FormData();
@@ -24,10 +26,6 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
       method: "delete",
     });
   };
-
-  const isDisableButton = () =>
-    editTopicFetcher.state === "submitting" ||
-    delTopicFetcher.state === "submitting";
 
   useEffect(() => {
     setTopic(topic);
@@ -153,7 +151,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           <button
             type="submit"
             className={`btn btn-primary ${!isNew ? "me-2" : "w-sm-50"}`}
-            disabled={isDisableButton()}
+            disabled={isSubmitting}
           >
             <i className="bi bi-pencil-square text-white"></i>{" "}
             <span className={`btn-text ${!isNew ? "--d-sm-none" : ""}`}>
@@ -165,7 +163,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
               type="button"
               className="btn btn-danger"
               onClick={handleDelTopic}
-              disabled={isDisableButton()}
+              disabled={isSubmitting}
             >
               <i className="bi bi-trash text-white"></i>{" "}
               <span className="btn-text --d-sm-none">
