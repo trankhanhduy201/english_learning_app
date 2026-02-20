@@ -39,100 +39,99 @@ const Profile = memo(() => {
                 encType="multipart/form-data"
               >
                 <input type="hidden" name="_not_revalidate" defaultValue={"1"} />
-                <div className="row">
-                  <div className="mb-3 col-md-12">
-                    <label className="form-label">Avatar</label>
-                    <UploadImageInput
-                      name="avatar"
-                      imageUrl={resolvedUser?.avatar ?? null}
-                      shape="circle"
-                    />
-                    {actionData?.errors?.avatar && (
-                      <FieldErrors errors={actionData.errors.avatar} />
-                    )}
+                <fieldset disabled={isSubmitting} aria-busy={isSubmitting}>
+                  <div className="row">
+                    <div className="mb-3 col-md-12">
+                      <label className="form-label">Avatar</label>
+                      <UploadImageInput
+                        name="avatar"
+                        imageUrl={resolvedUser?.avatar ?? null}
+                        shape="circle"
+                        disabled={isSubmitting}
+                      />
+                      {actionData?.errors?.avatar && (
+                        <FieldErrors errors={actionData.errors.avatar} />
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div className="row">
-                  <div className="mb-3 col-lg-6">
-                    <label className="form-label">Username</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="username"
-                      defaultValue={resolvedUser?.username ?? ""}
-                      disabled={1}
-                    />
+                  <div className="row">
+                    <div className="mb-3 col-lg-6">
+                      <label className="form-label">Username</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="username"
+                        defaultValue={resolvedUser?.username ?? ""}
+                        disabled={1}
+                      />
+                    </div>
+                    <div className="mb-3 col-lg-6">
+                      <label className="form-label">
+                        Email <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        name="email"
+                        defaultValue={resolvedUser?.email ?? ""}
+                        placeholder="Email..."
+                      />
+                      {actionData?.errors?.email && (
+                        <FieldErrors errors={actionData.errors.email} />
+                      )}
+                    </div>
                   </div>
-                  <div className="mb-3 col-lg-6">
-                    <label className="form-label">
-                      Email <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      name="email"
-                      defaultValue={resolvedUser?.email ?? ""}
-                      placeholder="Email..."
-                      disabled={isSubmitting}
-                    />
-                    {actionData?.errors?.email && (
-                      <FieldErrors errors={actionData.errors.email} />
-                    )}
-                  </div>
-                </div>
 
-                <div className="row">
-                  <div className="mb-3 col-lg-6">
-                    <label className="form-label">
-                      First name <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="first_name"
-                      defaultValue={resolvedUser?.first_name ?? ""}
-                      placeholder="First name..."
-                      disabled={isSubmitting}
-                    />
-                    {actionData?.errors?.first_name && (
-                      <FieldErrors errors={actionData.errors.first_name} />
-                    )}
+                  <div className="row">
+                    <div className="mb-3 col-lg-6">
+                      <label className="form-label">
+                        First name <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="first_name"
+                        defaultValue={resolvedUser?.first_name ?? ""}
+                        placeholder="First name..."
+                      />
+                      {actionData?.errors?.first_name && (
+                        <FieldErrors errors={actionData.errors.first_name} />
+                      )}
+                    </div>
+                    <div className="mb-3 col-lg-6">
+                      <label className="form-label">
+                        Last name <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="last_name"
+                        defaultValue={resolvedUser?.last_name ?? ""}
+                        placeholder="Last name..."
+                      />
+                      {actionData?.errors?.last_name && (
+                        <FieldErrors errors={actionData.errors.last_name} />
+                      )}
+                    </div>
                   </div>
-                  <div className="mb-3 col-lg-6">
-                    <label className="form-label">
-                      Last name <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="last_name"
-                      defaultValue={resolvedUser?.last_name ?? ""}
-                      placeholder="Last name..."
-                      disabled={isSubmitting}
-                    />
-                    {actionData?.errors?.last_name && (
-                      <FieldErrors errors={actionData.errors.last_name} />
-                    )}
-                  </div>
-                </div>
 
-                <div className="row">
-                  <div className="mb-3 col-lg-12">
-                    <label className="form-label">About me</label>
-                    <textarea
-                      className="form-control"
-                      name="bio"
-                      defaultValue={resolvedUser?.bio ?? ""}
-                      placeholder="Write something about yourself..."
-                      rows={4}
-                      disabled={isSubmitting}
-                    />
-                    {actionData?.errors?.bio && (
-                      <FieldErrors errors={actionData.errors.bio} />
-                    )}
+                  <div className="row">
+                    <div className="mb-3 col-lg-12">
+                      <label className="form-label">About me</label>
+                      <textarea
+                        className="form-control"
+                        name="bio"
+                        defaultValue={resolvedUser?.bio ?? ""}
+                        placeholder="Write something about yourself..."
+                        rows={4}
+                      />
+                      {actionData?.errors?.bio && (
+                        <FieldErrors errors={actionData.errors.bio} />
+                      )}
+                    </div>
                   </div>
-                </div>
+                </fieldset>
 
                 <div className="d-flex justify-content-end mt-2">
                   <button

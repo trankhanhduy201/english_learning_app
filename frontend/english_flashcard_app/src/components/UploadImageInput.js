@@ -10,6 +10,7 @@ const UploadImageInput = memo(({
   width = 150,
   height = 150,
   shape = "rounded", // "rounded" | "circle"
+  disabled = false,
 }) => {
   const [ preview, setPreview ] = useState(null);
   const [ defaultImage, setDefaultImage ] = useState(null);
@@ -32,6 +33,7 @@ const UploadImageInput = memo(({
   const onRemoveImage = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (disabled) return;
     if (inputRef.current) {
       inputRef.current.value = '';
     }
@@ -44,11 +46,12 @@ const UploadImageInput = memo(({
       setDefaultImage(null);
       setRemoveRequested(true);
     }
-  }, [preview, defaultImage]);
+  }, [preview, defaultImage, disabled]);
 
   const openFileDialog = useCallback(() => {
+    if (disabled) return;
     inputRef.current?.click();
-  }, []);
+  }, [disabled]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -89,6 +92,7 @@ const UploadImageInput = memo(({
         name={name}
         accept="image/*"
         onChange={onChangeImage}
+        disabled={disabled}
         style={{ display: "none" }}
       />
 
@@ -100,18 +104,20 @@ const UploadImageInput = memo(({
         <div className="d-flex justify-content-center">
           <div
             className={`position-relative border ${shapeClassName} overflow-hidden`}
-            style={{ width: `${width}px`, height: `${height}px`, cursor: "pointer" }}
+            style={{ width: `${width}px`, height: `${height}px`, cursor: disabled ? "not-allowed" : "pointer" }}
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
             onClick={openFileDialog}
             role="button"
-            tabIndex={0}
+            tabIndex={disabled ? -1 : 0}
             onKeyDown={(e) => {
+              if (disabled) return;
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
                 openFileDialog();
               }
             }}
+            aria-disabled={disabled}
           >
             <img
               className={`img-fluid ${shapeClassName}`}
@@ -136,6 +142,7 @@ const UploadImageInput = memo(({
                     className="btn p-0 border-0 bg-transparent text-white"
                     onClick={onRemoveImage}
                     aria-label="Remove image"
+                    disabled={disabled}
                   >
                     <i className="bi bi-trash-fill" style={{ fontSize: "1.4rem" }}></i>
                   </button>
@@ -152,6 +159,7 @@ const UploadImageInput = memo(({
             type="button"
             className="btn btn-outline-secondary"
             onClick={openFileDialog}
+            disabled={disabled}
           >
             <i className="bi bi-camera-fill"></i> Choose image
           </button>

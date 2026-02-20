@@ -58,83 +58,80 @@ const Register = () => {
         )}
 
         <registerFetcher.Form ref={formRef} action="/register" method="post">
-          <div className="mb-3">
-            <label htmlFor="username" className="form-label">
-              Username
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="username"
-              placeholder="Enter your username"
-              disabled={isSubmitting}
-            />
-            <FieldErrors errors={getFieldErrors("username")} />
-          </div>
-
-          <div className="row">
-            <div className="col-12 col-md-6 mb-3">
-              <label htmlFor="firstname" className="form-label">
-                First name
+          <fieldset disabled={isSubmitting} aria-busy={isSubmitting}>
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label">
+                Username
               </label>
               <input
                 type="text"
                 className="form-control"
-                name="firstname"
-                placeholder="First name"
-                disabled={isSubmitting}
+                name="username"
+                placeholder="Enter your username"
               />
-              <FieldErrors errors={getFieldErrors("first_name")} />
+              <FieldErrors errors={getFieldErrors("username")} />
             </div>
-            <div className="col-12 col-md-6 mb-3">
-              <label htmlFor="lastname" className="form-label">
-                Last name
+
+            <div className="row">
+              <div className="col-12 col-md-6 mb-3">
+                <label htmlFor="firstname" className="form-label">
+                  First name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="firstname"
+                  placeholder="First name"
+                />
+                <FieldErrors errors={getFieldErrors("first_name")} />
+              </div>
+              <div className="col-12 col-md-6 mb-3">
+                <label htmlFor="lastname" className="form-label">
+                  Last name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="lastname"
+                  placeholder="Last name"
+                />
+                <FieldErrors errors={getFieldErrors("last_name")} />
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">
+                Password
               </label>
               <input
-                type="text"
+                type="password"
                 className="form-control"
-                name="lastname"
-                placeholder="Last name"
-                disabled={isSubmitting}
+                name="password"
+                placeholder="Create a password"
               />
-              <FieldErrors errors={getFieldErrors("last_name")} />
+              <FieldErrors errors={getFieldErrors("password")} />
             </div>
-          </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-              placeholder="Create a password"
+            <div className="mb-3">
+              <label htmlFor="re_password" className="form-label">
+                Re-password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                name="re_password"
+                placeholder="Repeat your password"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
               disabled={isSubmitting}
-            />
-            <FieldErrors errors={getFieldErrors("password")} />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="re_password" className="form-label">
-              Re-password
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              name="re_password"
-              placeholder="Repeat your password"
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Creating account..." : "Create account"}
-          </button>
+            >
+              {isSubmitting ? "Creating account..." : "Create account"}
+            </button>
+          </fieldset>
         </registerFetcher.Form>
 
         <div className="mt-3 text-center">

@@ -14,6 +14,8 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const delTopicFetcher = useFetcher();
   const { setTopic } = useTopicContext();
 
+  const isSubmitting = editTopicFetcher.state === "submitting";
+
   const handleDelTopic = () => {
     const formData = new FormData();
     formData.append("_not_revalidate", "1");
@@ -49,92 +51,94 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
         encType="multipart/form-data"
       >
         <input type="hidden" name="_not_revalidate" defaultValue={"1"} />
-        <div className="row">
-          <div className="mb-3 col-md-12">
-            <label htmlFor="name" className="form-label">
-              Image
-            </label>
-            <UploadImageInput
-              name="image"
-              imageUrl={editTopicFetcher?.data?.data?.image_info?.url ?? topic?.image_info?.url}
-              placeholderUrl={null}
-              shape="circle"
-            />
-            {editTopicFetcher.data?.errors?.upload_image && (
-              <FieldErrors
-                errors={editTopicFetcher.data?.errors?.upload_image}
+        <fieldset disabled={isSubmitting} aria-busy={isSubmitting}>
+          <div className="row">
+            <div className="mb-3 col-md-12">
+              <label htmlFor="name" className="form-label">
+                Image
+              </label>
+              <UploadImageInput
+                name="image"
+                imageUrl={editTopicFetcher?.data?.data?.image_info?.url ?? topic?.image_info?.url}
+                placeholderUrl={null}
+                shape="circle"
               />
-            )}
-          </div>
-        </div>
-        <div className="row">
-          <div className="mb-3 col-lg-6">
-            <label htmlFor="name" className="form-label">
-              Topic name <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              defaultValue={topic?.name}
-              placeholder="Name..."
-            />
-            {editTopicFetcher.data?.errors?.name && (
-              <FieldErrors errors={editTopicFetcher.data.errors.name} />
-            )}
-          </div>
-          <div className="mb-3 col-lg-6">
-            <label htmlFor="learning_language" className="form-label">
-              Which language are you learning? <span className="text-danger">*</span>
-            </label>
-            <Dropdown
-              name="learning_language"
-              defaultValue={topic?.learning_language}
-              options={Object.values(LANGUAGES)}
-            />
-            {editTopicFetcher.data?.errors?.learning_language && (
-              <FieldErrors
-                errors={editTopicFetcher.data.errors.learning_language}
-              />
-            )}
-          </div>
-        </div>
-        <div className="row">
-          <div className="mb-3">
-            <label htmlFor="descriptions" className="form-label">
-              Descriptions
-            </label>
-            <textarea
-              rows={5}
-              className="form-control"
-              name="descriptions"
-              defaultValue={topic?.descriptions}
-              placeholder="Description..."
-            ></textarea>
-            {editTopicFetcher.data?.errors?.descriptions && (
-              <FieldErrors errors={editTopicFetcher.data.errors.descriptions} />
-            )}
-          </div>
-        </div>
-        <div className="row">
-          <div className="mb-3">
-            <label htmlFor="status" className="form-label">
-              Status <span className="text-danger">*</span>
-            </label>
-            <div className="d-block">
-              <RadioButtons
-                name="status"
-                options={Object.values(TOPIC_STATUS)}
-                selectedOption={topic?.status ?? 'private'}
-              />
+              {editTopicFetcher.data?.errors?.upload_image && (
+                <FieldErrors
+                  errors={editTopicFetcher.data?.errors?.upload_image}
+                />
+              )}
             </div>
-            {editTopicFetcher.data?.errors?.status && (
-              <FieldErrors
-                errors={editTopicFetcher.data?.errors?.status}
-              />
-            )}
           </div>
-        </div>
+          <div className="row">
+            <div className="mb-3 col-lg-6">
+              <label htmlFor="name" className="form-label">
+                Topic name <span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                defaultValue={topic?.name}
+                placeholder="Name..."
+              />
+              {editTopicFetcher.data?.errors?.name && (
+                <FieldErrors errors={editTopicFetcher.data.errors.name} />
+              )}
+            </div>
+            <div className="mb-3 col-lg-6">
+              <label htmlFor="learning_language" className="form-label">
+                Which language are you learning? <span className="text-danger">*</span>
+              </label>
+              <Dropdown
+                name="learning_language"
+                defaultValue={topic?.learning_language}
+                options={Object.values(LANGUAGES)}
+              />
+              {editTopicFetcher.data?.errors?.learning_language && (
+                <FieldErrors
+                  errors={editTopicFetcher.data.errors.learning_language}
+                />
+              )}
+            </div>
+          </div>
+          <div className="row">
+            <div className="mb-3">
+              <label htmlFor="descriptions" className="form-label">
+                Descriptions
+              </label>
+              <textarea
+                rows={5}
+                className="form-control"
+                name="descriptions"
+                defaultValue={topic?.descriptions}
+                placeholder="Description..."
+              ></textarea>
+              {editTopicFetcher.data?.errors?.descriptions && (
+                <FieldErrors errors={editTopicFetcher.data.errors.descriptions} />
+              )}
+            </div>
+          </div>
+          <div className="row">
+            <div className="mb-3">
+              <label htmlFor="status" className="form-label">
+                Status <span className="text-danger">*</span>
+              </label>
+              <div className="d-block">
+                <RadioButtons
+                  name="status"
+                  options={Object.values(TOPIC_STATUS)}
+                  selectedOption={topic?.status ?? 'private'}
+                />
+              </div>
+              {editTopicFetcher.data?.errors?.status && (
+                <FieldErrors
+                  errors={editTopicFetcher.data?.errors?.status}
+                />
+              )}
+            </div>
+          </div>
+        </fieldset>
         <div className="d-flex justify-content-end mt-2">
           <Link to={`/topics`} className={`btn btn-secondary me-2 ${isNew ? "w-sm-50" : ""}`}>
             <i className="bi bi-arrow-left"></i>

@@ -4,7 +4,6 @@ import { useFetcher } from "react-router-dom";
 import useCheckAuth from "../hooks/useCheckAuth";
 import LoadingOverlay from "../components/LoadingOverlay";
 import FieldErrors from "../components/FieldErrors";
-import { login } from "../routes/actions/loginAction";
 
 const Login = () => {
   const loginFetcher = useFetcher();
@@ -44,39 +43,39 @@ const Login = () => {
           </div>
         )}
         <loginFetcher.Form action={"/login"} method={"post"}>
-          <div className="mb-3">
-            <label htmlFor="username" className="form-label">
-              User name
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="username"
-              placeholder="Enter your username"
+          <fieldset disabled={isSubmitting} aria-busy={isSubmitting}>
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label">
+                User name
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                name="username"
+                placeholder="Enter your username"
+              />
+              <FieldErrors errors={getFieldErrors("username")} />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">
+                Password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                name="password"
+                placeholder="Enter your password"
+              />
+              <FieldErrors errors={getFieldErrors("password")} />
+            </div>
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
               disabled={isSubmitting}
-            />
-            <FieldErrors errors={getFieldErrors("username")} />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-              placeholder="Enter your password"
-              disabled={isSubmitting}
-            />
-            <FieldErrors errors={getFieldErrors("password")} />
-          </div>
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Logging in..." : "Login"}
-          </button>
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
+            </button>
+          </fieldset>
         </loginFetcher.Form>
         <div className="mt-3 text-center">
           <a href="/forgot-password" className="text-decoration-none">
