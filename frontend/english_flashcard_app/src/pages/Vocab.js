@@ -10,6 +10,7 @@ import {
 import TranslationTabs from "../components/pages/vocab/TranslationTabs";
 import LoadingOverlay from "../components/LoadingOverlay";
 import VocabDetail from "../components/pages/vocab/VocabDetail";
+import VocabErrors from "../components/pages/vocab/VocabErrors";
 import { useTopicContext } from "../contexts/TopicContext";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -21,8 +22,6 @@ const Vocab = memo(() => {
   const isNew = () => vocabId === "new";
   const { topic: topicData } = useTopicContext();
 
-  const isSubmitting = vocabFetcher.state === "submitting";
-
   const handleDelVocab = () => {
     const formData = new FormData();
     formData.append("_form_name", "deleting_vocab");
@@ -32,12 +31,17 @@ const Vocab = memo(() => {
     });
   };
 
-  const isDisableButton = () =>
+  const isSubmitting = 
     vocabFetcher.state === "submitting" ||
     delVocabFetcher.state === "submitting";
 
+  const submitError = vocabFetcher.data?.errors?.detail;
+  const deleteError = delVocabFetcher.data?.errors?.detail;
+  const commonErrors = [submitError, deleteError].filter(Boolean);
+
   return (
     <ErrorBoundary fallback={<Navigate to={`/topic/${topicId}`} />}>
+      {commonErrors.length > 0 && <VocabErrors errors={commonErrors} />}
       <vocabFetcher.Form
         action={`/topic/${topicId}/vocab/${vocabId}`}
         method={isNew() ? "POST" : "PUT"}
@@ -94,7 +98,7 @@ const Vocab = memo(() => {
             <button
               type="submit"
               className={`btn btn-primary ${!isNew() ? 'me-sm-2' : ''} w-sm-50`}
-              disabled={isDisableButton()}
+              disabled={isSubmitting}
             >
               <i className="bi bi-pencil-square text-white"></i>{" "}
               {vocabFetcher.state === "submitting" ? "Saving..." : "Save"}
@@ -104,7 +108,7 @@ const Vocab = memo(() => {
             <button
               type="button"
               className="btn btn-danger w-sm-100 mt-sm-0 mt-2"
-              disabled={isDisableButton()}
+              disabled={isSubmitting}
               onClick={handleDelVocab}
             >
               <i className="bi bi-trash text-white"></i>{" "}
