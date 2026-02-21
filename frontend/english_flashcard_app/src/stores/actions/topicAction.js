@@ -53,9 +53,13 @@ export const updateTopicThunk = createThunkWithCallback(
 
 export const deleteTopicThunk = createThunkWithCallback(
   "topic/delete",
-  async ({ topicId }, { dispatch }) => {
+  async ({ topicId }, { dispatch, rejectWithValue }) => {
     const params = { id: topicId };
-    await topicApi.deleteTopic(topicId);
+    const response = await topicApi.deleteTopic(topicId);
+    if (response?.status === "error") {
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
+    }
+
     dispatchSuccessAlert(dispatch, "Topic is deleted successfully");
     return {
       status: "success",

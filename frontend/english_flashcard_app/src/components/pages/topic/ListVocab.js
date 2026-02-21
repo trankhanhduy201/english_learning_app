@@ -61,9 +61,6 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
         action: `/topic/${topicId}/vocab/${vocabId}/delete`,
         method: "delete",
       });
-      setVocabs((prevVocabs) =>
-        prevVocabs.filter((vocab) => vocab.id !== vocabId),
-      );
     },
     [topicId],
   );

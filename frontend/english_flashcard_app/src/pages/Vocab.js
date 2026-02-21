@@ -41,7 +41,7 @@ const Vocab = memo(() => {
 
   return (
     <ErrorBoundary fallback={<Navigate to={`/topic/${topicId}`} />}>
-      {commonErrors.length > 0 && <VocabErrors errors={commonErrors} />}
+      {commonErrors.length > 0 && <VocabErrors errors={['There was something wrong']} />}
       <vocabFetcher.Form
         action={`/topic/${topicId}/vocab/${vocabId}`}
         method={isNew() ? "POST" : "PUT"}

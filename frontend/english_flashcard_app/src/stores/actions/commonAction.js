@@ -17,12 +17,14 @@ export const rejectWithErrorValue = (
   error,
   message = "",
 ) => {
-  dispatch(
-    setAlert({
-      type: alertConfig.ERROR_TYPE,
-      message: message || "There was something wrong",
-    }),
-  );
+  if (dispatch) {
+    dispatch(
+      setAlert({
+        type: alertConfig.ERROR_TYPE,
+        message: message || "There was something wrong",
+      }),
+    );
+  }
   return rejectWithValue(error);
 };
 
