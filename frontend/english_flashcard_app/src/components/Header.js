@@ -6,6 +6,7 @@ import { setLangThunk } from "../stores/actions/langAction";
 import { LANGUAGES } from "../configs/langConfig";
 import { memo } from "react";
 import LogoutItem from "./LogoutItem";
+import TopicAutocompleteSearch from "./TopicAutocompleteSearch";
 
 const Header = memo(() => {
   const globalLang = useSelector((state) => state.lang);
@@ -27,15 +28,7 @@ const Header = memo(() => {
       </button>
       <h5 className="mb-0 ms-3 d-xl-block d-none">Flashcards</h5>
       <div className="d-flex justify-content-end align-items-center">
-        <div
-          id="header__search-bar"
-          className="input-group input-group-sm me-2"
-        >
-          <input type="text" className="form-control" placeholder="Search..." />
-          <span className="input-group-text bg-white">
-            <i className="bi bi-search"></i>
-          </span>
-        </div>
+        <TopicAutocompleteSearch />
         <div className="dropdown me-2">
           <Dropdown as={Nav.Item}>
             <Dropdown.Toggle
