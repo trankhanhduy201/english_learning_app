@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
+from django.db import transaction
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from flashcards.models import UserProfile
@@ -79,6 +80,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             "bio",
         ]
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         self.update_profile(instance, validated_data)
         return super().update(instance, validated_data)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from django.db import transaction
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from flashcards.models import LanguageEnums, Topic, Vocabulary, Translation, TopicMember
@@ -136,6 +137,7 @@ class TopicSerializer(BaseSerializer):
     def get_current_member(self, instance):
         return CurrentTopicMemberSerializer(instance=instance, read_only=True, context=self.context).data
         
+    @transaction.atomic
     def update(self, instance, validated_data):
         updated_members = validated_data.pop('updated_members', None)
         if updated_members:
@@ -154,6 +156,7 @@ class TranslationSerializer(BaseSerializer):
 
 
 class VocabularyListSerializer(BaseListSerializer):
+    @transaction.atomic
     def create(self, validated_data):
         validated_translations = {
             item['word']: item.pop('translations', [])
@@ -189,6 +192,7 @@ class VocabularySerializer(BaseSerializer):
         read_only_fields = ['audio']
         read_only_fields_on_update = ['topic']
     
+    @transaction.atomic
     def create(self, validated_data):
         validated_data.pop('translations', [])
         instance = super().create(validated_data)
@@ -196,6 +200,7 @@ class VocabularySerializer(BaseSerializer):
         translation_service.bulk_create_update_translations([instance], translation_datas)
         return instance
     
+    @transaction.atomic
     def update(self, instance, validated_data):
         validated_data.pop('translations', [])
         instance = super().update(instance, validated_data)

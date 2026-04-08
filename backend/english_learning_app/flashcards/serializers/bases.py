@@ -1,4 +1,4 @@
-from django.db import IntegrityError, models
+from django.db import IntegrityError, models, transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import ManyRelatedField, MANY_RELATION_KWARGS
@@ -113,8 +113,9 @@ class BaseListSerializer(serializers.ListSerializer):
                 updating_data.append(child_instance)
 
             try:
-                self.child.Meta.model.objects.bulk_update(updating_data, writable_fields)
-                self.child.Meta.model.objects.bulk_delete(delete_ids)
+                with transaction.atomic():
+                    self.child.Meta.model.objects.bulk_update(updating_data, writable_fields)
+                    self.child.Meta.model.objects.bulk_delete(delete_ids)
             except IntegrityError as e:
                 raise ValidationError(e)
             

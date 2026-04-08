@@ -1,7 +1,10 @@
+from django.db import transaction
 from flashcards.models import Translation
+from flashcards.decorators import handle_exceptions
 
 
 class TranslationService:
+    @handle_exceptions(reraise=True, log_error=True)
     def bulk_create_update_translations(self, vocab_instances, validated_translations, translation_existing_ids = {}):
         new_translations = []
         update_translations = []
@@ -42,17 +45,17 @@ class TranslationService:
                 # For delete item
                 delete_ids = list(set(_translation_existing_ids).difference(updated_ids))
                 delete_translations.extend(delete_ids if delete_ids else [])
-                    
+                
+        with transaction.atomic():
+            if len(new_translations) > 0:
+                Translation.objects.bulk_create(new_translations)
 
-        if len(new_translations) > 0:
-            Translation.objects.bulk_create(new_translations)
+            if len(update_translations) > 0:
+                Translation.objects.bulk_update(update_translations, update_fields)
+            
+            if len(delete_translations) > 0:
+                Translation.objects.bulk_delete(delete_translations)
 
-        if len(update_translations) > 0:
-            Translation.objects.bulk_update(update_translations, update_fields)
-        
-        if len(delete_translations) > 0:
-            Translation.objects.bulk_delete(delete_translations)
-        
         return (
             new_translations,
             update_translations,
