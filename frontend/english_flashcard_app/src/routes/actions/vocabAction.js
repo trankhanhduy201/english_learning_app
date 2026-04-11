@@ -42,8 +42,12 @@ const updateVocab = async (topicId, vocabId, data) => {
 
 const deleteVocab = async (topicId, vocabId, params = {}) => {
   try {
-    await store.dispatch(deleteVocabThunk({ vocabId, params })).unwrap();
-    return redirect(`/topic/${topicId}`);
+    const result = await store.dispatch(deleteVocabThunk({ vocabId, params })).unwrap();
+    const vocabDetailPage = params?._form_name === "deleting_vocab";
+    if (vocabDetailPage) {
+      return redirect(`/topic/${topicId}`);
+    }
+    return result;
   } catch (err) {
     return err;
   }

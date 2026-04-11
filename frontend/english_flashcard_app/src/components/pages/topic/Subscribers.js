@@ -135,7 +135,6 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
     [initialMap]
   );
 
-
   const toggleRemove = useCallback(
     (index, isRemove) => changeSettings(index, { is_remove: isRemove })
   );

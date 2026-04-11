@@ -1,9 +1,10 @@
-from rest_framework_simplejwt.serializers import (
-    TokenObtainPairSerializer, 
-    TokenVerifySerializer, 
-    TokenRefreshSerializer
-)
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer,
+    TokenRefreshSerializer,
+    TokenVerifySerializer,
+)
+
 from flashcards.models import UserToken
 from flashcards.serializers.mixins import TokenSerializerMixin
 
@@ -21,7 +22,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         if not getattr(self.user, "is_active", True):
             raise serializers.ValidationError(
-                {"detail": "Account is not activated. Please check your email to activate it."}
+                {
+                    "detail": "Account is not activated. Please check your email to activate it."
+                }
             )
         return data
 
@@ -37,15 +40,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['token_version'] = self.get_refresh_token_version(user)
 
         return token
-    
+
     @classmethod
     def get_user_full_name(self, user):
         full_name = user.get_full_name()
         return full_name if full_name else user.username
-    
+
     @classmethod
     def get_refresh_token_version(self, user):
         if hasattr(user, 'usertoken'):
             return user.usertoken.refresh_token_version
-        user_token = UserToken.objects.create(user=user, refresh_token_version=1)
+        user_token = UserToken.objects.create(
+            user=user, refresh_token_version=1
+        )
         return user_token.refresh_token_version

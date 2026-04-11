@@ -1,16 +1,28 @@
 import re
 from django.db.models import Q
-from django.db.models.functions import Coalesce
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from flashcards.serializers.flashcards import (
-	TopicSerializer, 
-	VocabularySerializer, 
-	VocabularyImportSerializer,
-	TopicMemberSerializer
+from flashcards.serializers.topics import (
+	RetrieveTopicSerializer,
+	CreateTopicSerializer,
+	UpdateTopicSerializer
+)
+from flashcards.serializers.topic_members import (
+	RetrieveListTopicMembersSerializer,
+	CreateListTopicMembersSerializer,
+	UpdateListTopicMembersSerializer
+)
+from flashcards.serializers.vocabularies import (
+	RetrieveVocabularySerializer,
+	CreateVocabularySerializer,
+	UpdateVocabularySerializer,
+	CreateImportVocabulariesSerializer
+)
+from flashcards.serializers.requests import (
+	RequestImportVocabulariesSerializer
 )
 from flashcards.models import TopicMember
 from flashcards.views.bases import BaseModelViewSet
@@ -23,7 +35,6 @@ from flashcards.services.vocabularies import VocabularyImportService
 from flashcards.services.topics import TopicService
 from flashcards.permissions import IsAccessable
 
-
 User = get_user_model()
 
 vocab_import_service = VocabularyImportService()
@@ -33,12 +44,17 @@ topic_service = TopicService()
 
 class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
 	queryset = Topic.objects.all()
-	serializer_class = TopicSerializer
-	member_serializer_class = TopicMemberSerializer
+	serializer_class = RetrieveTopicSerializer
+	create_serializer_class = CreateTopicSerializer
+	update_serializer_class = UpdateTopicSerializer
 	filterset_class = TopicFilter
 	pagination_class = CustomPageNumberPagination
 	permission_classes = [IsAccessable]
 	auto_add_created_by = True
+
+	list_topic_members_serializer_class = RetrieveListTopicMembersSerializer
+	create_list_topic_members_serializer_class = CreateListTopicMembersSerializer
+	update_list_topic_members_serializer_class = UpdateListTopicMembersSerializer
 
 	def get_queryset(self):
 		qs = super().get_queryset(skip_owner_filter=True)
@@ -80,12 +96,17 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 
 	def get_members(self, topic):
 		return Response(
-			self.member_serializer_class(topic.topic_members.all(), many=True).data, 
+			self.list_topic_members_serializer_class(topic.topic_members.all(), many=True).data, 
 			status=status.HTTP_200_OK
 		)
 	
+	def _get_create_update_topic_member_serializer(self, is_create=True):
+		if is_create:
+			return self.create_list_topic_members_serializer_class
+		return self.update_list_topic_members_serializer_class
+	
 	def create_update_members(self, topic, updated_members, is_create=True):
-		serializers = self.member_serializer_class(
+		serializers = self._get_create_update_topic_member_serializer(is_create=is_create)(
 			instance=None if is_create else topic.topic_members.all(), 
 			data=topic_service.get_create_update_members(
 				topic=topic, 
@@ -103,16 +124,25 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 
 class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
 	queryset = Vocabulary.objects.all()
-	serializer_class = VocabularySerializer
+	serializer_class = RetrieveVocabularySerializer
+	create_serializer_class = CreateVocabularySerializer
+	update_serializer_class = UpdateVocabularySerializer
 	filterset_class = VocabularyFilter
 	permission_classes = [IsAccessable]
 	auto_add_created_by = True
 
+	create_import_serializer_class = CreateImportVocabulariesSerializer
+	request_import_serializer_class = RequestImportVocabulariesSerializer
+
 	def get_queryset(self):
 		qs = super().get_queryset(skip_owner_filter=True)
-		qs = qs.with_translations(
-			self.request.GET.dict()
-		)
+		qs = qs.with_owner()
+
+		with_param = self.request.GET.get('with', '').split(',')
+		if with_param and 'translations' in with_param:
+			qs = qs.with_translations(
+				self.request.GET.get('lang', None)
+			)
 		return qs
 	
 	@action(detail=False, methods=['post'], url_path='generate-audio')
@@ -128,7 +158,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
 		
 	@action(detail=False, methods=['post'], url_path='import')
 	def bulk_import(self, request, *args, **kwargs):
-		rq_serializer = VocabularyImportSerializer(data=request.data)
+		rq_serializer = self.request_import_serializer_class(data=request.data)
 		if not rq_serializer.is_valid():
 			return Response(rq_serializer.errors, status=400)
 		
@@ -136,7 +166,9 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
 		import_func = f'import_{import_type}'
 		data_import = getattr(self, import_func)(request, rq_serializer.validated_data)
 		
-		serializer = self.get_serializer(data=data_import, many=True)
+		serializer = self.create_import_serializer_class(
+			data=data_import, many=True
+		)
 		if serializer.is_valid():
 			serializer.save()
 			# vocab_ids = list(serializer.instance.values_list('id', flat=True))

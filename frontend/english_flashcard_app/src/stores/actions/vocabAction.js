@@ -20,8 +20,9 @@ export const importVocabThunk = createThunkWithCallback(
 
 export const getVocabsThunk = createThunkWithCallback(
   "vocabs/get",
-  async ({ topicId }, { dispatch, rejectWithValue }) => {
-    const response = await vocabApi.getVocabs(topicId);
+  async ({ topicId, inclTranslations = false }, { dispatch, rejectWithValue }) => {
+    const query = inclTranslations ? { with: 'translations' } : {};
+    const response = await vocabApi.getVocabs(topicId, { query });
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
@@ -31,8 +32,9 @@ export const getVocabsThunk = createThunkWithCallback(
 
 export const getVocabThunk = createThunkWithCallback(
   "vocab/get",
-  async ({ vocabId }, { dispatch, rejectWithValue }) => {
-    const response = await vocabApi.getVocab(vocabId);
+  async ({ vocabId, inclTranslations = false }, { dispatch, rejectWithValue }) => {
+    const query = inclTranslations ? { with: 'translations' } : {};
+    const response = await vocabApi.getVocab(vocabId, { query });
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }

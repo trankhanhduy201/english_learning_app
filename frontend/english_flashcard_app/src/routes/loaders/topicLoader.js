@@ -35,7 +35,7 @@ export const getTopic = async ({ request, params }) => {
 
   try {
     const vocabsPromise = store
-      .dispatch(getVocabsThunk({ topicId }))
+      .dispatch(getVocabsThunk({ topicId, inclTranslations: true }))
       .unwrap()
       .then((resp) => resp.data);
 

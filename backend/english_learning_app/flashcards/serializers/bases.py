@@ -1,7 +1,7 @@
 from django.db import IntegrityError, models, transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.relations import ManyRelatedField, MANY_RELATION_KWARGS
+from rest_framework.relations import MANY_RELATION_KWARGS, ManyRelatedField
 
 
 class CustomManyRelatedField(ManyRelatedField):
@@ -44,10 +44,14 @@ class BaseListSerializer(serializers.ListSerializer):
         return delete_field_name in [
             field.name for field in self.child.Meta.model._meta.get_fields()
         ]
-    
+
     def to_representation(self, data):
-        iterable = data.all() if isinstance(data, models.manager.BaseManager) else data
-        
+        iterable = (
+            data.all()
+            if isinstance(data, models.manager.BaseManager)
+            else data
+        )
+
         mapping_initial_data = {}
         for item in getattr(self, 'initial_data', []):
             if 'id' in item:
@@ -55,7 +59,11 @@ class BaseListSerializer(serializers.ListSerializer):
 
         results = []
         for item in iterable:
-            item_id = item.id if isinstance(item, self.child.Meta.model) else item.get('id', None)
+            item_id = (
+                item.id
+                if isinstance(item, self.child.Meta.model)
+                else item.get('id', None)
+            )
             if item_id:
                 self.child.initial_data = mapping_initial_data.get(item_id, None)
             results.append(self.child.to_representation(item))
@@ -71,35 +79,38 @@ class BaseListSerializer(serializers.ListSerializer):
     #     return self.child.run_validation(data)
 
     def update(self, instances, validated_data):
-        # instance_hash = {index: instance for index, instance in enumerate(instances)}
-        # result = [
-        #     self.child.update(instance_hash[index], attrs)
-        #     for index, attrs in enumerate(validated_data)
-        # ]
         updating_data = []
         if isinstance(validated_data, list) and len(validated_data) > 0:
-            """
-            There are some ways to get items
-            1. self.child.Meta.fields.items() -> List[str]
-            2. self.child.get_fields() -> Dict(<key>:<field>)
-            """
-            read_only_fields = getattr(self.child.Meta, 'read_only_fields', [])
+            read_only_fields = getattr(
+                self.child.Meta, 'read_only_fields', []
+            )
             writable_fields = [
-                name for name, field in self.child.get_fields().items()
-                if name not in read_only_fields and not getattr(field, 'read_only', False)
+                name
+                for name, field in self.child.get_fields().items()
+                if name not in read_only_fields
+                and not getattr(field, 'read_only', False)
             ]
-            
+
             delete_field_name = self.get_delete_field_name()
             has_delete_field_db = self.has_delete_field_db()
 
             enable_delete = False
             if not has_delete_field_db and delete_field_name in writable_fields:
-                idx = next((index for index, item in enumerate(writable_fields) if item == delete_field_name), None)
+                idx = next(
+                    (
+                        index
+                        for index, item in enumerate(writable_fields)
+                        if item == delete_field_name
+                    ),
+                    None,
+                )
                 writable_fields.pop(idx)
                 enable_delete = True
-                
+
             delete_ids = []
-            instance_hash = {instance.id: instance for index, instance in enumerate(instances)}
+            instance_hash = {
+                instance.id: instance for index, instance in enumerate(instances)
+            }
             for data in self.initial_data:
                 new_data = {'id': data['id'] if 'id' in data else None}
                 for key, value in data.items():
@@ -107,18 +118,20 @@ class BaseListSerializer(serializers.ListSerializer):
                         delete_ids.append(new_data['id'])
                     if key in writable_fields:
                         new_data[key] = value
-                    
+
                 child_instance = instance_hash[new_data['id']]
                 child_instance.__dict__.update(new_data)
                 updating_data.append(child_instance)
 
             try:
                 with transaction.atomic():
-                    self.child.Meta.model.objects.bulk_update(updating_data, writable_fields)
+                    self.child.Meta.model.objects.bulk_update(
+                        updating_data, writable_fields
+                    )
                     self.child.Meta.model.objects.bulk_delete(delete_ids)
             except IntegrityError as e:
                 raise ValidationError(e)
-            
+
         return updating_data
     
     def create(self, validated_data):
@@ -136,13 +149,3 @@ class BaseListSerializer(serializers.ListSerializer):
 class BaseSerializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = BaseListSerializer
-
-    def get_fields(self):
-        fields = super().get_fields()
-
-        # Make fields read-only on update
-        for name in getattr(self.Meta, "read_only_fields_on_update", []):
-            if self.instance is not None and name in fields:
-                fields[name].read_only = True
-
-        return fields

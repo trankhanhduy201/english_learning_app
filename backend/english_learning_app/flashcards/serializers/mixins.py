@@ -1,6 +1,7 @@
-from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.settings import api_settings
+from rest_framework_simplejwt.tokens import UntypedToken
+
 from flashcards.authentications import check_token_version
 
 

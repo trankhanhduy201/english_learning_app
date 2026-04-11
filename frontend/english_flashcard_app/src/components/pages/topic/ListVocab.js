@@ -85,7 +85,7 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
   useEffect(() => {
     if (delVocabFetcher.data?.status === "success") {
       setVocabs((prevVocabs) =>
-        prevVocabs.filter((vocab) => vocab.id !== delVocabFetcher.data.data.id),
+        prevVocabs.filter((vocab) => vocab.id != delVocabFetcher.data.data.id),
       );
     }
   }, [delVocabFetcher.data]);

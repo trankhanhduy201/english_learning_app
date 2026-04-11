@@ -66,11 +66,24 @@ class QueryLoggingMixin:
 class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
     permission_classes = [IsOwner]
     filter_backends = [DjangoFilterBackend]
-
+    
+    list_serializer_class = None
     create_serializer_class = None
     update_serializer_class = None
+    invalidate_data_after_update = True
 
     auto_add_created_by = False
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs['context'] = self.get_serializer_context()
+        return (
+            self.serializer_class(*args, **kwargs) 
+            if not kwargs.get('many', False) else 
+            self.get_list_serializer_class()(*args, **kwargs)
+        )
+    
+    def get_list_serializer_class(self):
+        return self.list_serializer_class or self.serializer_class
 
     def get_create_serializer_class(self):
         return self.create_serializer_class or self.serializer_class
@@ -93,9 +106,10 @@ class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
         serializer = update_serializer_class(instance, data=request.data, partial=partial, context={'request': request})
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        
+        if self.invalidate_data_after_update:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def perform_create(self, serializer):

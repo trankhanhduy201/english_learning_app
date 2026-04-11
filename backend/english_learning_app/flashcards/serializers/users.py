@@ -2,8 +2,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
 from flashcards.models import UserProfile
 
 
@@ -34,7 +35,9 @@ class RetrieveUserSerializer(serializers.ModelSerializer):
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, trim_whitespace=False, required=True)
+    password = serializers.CharField(
+        write_only=True, trim_whitespace=False, required=True
+    )
 
     class Meta:
         model = get_user_model()
@@ -68,7 +71,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class UpdateUserSerializer(serializers.ModelSerializer):
     # Accept avatar uploads via JSON (data URL base64), same pattern as TopicSerializer.upload_image
     avatar = Base64ImageField(write_only=True, required=False, allow_null=True)
-    bio = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
+    bio = serializers.CharField(
+        write_only=True, required=False, allow_blank=True, allow_null=True
+    )
 
     class Meta:
         model = get_user_model()
@@ -76,7 +81,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
-            "avatar",   
+            "avatar",
             "bio",
         ]
 
@@ -84,7 +89,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         self.update_profile(instance, validated_data)
         return super().update(instance, validated_data)
-    
+
     def update_profile(self, instance, validated_data):
         profile, _ = UserProfile.objects.get_or_create(user=instance)
         profile.bio = validated_data.pop("bio", None)

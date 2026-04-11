@@ -7,7 +7,10 @@ export const getVocab = async ({ request, params }) => {
     const { vocabId } = params;
     if (params.vocabId !== "new") {
       vocabPromise = store
-        .dispatch(getVocabThunk({ vocabId }))
+        .dispatch(getVocabThunk({ 
+          vocabId, 
+          inclTranslations: true 
+        }))
         .unwrap()
         .then((resp) => resp.data);
     }

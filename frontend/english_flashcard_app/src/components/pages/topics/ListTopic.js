@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
 
-const Topics = memo(({ topics, removeTopic }) => {
+const ListTopic = memo(({ topics, removeTopic }) => {
   return (
     <div className="table-responsive">
       <table id="topics__list-item" className="table table-striped table-bordered">
@@ -45,4 +45,4 @@ const Topics = memo(({ topics, removeTopic }) => {
   );
 });
 
-export default Topics;
+export default ListTopic;

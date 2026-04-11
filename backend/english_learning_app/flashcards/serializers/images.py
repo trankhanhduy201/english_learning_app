@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
 from flashcards.serializers.fields import StringListField
 
 
@@ -14,6 +15,7 @@ class UploadImageSerializer(serializers.Serializer):
 
     def _guess_type(self, instance):
         import mimetypes
+
         mime, _ = mimetypes.guess_type(instance.name)
 
         file_name = self._get_name(instance)

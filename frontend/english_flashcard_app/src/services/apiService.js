@@ -5,6 +5,14 @@ const API_BASE_URL = apiConfig.API_BASE_URL;
 
 const checkStatusNoContent = (status) => [204, 304].includes(status);
 
+const buildUrl = (endpoint, query) => {
+  const url = new URL(`${API_BASE_URL}/${endpoint}`);
+  Object.entries(query).forEach(([key, value]) => {
+    url.searchParams.append(key, value);
+  });
+  return url;
+};
+
 export const callApi = async (endpoint, options = {}) => {
   const { token } = cookies.getAuthTokens();
   const headers = {
@@ -13,15 +21,15 @@ export const callApi = async (endpoint, options = {}) => {
     "Content-Type": "application/json",
   };
 
-  let throwEx = false;
-  if (options.throwEx !== undefined) {
-    throwEx = options.throwEx;
-    delete options.throwEx;
-  }
+  const throwEx = options.throwEx ?? false;
+  delete options.throwEx;
+
+  const query = options.query || {};
+  delete options.query;
 
   try {
     let dataJson = {};
-    const resp = await fetch(`${API_BASE_URL}/${endpoint}`, {
+    const resp = await fetch(buildUrl(endpoint, query), {
       ...options,
       headers,
     });
