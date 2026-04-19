@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'rest_framework',
+    'drf_spectacular',
     # 'rest_framework_simplejwt',
     'django_filters',
     'flashcards.apps.FlashcardsConfig',
@@ -145,10 +146,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'flashcards.renderers.CustomJSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
         # 'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'EXCEPTION_HANDLER': 'flashcards.exceptions.custom_exception_handler',
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10
@@ -165,7 +167,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=300), # Access token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2), # Access token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # DEFAULT_AUTHENTICATION_CLASSES Refresh token lifetime
     'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
     'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens
@@ -174,6 +176,31 @@ SIMPLE_JWT = {
     "TOKEN_REFRESH_SERIALIZER": "flashcards.serializers.tokens.CustomTokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "flashcards.serializers.tokens.CustomTokenVerifySerializer",
 
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'English Learning App API',
+    'DESCRIPTION': 'REST API documentation for the English Learning App.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/',
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+    },
+    'SECURITY_SCHEMES': {
+        'BearerAuth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+        },
+        'TokenAuth': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+        },
+    },
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
