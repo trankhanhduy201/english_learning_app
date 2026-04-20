@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from django.conf import settings
+from django.utils.module_loading import import_string
 from flashcards.permissions import IsOwner
 
 User = get_user_model()
@@ -67,6 +69,29 @@ class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
     permission_classes = [IsOwner]
     filter_backends = [DjangoFilterBackend]
     
+    def get_permissions(self):
+        default_permissions = settings.REST_FRAMEWORK.get('DEFAULT_PERMISSION_CLASSES', [])
+        default_permission_classes = [
+            import_string(permission) if isinstance(permission, str) else permission
+            for permission in default_permissions
+        ]
+
+        if self.permission_classes is not None:
+            if not self.permission_classes:
+                return []
+            permission_classes = default_permission_classes + list(self.permission_classes)
+        else:
+            permission_classes = default_permission_classes
+
+        unique_permission_classes = []
+        seen = set()
+        for permission in permission_classes:
+            if permission not in seen:
+                unique_permission_classes.append(permission)
+                seen.add(permission)
+
+        return [permission() for permission in unique_permission_classes]
+
     list_serializer_class = None
     create_serializer_class = None
     update_serializer_class = None
