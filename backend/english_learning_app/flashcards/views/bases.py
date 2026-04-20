@@ -68,7 +68,14 @@ class QueryLoggingMixin:
 class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
     permission_classes = [IsOwner]
     filter_backends = [DjangoFilterBackend]
-    
+
+    list_serializer_class = None
+    create_serializer_class = None
+    update_serializer_class = None
+    invalidate_data_after_update = True
+
+    auto_add_created_by = False
+
     def get_permissions(self):
         default_permissions = settings.REST_FRAMEWORK.get('DEFAULT_PERMISSION_CLASSES', [])
         default_permission_classes = [
@@ -91,13 +98,6 @@ class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
                 seen.add(permission)
 
         return [permission() for permission in unique_permission_classes]
-
-    list_serializer_class = None
-    create_serializer_class = None
-    update_serializer_class = None
-    invalidate_data_after_update = True
-
-    auto_add_created_by = False
 
     def get_serializer(self, *args, **kwargs):
         kwargs['context'] = self.get_serializer_context()
