@@ -61,7 +61,6 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		qs = qs.with_topic_members()
 		qs = qs.with_owner()
 		qs = qs.with_member_count()
-		qs = qs.distinct()
 		return qs
 	  
 	@action(detail=True, methods=['post'], url_path='subcribe')

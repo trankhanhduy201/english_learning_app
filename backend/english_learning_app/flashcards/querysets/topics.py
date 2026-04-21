@@ -1,4 +1,4 @@
-from django.db.models import QuerySet, Q, Prefetch, Subquery, IntegerField
+from django.db.models import OuterRef, Exists, Q, Prefetch, Subquery, IntegerField
 from django.db.models.functions import Coalesce
 from flashcards.querysets.bases import BaseQuerySet
 from flashcards.querysets.mixins import OwnerMixin
@@ -30,9 +30,14 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
         topic_member_accessable_statuses = TopicMember.get_accessible_statuses()
         topic_accessable_statuses = self.model.get_accessible_statuses()
         conditions = Q(created_by=user)
+
+        topic_member_qs = TopicMember.objects.filter(
+            member=user,
+            status__in=topic_member_accessable_statuses,
+            topic=OuterRef('pk')
+        )
         conditions |= Q(
 			Q(status__in=topic_accessable_statuses) &
-			Q(topic_members__member=user) &
-			Q(topic_members__status__in=topic_member_accessable_statuses)
+			Exists(topic_member_qs)
 		)
         return self.filter(conditions)
