@@ -8,6 +8,7 @@ import {
   importVocabThunk,
   updateVocabThunk,
 } from "../../stores/actions/vocabAction";
+import { validateVocabDetail } from "../../validations/vocabValidation";
 
 const getTrans = (topic) => {
   const trans = topic?.translations
@@ -20,6 +21,25 @@ const getTrans = (topic) => {
   return Object.keys(trans).reduce((newTrans, language) => {
     return [...newTrans, ...trans[language].map(v => v)];
   }, []);
+};
+
+const getValidatedVocabPayload = async (request) => {
+  const formData = await request.formData();
+  const rawData = qs.parse(Object.fromEntries(formData));
+
+  if (rawData?._form_name === "deleting_vocab") {
+    return rawData;
+  }
+
+  const { validatedData, errors } = await validateVocabDetail(rawData);
+  if (errors) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
+
+  return validatedData;
 };
 
 const createVocab = async (topicId, data) => {
@@ -73,25 +93,27 @@ const doImportVocab = async (data) => {
 };
 
 export const editVocab = async ({ request, params }) => {
-  const formData = await request.formData();
-  const updateData = qs.parse(Object.fromEntries(formData));
+  const validatedData = await getValidatedVocabPayload(request);
+  if (validatedData?.status === "error") {
+    return validatedData;
+  }
 
   if (params.vocabId === "new") {
-    updateData.topic = params.topicId;
     return await createVocab(params.topicId, {
-      ...updateData,
-      translations: getTrans(updateData),
+      ...validatedData,
+      topic: params.topicId,
+      translations: getTrans(validatedData)
     });
   }
 
-  if (params.action === "delete") {
-    return await deleteVocab(params.topicId, params.vocabId, updateData);
+  if (params.action === "delete") { 
+    return await deleteVocab(params.topicId, params.vocabId, validatedData);
   }
-
+  
   return await updateVocab(params.topicId, params.vocabId, {
-    ...updateData,
+    ...validatedData,
     id: params.vocabId,
-    translations: getTrans(updateData),
+    translations: getTrans(validatedData)
   });
 };
 

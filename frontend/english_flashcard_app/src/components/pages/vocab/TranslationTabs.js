@@ -21,11 +21,19 @@ import * as transType from "../../../enums/transType";
 
 const EVENT_KEY_NEW_TAB = "new";
 
-const TranslationTabs = ({ data }) => {
+const TranslationTabs = ({ data, errors = {} }) => {
   const textRef = useRef(null);
   const languageRef = useRef(null);
   const typeRef = useRef(null);
   const [activeTab, setActiveTab] = useState("en");
+
+
+  const getFieldError = (lang, idx, field) => {
+    return errors?.[lang]?.[idx]?.[field];
+  };
+
+  const getTabError = (lang) => errors?.[lang];
+
   const [translations, setTranslations] = useState(
     _.groupBy(
       data.map((v, i) => ({ ...v, idx: i })),
@@ -130,7 +138,18 @@ const TranslationTabs = ({ data }) => {
       className="mb-3"
     >
       {Object.keys(translations).map((lang) => (
-        <Tab key={lang} eventKey={lang} title={lang}>
+        <Tab 
+          key={lang} 
+          eventKey={lang} 
+          title={
+            <span className="d-inline-flex align-items-center gap-1">
+              {lang}
+              {getTabError(lang) && (
+                <i className="bi bi-exclamation-circle-fill text-danger"></i>
+              )}
+            </span>
+          }
+        >
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -170,7 +189,7 @@ const TranslationTabs = ({ data }) => {
                             <td>
                               <input
                                 type="text"
-                                className="form-control"
+                                className={`form-control ${getFieldError(lang, item.idx, "translation") ? "is-invalid" : ""}`}
                                 name={`translations[${lang}][${item.idx}][translation]`}
                                 defaultValue={item.translation}
                                 placeholder="Translation..."
@@ -192,7 +211,7 @@ const TranslationTabs = ({ data }) => {
                             </td>
                             <td>
                               <select
-                                className="form-control"
+                                className={`form-control ${getFieldError(lang, item.idx, "type") ? "is-invalid" : ""}`}
                                 name={`translations[${lang}][${item.idx}][type]`}
                                 defaultValue={item.type}
                               >
@@ -208,7 +227,7 @@ const TranslationTabs = ({ data }) => {
                               <textarea
                                 rows={1}
                                 placeholder="Examples..."
-                                className="form-control"
+                                className={`form-control ${getFieldError(lang, item.idx, "note") ? "is-invalid" : ""}`}
                                 name={`translations[${lang}][${item.idx}][note]`}
                                 defaultValue={item.note}
                               ></textarea>

@@ -81,7 +81,10 @@ const Vocab = memo(() => {
                 <Suspense fallback={<p className="text-center">Loadding...</p>}>
                   <Await resolve={vocabPromise}>
                     {(data) => (
-                      <TranslationTabs data={data?.translations ?? []} />
+                      <TranslationTabs 
+                        data={data?.translations ?? []}
+                        errors={vocabFetcher.data?.errors?.translations ?? {}}
+                      />
                     )}
                   </Await>
                 </Suspense>
