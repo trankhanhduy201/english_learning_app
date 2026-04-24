@@ -24,10 +24,6 @@ class IsAccessable(IsOwner):
 		# Allow access if the user is the owner
 		if super().has_object_permission(request, view, topic):
 			return True
-		
-		# Deny access if the topic is PRIVATE
-		if topic.status == Topic.TopicStatusEnums.PRIVATE:
-			return False
 
 		# Check if the user is a member with EDITABLE status
 		topic_member = TopicMember.objects \
@@ -38,12 +34,14 @@ class IsAccessable(IsOwner):
 		# Allow user access topic in GET/HEAD/OPTIONS requests except blocked users
 		topic_member_status = getattr(topic_member, 'status', None)
 		if request.method in permissions.SAFE_METHODS:
-			return topic_member_status != TopicMember.TopicMemberStatusEnums.BLOCK
+			return (
+				topic.status == Topic.TopicStatusEnums.PUBLIC and
+				topic_member_status != TopicMember.TopicMemberStatusEnums.BLOCK
+			)
 		
-		# For other requests like PUT/DELETE, only allow EDITABLE members
+		# For other requests like PUT/DELETE, only allow EDITABLE members regardless of topic status
 		return topic_member_status == TopicMember.TopicMemberStatusEnums.EDITABLE
 
-	
 	def _has_vocabulary_permission(self, request, view, vocabulary):
 		# Always allow access if the user is the owner
 		topic = vocabulary.topic
@@ -72,8 +70,12 @@ class IsAccessable(IsOwner):
 		model = getattr(queryset, 'model', None)
 
 		# Enforce topic permission before creating a new vocabulary
-		if request.method == 'POST' and action == 'create' and model is Vocabulary:
-			topic_id = request.data.get('topic')
+		verifying_actions = [
+			'create',
+			'bulk_import'
+		]
+		if request.method == 'POST' and action in verifying_actions and model is Vocabulary:
+			topic_id = request.data.get('topic') or request.data.get('topic_id')
 			if not topic_id:
 				return False
 			
