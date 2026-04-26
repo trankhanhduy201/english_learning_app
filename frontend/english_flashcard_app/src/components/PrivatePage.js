@@ -49,7 +49,8 @@ const PrivatePage = memo(({ pageName }) => {
   const { isLogged } = useCheckAuth({
     pageName,
     hasCheckExpired: false,
-    isPassServerAuth: isPassServerAuth(pageName)
+    isPassServerAuth: isPassServerAuth(pageName),
+    skipFirstVerify: true
   });
 
   if (isLogged === null) {

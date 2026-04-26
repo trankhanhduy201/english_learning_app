@@ -1,14 +1,20 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import throttle from "lodash/throttle";
 import * as cookies from "../commons/cookies";
 import * as tokenCommon from "../commons/token";
 import { THROTTLING_TOKEN_VERIFY, TOKEN_VERIFY_INTERVAL } from "../configs/appConfig";
 
-const useCheckAuth = ({ pageName = null, hasCheckExpired, isPassServerAuth }) => {
+const useCheckAuth = ({ 
+  pageName = null, 
+  hasCheckExpired, 
+  isPassServerAuth,
+  skipFirstVerify = false
+}) => {
   const [dataAuth, setDataAuth] = useState({
-    isLogged: null,
+    isLogged: skipFirstVerify ? true : null,
     isExpired: false
   });
+  const countUpRef = useRef(1);
 
   const setIsLogged = (isLogged) => {
     setDataAuth((state) =>
@@ -31,6 +37,11 @@ const useCheckAuth = ({ pageName = null, hasCheckExpired, isPassServerAuth }) =>
     () =>
       throttle(
         async () => {
+          if (skipFirstVerify && countUpRef.current === 1) {
+            countUpRef.current += 1;
+            return;
+          }
+
           setIsLogged(null);
           if (isPassServerAuth) {
             setIsLogged(true);
@@ -50,7 +61,7 @@ const useCheckAuth = ({ pageName = null, hasCheckExpired, isPassServerAuth }) =>
           trailing: false,
         }
       ),
-    [isPassServerAuth]
+    [isPassServerAuth, skipFirstVerify]
   );
 
   useEffect(() => {
