@@ -1,11 +1,10 @@
 import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from "./ConfirmModal";
 import { memo } from "react";
-import { useNavigate, useFetcher } from "react-router-dom";
+import { useFetcher } from "react-router-dom";
 
 const LogoutItem = memo(({ children, revokeTokens = false}) => {
   const logoutFetcher = useFetcher();
-  const navigate = useNavigate();
   const confirmLogoutModal = useConfirmModal({
     submitActionCallback: async () => {
       return new Promise((resolve) => {
