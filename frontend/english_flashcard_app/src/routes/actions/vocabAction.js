@@ -19,7 +19,7 @@ const getTrans = (topic) => {
     }];
   }
   return Object.keys(trans).reduce((newTrans, language) => {
-    return [...newTrans, ...trans[language].map(v => v)];
+    return [...newTrans, ...Object.values(trans[language]).map(v => v)];
   }, []);
 };
 

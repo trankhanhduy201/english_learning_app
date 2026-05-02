@@ -50,24 +50,46 @@ export const vocabDetailSchema = yup
       .required("Translations are required.")
       .test("notEmpty", "At least one translation is required.", (value) => {
         if (!value || typeof value !== "object") return false;
+
         return Object.values(value).some(
-          (arr) => Array.isArray(arr) && arr.length > 0
+          (langObj) =>
+            langObj &&
+            typeof langObj === "object" &&
+            Object.keys(langObj).length > 0
         );
       })
       .shape(
         Object.fromEntries(
           LANGUAGE_KEYS.map((lang) => [
             lang,
-            yup
-              .array()
-              .of(translationItemSchema)
-              .min(1, `${lang} must have at least one translation`)
-              .optional(),
+            yup.lazy((value) => {
+              if (!value || typeof value !== "object") {
+                return yup.object().optional();
+              }
+
+              const keys = Object.keys(value);
+
+              // enforce at least one item inside each language (optional)
+              if (keys.length === 0) {
+                return yup.object().test(
+                  "notEmpty",
+                  `${lang} must have at least one translation`,
+                  () => false
+                );
+              }
+
+              const shape = keys.reduce((acc, key) => {
+                acc[key] = translationItemSchema;
+                return acc;
+              }, {});
+
+              return yup.object().shape(shape);
+            }),
           ])
         )
       )
-      })
-      .required();
+  })
+  .required();
 
 export const validateVocabDetail = async (rawData) => {
   return validateWithSchema(vocabDetailSchema, {

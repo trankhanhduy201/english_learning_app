@@ -33,7 +33,6 @@ export const topicMemberUpdateSchema = yup
       .array()
       .transform((_value, originalValue) => {
         const parsedValues = parseJsonObjectValues(originalValue);
-        console.log(parsedValues)
         return Array.isArray(parsedValues) ? parsedValues : null;
       })
       .of(topicMemberItemSchema)

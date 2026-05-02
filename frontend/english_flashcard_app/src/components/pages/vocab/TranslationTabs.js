@@ -25,18 +25,23 @@ const TranslationTabs = ({ data, errors = {} }) => {
   const textRef = useRef(null);
   const languageRef = useRef(null);
   const typeRef = useRef(null);
+  const noteRef = useRef(null);
   const [activeTab, setActiveTab] = useState("en");
 
+  const getKey = () => crypto.randomUUID();
 
-  const getFieldError = (lang, idx, field) => {
-    return errors?.[lang]?.[idx]?.[field];
+  const getFieldError = (lang, key, field) => {
+    return errors?.[lang]?.[key]?.[field];
   };
 
-  const getTabError = (lang) => errors?.[lang];
+  const getTabError = (lang) => 
+    translations[lang]?.some(
+      (item) => errors?.[lang]?.[item.key] ? true : false
+    );
 
   const [translations, setTranslations] = useState(
     _.groupBy(
-      data.map((v, i) => ({ ...v, idx: i })),
+      data.map((v, i) => ({ ...v, pos: i, key: getKey() })),
       "language",
     ),
   );
@@ -46,21 +51,46 @@ const TranslationTabs = ({ data, errors = {} }) => {
     setActiveTab(langs.length > 0 ? langs[0] : EVENT_KEY_NEW_TAB);
   }, []);
 
-  const handleDelTrans = (idx, lang) => {
-    setTranslations((oldState) => ({
-      ...oldState,
-      [lang]: oldState[lang].filter((v) => v.idx !== idx),
-    }));
+  const handleDelTrans = (key, lang) => {
+    let isRemoveTab = false;
+    setTranslations((oldState) => {
+      const list = oldState[lang] ?? [];
+      const filtered = list.filter((v) => v.key !== key);
+
+      // still has items → keep lang
+      if (filtered.length > 0) {
+        return {
+          ...oldState,
+          [lang]: filtered,
+        };
+      }
+
+      // no items → remove lang
+      isRemoveTab = true;
+      const { [lang]: _, ...rest } = oldState;
+      return rest;
+    });
+
+    if (isRemoveTab && activeTab === lang) {
+      setActiveTab(EVENT_KEY_NEW_TAB);
+    }
   };
 
   const handleAddTrans = (lang) => {
     setTranslations((oldState) => {
-      const newId = utils.getNextMaxId(oldState[lang], "idx");
+      const newPos = utils.getNextMaxId(oldState[lang], "pos");
       return {
         ...oldState,
         [lang]: [
           ...oldState[lang],
-          { translation: "", language: lang, idx: newId },
+          { 
+            translation: null, 
+            language: lang, 
+            type: null,
+            note: null,
+            pos: newPos, 
+            key: getKey() 
+          },
         ],
       };
     });
@@ -78,9 +108,9 @@ const TranslationTabs = ({ data, errors = {} }) => {
 
     if (active.id !== over.id) {
       setTranslations((oldState) => {
-        const oldItems = oldState[lang];
-        const oldIndex = oldItems.findIndex((item) => item.idx === active.id);
-        const newIndex = oldItems.findIndex((item) => item.idx === over.id);
+        const oldItems = [ ...oldState[lang]];
+        const oldIndex = oldItems.findIndex((item) => item.pos === active.id);
+        const newIndex = oldItems.findIndex((item) => item.pos === over.id);
         const newItems = arrayMove(oldItems, oldIndex, newIndex);
         return {
           ...oldState,
@@ -94,38 +124,44 @@ const TranslationTabs = ({ data, errors = {} }) => {
     const nWord = textRef.current.value;
     const sLang = languageRef.current.value;
     const sType = typeRef.current?.value;
+    const sNote = noteRef.current?.value;
 
-    if (!nWord || !sLang || !sType) {
+    if (!nWord || !sLang) {
       textRef.current.style.borderColor = !nWord ? "red" : "";
       languageRef.current.style.borderColor = !sLang ? "red" : "";
-      typeRef.current.style.borderColor = !sType ? "red" : "";
       return;
     }
 
     setTranslations((oldState) => {
-      let newVocab = {
-        translation: nWord,
-        language: sLang,
-        type: sType,
-        idx: 0,
+      const listTrans = oldState[sLang] ?? [];
+      const newPos = utils.getNextMaxId(listTrans, "pos");
+
+      return {
+        ...oldState, 
+        [sLang]: [
+          ...listTrans, 
+          {
+            translation: nWord,
+            language: sLang,
+            type: sType,
+            note: sNote,
+            pos: newPos,
+            key: getKey()
+          }
+        ] 
       };
-
-      if (!oldState[sLang]) {
-        return { ...oldState, [sLang]: [newVocab] };
-      }
-
-      newVocab.idx = Math.max(...oldState[sLang].map((t) => t.idx)) + 1;
-      return { ...oldState, [sLang]: [...oldState[sLang], newVocab] };
     });
 
     // Reset input fields
     textRef.current.value = "";
     languageRef.current.value = "";
     typeRef.current.value = "";
+    noteRef.current.value = "";
 
     textRef.current.style.borderColor = "";
     languageRef.current.style.borderColor = "";
     typeRef.current.style.borderColor = "";
+    noteRef.current.style.borderColor = "";
 
     setActiveTab(sLang);
   };
@@ -156,7 +192,7 @@ const TranslationTabs = ({ data, errors = {} }) => {
             onDragEnd={(event) => handleDragEnd(event, lang)}
           >
             <SortableContext
-              items={translations[lang].map((item) => item.idx)}
+              items={translations[lang].map((item) => item.pos)}
               strategy={verticalListSortingStrategy}
             >
               <div
@@ -184,35 +220,35 @@ const TranslationTabs = ({ data, errors = {} }) => {
                     {translations[lang].length > 0 ? (
                       <>
                         {translations[lang].map((item, index) => (
-                          <SortableTr key={item.idx} id={item.idx}>
+                          <SortableTr key={item.pos} id={item.pos}>
                             <td className="align-middle">{index + 1}</td>
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${getFieldError(lang, item.idx, "translation") ? "is-invalid" : ""}`}
-                                name={`translations[${lang}][${item.idx}][translation]`}
+                                className={`form-control ${getFieldError(lang, item.key, "translation") ? "is-invalid" : ""}`}
+                                name={`translations[${lang}][${item.key}][translation]`}
                                 defaultValue={item.translation}
                                 placeholder="Translation..."
                               />
                               <input
                                 type="hidden"
                                 className="form-control"
-                                name={`translations[${lang}][${item.idx}][language]`}
+                                name={`translations[${lang}][${item.key}][language]`}
                                 defaultValue={lang}
                               />
                               {item.id && (
                                 <input
                                   type="hidden"
                                   className="form-control"
-                                  name={`translations[${lang}][${item.idx}][id]`}
+                                  name={`translations[${lang}][${item.key}][id]`}
                                   defaultValue={item.id}
                                 />
                               )}
                             </td>
                             <td>
                               <select
-                                className={`form-control ${getFieldError(lang, item.idx, "type") ? "is-invalid" : ""}`}
-                                name={`translations[${lang}][${item.idx}][type]`}
+                                className={`form-control ${getFieldError(lang, item.key, "type") ? "is-invalid" : ""}`}
+                                name={`translations[${lang}][${item.key}][type]`}
                                 defaultValue={item.type}
                               >
                                 <option></option>
@@ -227,8 +263,8 @@ const TranslationTabs = ({ data, errors = {} }) => {
                               <textarea
                                 rows={1}
                                 placeholder="Examples..."
-                                className={`form-control ${getFieldError(lang, item.idx, "note") ? "is-invalid" : ""}`}
-                                name={`translations[${lang}][${item.idx}][note]`}
+                                className={`form-control ${getFieldError(lang, item.key, "note") ? "is-invalid" : ""}`}
+                                name={`translations[${lang}][${item.key}][note]`}
                                 defaultValue={item.note}
                               ></textarea>
                             </td>
@@ -238,7 +274,7 @@ const TranslationTabs = ({ data, errors = {} }) => {
                                   type="button"
                                   className="btn btn-link p-0"
                                   onClick={(e) =>
-                                    handleDelTrans(item.idx, item.language)
+                                    handleDelTrans(item.key, item.language)
                                   }
                                 >
                                   <i className="bi bi-trash text-dark"></i>
@@ -330,6 +366,7 @@ const TranslationTabs = ({ data, errors = {} }) => {
             className="form-control"
             rows={4}
             placeholder="Examples..."
+            ref={noteRef}
           ></textarea>
         </div>
         <div className="mb-3 text-end">
