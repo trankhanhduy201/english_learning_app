@@ -23,6 +23,9 @@ const VocabDetail = memo(
             placeholder="Word..."
           />
           {errors?.word && <FieldErrors errors={errors.word} />}
+          {errors?.translations && Array.isArray(errors.translations) && 
+            <FieldErrors errors={errors.translations} />
+          }
         </div>
         <div className="row">
           <div className="mb-3 col-lg-6">
