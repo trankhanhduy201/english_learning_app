@@ -9,6 +9,7 @@ import {
   updateVocabThunk,
 } from "../../stores/actions/vocabAction";
 import { validateVocabDetail } from "../../validations/vocabValidation";
+import { validateCreateTranslationTab } from "../../validations/createTranslationTabValidation";
 
 const getTrans = (topic) => {
   const trans = topic?.translations
@@ -90,6 +91,24 @@ const doImportVocab = async (data) => {
   } catch (err) {
     return err;
   }
+};
+
+export const createTranslationTab = async ({ request }) => {
+  const formData = await request.formData();
+  const rawData = Object.fromEntries(formData);
+  const { validatedData, errors } = await validateCreateTranslationTab(rawData);
+
+  if (errors) {
+    return {
+      status: "error",
+      errors,
+    };
+  }
+
+  return {
+    status: "success",
+    item: validatedData,
+  };
 };
 
 export const editVocab = async ({ request, params }) => {

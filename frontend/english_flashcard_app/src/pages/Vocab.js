@@ -1,4 +1,4 @@
-import { memo, Suspense } from "react";
+import { memo, Suspense, useRef } from "react";
 import {
   Await,
   Link,
@@ -21,6 +21,7 @@ const Vocab = memo(() => {
   const { vocabPromise } = useLoaderData();
   const isNew = () => vocabId === "new";
   const { topic: topicData } = useTopicContext();
+  const formRef = useRef();
 
   const handleDelVocab = () => {
     const formData = new FormData();
@@ -43,6 +44,7 @@ const Vocab = memo(() => {
     <ErrorBoundary fallback={<Navigate to={`/topic/${topicId}`} />}>
       {commonErrors.length > 0 && <VocabErrors errors={['There was something wrong']} />}
       <vocabFetcher.Form
+        ref={formRef}
         action={`/topic/${topicId}/vocab/${vocabId}`}
         method={isNew() ? "POST" : "PUT"}
       >
@@ -84,6 +86,7 @@ const Vocab = memo(() => {
                       <TranslationTabs 
                         data={data?.translations ?? []}
                         errors={vocabFetcher.data?.errors?.translations ?? {}}
+                        vocabFormRef={formRef}
                       />
                     )}
                   </Await>

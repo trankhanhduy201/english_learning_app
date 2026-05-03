@@ -153,6 +153,11 @@ const routes = createBrowserRouter(
                   action: vocabsAction.editVocab,
                   shouldRevalidate: defaultShouldRevalidate,
                 },
+                {
+                  path: "vocab/translation_tab/create",
+                  action: vocabsAction.createTranslationTab,
+                  shouldRevalidate: () => false,
+                },
               ],
             },
             {

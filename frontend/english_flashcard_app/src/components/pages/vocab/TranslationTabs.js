@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { Tab, Tabs } from "react-bootstrap";
 import _ from "lodash";
 import {
@@ -18,17 +18,14 @@ import {
 import { SortableTr } from "../../../components/SortableTr";
 import * as utils from "../../../utils/commons";
 import * as transType from "../../../enums/transType";
+import CreateLanguageTabForm from "./CreateLanguageTabForm";
 
 const EVENT_KEY_NEW_TAB = "new";
 
-const TranslationTabs = ({ data, errors = {} }) => {
-  const textRef = useRef(null);
-  const languageRef = useRef(null);
-  const typeRef = useRef(null);
-  const noteRef = useRef(null);
+const TranslationTabs = memo(({ data, errors = {}, vocabFormRef }) => {
   const [activeTab, setActiveTab] = useState("en");
 
-  const getKey = () => crypto.randomUUID();
+  const getKey = useCallback(() => crypto.randomUUID(), []);
 
   const getFieldError = (lang, key, field) => {
     return errors?.[lang]?.[key]?.[field];
@@ -76,25 +73,41 @@ const TranslationTabs = ({ data, errors = {} }) => {
     }
   };
 
-  const handleAddTrans = (lang) => {
+  const handleAddTrans = useCallback((lang, transItem = {}) => {
     setTranslations((oldState) => {
-      const newPos = utils.getNextMaxId(oldState[lang], "pos");
+      const listTrans = oldState[lang] ?? [];
+      const newPos = utils.getNextMaxId(listTrans, "pos");
+
+      // Note: Using typescript to define type of transItem later,
+      // that will help to avoid error of missing field when add new translation item
       return {
         ...oldState,
         [lang]: [
-          ...oldState[lang],
-          { 
-            translation: null, 
-            language: lang, 
-            type: null,
-            note: null,
-            pos: newPos, 
-            key: getKey() 
+          ...listTrans,
+          {
+            translation: transItem.translation ?? "",
+            type: transItem.type ?? "",
+            note: transItem.note ?? "",
+            ...transItem,
+            language: lang,
+            pos: newPos,
+            key: getKey(),
           },
         ],
       };
     });
-  };
+  }, [getKey]);
+
+  const handleCreatedTranslationTab = useCallback(
+    (item) => {
+      if (!item || !item.language) {
+        return;
+      }
+      handleAddTrans(item.language, item);
+      setActiveTab(item.language);
+    },
+    [handleAddTrans],
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -118,52 +131,6 @@ const TranslationTabs = ({ data, errors = {} }) => {
         };
       });
     }
-  };
-
-  const handleAddLang = () => {
-    const nWord = textRef.current.value;
-    const sLang = languageRef.current.value;
-    const sType = typeRef.current?.value;
-    const sNote = noteRef.current?.value;
-
-    if (!nWord || !sLang) {
-      textRef.current.style.borderColor = !nWord ? "red" : "";
-      languageRef.current.style.borderColor = !sLang ? "red" : "";
-      return;
-    }
-
-    setTranslations((oldState) => {
-      const listTrans = oldState[sLang] ?? [];
-      const newPos = utils.getNextMaxId(listTrans, "pos");
-
-      return {
-        ...oldState, 
-        [sLang]: [
-          ...listTrans, 
-          {
-            translation: nWord,
-            language: sLang,
-            type: sType,
-            note: sNote,
-            pos: newPos,
-            key: getKey()
-          }
-        ] 
-      };
-    });
-
-    // Reset input fields
-    textRef.current.value = "";
-    languageRef.current.value = "";
-    typeRef.current.value = "";
-    noteRef.current.value = "";
-
-    textRef.current.style.borderColor = "";
-    languageRef.current.style.borderColor = "";
-    typeRef.current.style.borderColor = "";
-    noteRef.current.style.borderColor = "";
-
-    setActiveTab(sLang);
   };
 
   return (
@@ -314,73 +281,13 @@ const TranslationTabs = ({ data, errors = {} }) => {
         eventKey={EVENT_KEY_NEW_TAB}
         title={"＋"}
       >
-        <div className="mb-3">
-          <label htmlFor="textInput" className="form-label">
-            Translation
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="textInput"
-            placeholder="Translation..."
-            ref={textRef}
-          />
-        </div>
-        <div className="mb-3">
-          <div className="row">
-            <div className="col-12 col-sm-6 mb-3 mb-sm-0">
-              <label htmlFor="languageSelect" className="form-label">
-                Select Language
-              </label>
-              <select
-                className="form-select"
-                id="languageSelect"
-                ref={languageRef}
-              >
-                <option value="">-- No choice --</option>
-                <option value="en">English</option>
-                <option value="ja">Japanese (日本語)</option>
-                <option value="vn">Vietnamese (Tiếng Việt)</option>
-              </select>
-            </div>
-            <div className="col-12 col-sm-6">
-              <label htmlFor="type" className="form-label">
-                Type
-              </label>
-              <select id="type" className="form-control" ref={typeRef}>
-                <option value="">-- No choice --</option>
-                {transType.getDatas().map((v) => (
-                  <option key={v.key} value={v.key}>
-                    {v.text}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="note" className="form-label">
-            Note
-          </label>
-          <textarea
-            className="form-control"
-            rows={4}
-            placeholder="Examples..."
-            ref={noteRef}
-          ></textarea>
-        </div>
-        <div className="mb-3 text-end">
-          <button
-            type="button"
-            className="btn btn-secondary w-sm-100"
-            onClick={() => handleAddLang()}
-          >
-            <i className="bi bi-plus-circle"></i> Add
-          </button>
-        </div>
+        <CreateLanguageTabForm 
+          onCreated={handleCreatedTranslationTab} 
+          vocabFormRef={vocabFormRef}
+        />
       </Tab>
     </Tabs>
   );
-};
+});
 
 export default TranslationTabs;
