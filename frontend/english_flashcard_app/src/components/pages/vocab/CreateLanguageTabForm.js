@@ -1,6 +1,7 @@
 import React, { memo, useEffect } from "react";
 import { useFetcher, useParams } from "react-router-dom";
 import * as transType from "../../../enums/transType";
+import { LANGUAGES } from "../../../configs/langConfig";
 
 const CreateLanguageTabForm = memo(({ onCreated, vocabFormRef }) => {
   const { topicId } = useParams();
@@ -63,9 +64,11 @@ const CreateLanguageTabForm = memo(({ onCreated, vocabFormRef }) => {
               name="translation_tab[language]"
             >
               <option value="">-- No choice --</option>
-              <option value="en">English</option>
-              <option value="ja">Japanese (日本語)</option>
-              <option value="vn">Vietnamese (Tiếng Việt)</option>
+              {Object.values(LANGUAGES).map((lang) => (
+                <option key={lang.key} value={lang.key}>
+                  {lang.text}
+                </option>
+              ))}
             </select>
             {errors.language && (
               <div className="invalid-feedback">{errors.language}</div>
