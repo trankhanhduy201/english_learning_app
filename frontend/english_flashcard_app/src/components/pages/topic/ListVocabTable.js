@@ -13,14 +13,15 @@ const ListVocabTable = memo(
     return (
       <div
         className="table-responsive"
-        style={{ maxHeight: "265px", overflowY: "auto" }}
+        style={{ maxHeight: "400px", minHeight: "400px", overflowY: "auto" }}
       >
         <table className="table table-striped">
           <colgroup>
             <col style={{ width: "5%" }} />
             <col style={{ width: "30%" }} />
-            <col style={{ width: "50%" }} />
-            <col style={{ width: "15%" }} />
+            <col style={{ width: "38%" }} />
+            <col style={{ width: "20%" }} />
+            <col style={{ width: "7%" }} />
           </colgroup>
           <thead
             style={{
@@ -53,7 +54,7 @@ const ListVocabTable = memo(
           <tbody>
             {isSearching ? (
               <tr>
-                <td colSpan="4" className="text-center">
+                <td colSpan="5" className="text-center">
                   Searching...
                 </td>
               </tr>
@@ -99,7 +100,7 @@ const ListVocabTable = memo(
               ))
             ) : (
               <tr>
-                <td className="text-center" colSpan="4">
+                <td className="text-center" colSpan="5">
                   No vocabularies found
                 </td>
               </tr>
