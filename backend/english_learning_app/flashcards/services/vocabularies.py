@@ -1,5 +1,7 @@
 import re
-from flashcards.models import Translation
+import base64
+from flashcards.models import Translation, Vocabulary
+from flashcards.utilities.audio import get_tts_audio
 
 
 class VocabularyImportService:
@@ -14,7 +16,10 @@ class VocabularyImportService:
 
             # Get translation type
             translation_type = None if len(parts) == 1 else parts[0].strip('()')
-            translation_type = Translation.TranslationTypeEnums.ADJ.value if translation_type == 'a' else translation_type
+            translation_type = (
+                Translation.TranslationTypeEnums.ADJ.value 
+                if translation_type == 'a' else translation_type
+            )
             if translation_type not in Translation.TranslationTypeEnums.values:
                 translation_type = None
 
@@ -75,3 +80,56 @@ class VocabularyImportService:
             }
         
         return list(vocab_entries.values())
+
+
+class VocabularyAudioService:
+    def get_audio_cache(self, words):
+        existing_audio_vocabs = (
+            Vocabulary.objects.filter(
+                word__in=words,
+                audio__isnull=False
+            )
+            .values('word', 'audio')
+            .distinct()
+        )
+
+        return {
+            vocab['word']: vocab['audio']
+            for vocab in existing_audio_vocabs
+        }
+
+    def generate_audio(self, vocab_ids):
+        results = {
+            'audios': {}
+        }
+        if not vocab_ids:
+            return results
+
+        vocabs = Vocabulary.objects.filter(pk__in=set(vocab_ids))
+        if not vocabs.exists():
+            return results
+        
+        audio_cache = self.get_audio_cache([
+            vocab.word for vocab in vocabs
+        ])
+        updated_vocabs = []
+
+        for vocab in vocabs:
+            cache_key = vocab.word
+            audio_binary = (
+                audio_cache.get(cache_key) or
+                get_tts_audio(cache_key, vocab.language)
+            )
+
+            if audio_binary is not None:
+                vocab.audio = audio_binary
+                updated_vocabs.append(vocab)
+                audio_base64 = base64.b64encode(audio_binary).decode('utf-8')
+                results['audios'].update({
+                    cache_key: audio_base64
+                })
+
+        if updated_vocabs:
+            Vocabulary.objects.bulk_update(updated_vocabs, ['audio'])
+
+        return results
