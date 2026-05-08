@@ -148,3 +148,300 @@
     width: 160px
   }
 }
+
+/* Vocab table */
+
+.vocab-table-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 477px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.vocab-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.vocab-header-row {
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.vocab-search-row {
+  padding: 12px;
+}
+
+.vocab-search-input {
+  padding: 8px 12px;
+}
+
+.vocab-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.vocab-row {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  background: #fff;
+  border-bottom: 1px solid #dee2e6;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.vocab-row:last-child {
+  border-bottom: none;
+}
+
+.vocab-content .vocab-row:hover {
+  background: #f8f9fa;
+}
+
+.vocab-header .vocab-cell {
+  font-weight: 600;
+}
+
+.vocab-cell {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vocab-index {
+  flex: 0 0 5%;
+  min-width: 40px;
+  justify-content: center;
+}
+
+.vocab-word {
+  flex: 0 0 30%;
+  min-width: 150px;
+}
+
+.vocab-description {
+  flex: 0 0 38%;
+  min-width: 200px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.vocab-author {
+  flex: 0 0 20%;
+  min-width: 120px;
+}
+
+.vocab-actions {
+  flex: 0 0 7%;
+  min-width: 80px;
+  justify-content: center;
+  padding-right: 12px;
+}
+
+.actions-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.audio-link,
+.action-link {
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: color 0.15s ease-in-out;
+}
+
+.audio-link:hover,
+.action-link:hover {
+  background: #e7f1ff;
+}
+
+.vocab-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 360px;
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  .vocab-index {
+    flex: 0 0 6%;
+    min-width: 35px;
+  }
+
+  .vocab-word {
+    flex: 0 0 28%;
+    min-width: 120px;
+  }
+
+  .vocab-description {
+    flex: 0 0 38%;
+    min-width: 150px;
+  }
+
+  .vocab-author {
+    flex: 0 0 22%;
+    min-width: 90px;
+  }
+
+  .vocab-actions {
+    flex: 0 0 6%;
+    min-width: 60px;
+  }
+
+  .vocab-cell {
+    padding: 10px 8px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .vocab-row {
+    flex-wrap: wrap;
+    min-height: 56px;
+  }
+
+  .vocab-index {
+    flex: 0 0 10%;
+    min-width: 30px;
+  }
+
+  .vocab-word {
+    flex: 0 0 55%;
+    min-width: 100px;
+  }
+
+  .vocab-description {
+    display: none;
+  }
+
+  .vocab-author {
+    flex: 0 0 25%;
+    min-width: 70px;
+  }
+
+  .vocab-actions {
+    flex: 0 0 10%;
+    min-width: 50px;
+  }
+
+  .vocab-cell {
+    padding: 8px 6px;
+  }
+
+  .audio-link,
+  .action-link {
+    padding: 3px 4px;
+  }
+
+  .vocab-search-input {
+    padding: 6px 10px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 550px) {
+  .vocab-row {
+    min-height: 52px;
+  }
+
+  .vocab-index {
+    flex: 0 0 15%;
+  }
+
+  .vocab-word {
+    flex: 0 0 65%;
+    min-width: 90px;
+  }
+
+  .vocab-description,
+  .vocab-author,
+  .vocab-header-row {
+    display: none;
+  }
+
+  .vocab-table-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 421px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+  }
+
+  .vocab-actions {
+    flex: 0 0 20%;
+    min-width: 45px;
+  }
+
+  .vocab-cell {
+    padding: 6px 4px;
+  }
+
+  .actions-container {
+    gap: 4px;
+  }
+
+  .audio-link,
+  .action-link {
+    padding: 2px 3px;
+  }
+
+  .vocab-search-input {
+    padding: 5px 8px;
+  }
+}
+
+/* Extra Small Devices */
+@media (max-width: 360px) {
+  .vocab-row {
+    min-height: 48px;
+  }
+
+  .vocab-cell {
+    padding: 5px 3px;
+  }
+
+  .vocab-index {
+    flex: 0 0 15%;
+  }
+
+  .vocab-word {
+    flex: 0 0 60%;
+    min-width: 80px;
+  }
+
+  .vocab-actions {
+    flex: 0 0 25%;
+  }
+}
+
+/* Scrollbar */
+.vocab-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vocab-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.vocab-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.vocab-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
