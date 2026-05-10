@@ -25,10 +25,6 @@ const TopicHeader = memo(() => {
     }));
   });
 
-  if (topic?.current_member?.is_blocking) {
-    return <Navigate to="/topics" />
-  }
-
   return (
     <>
       <div className="d-flex align-item-center">
@@ -50,6 +46,9 @@ const Topic = memo(() => {
   const { topicId } = useParams();
   const isNew = () => isNaN(topicId);
   const loaderData = useLoaderData();
+  const redirectToTopics = (topic) => {
+    return !(topic && !topic?.current_member?.is_blocking);
+  }
 
   return (
     <TopicProvider initialTopic={null}>
@@ -70,7 +69,7 @@ const Topic = memo(() => {
                   <Await resolve={loaderData.topicData}>
                     {(topic) => (
                       <>
-                        {topic ? (
+                        {!redirectToTopics(topic) ? (
                           <>
                             <TopicHeader />
                             <TopicDetail
