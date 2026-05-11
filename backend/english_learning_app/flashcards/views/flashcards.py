@@ -32,14 +32,12 @@ from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
-from flashcards.services.topics import TopicService
 from flashcards.permissions import IsAccessable
+from flashcards.constants import SUBSCRIBE_ACTION_URL_PATH
 
 User = get_user_model()
 
 vocab_import_service = VocabularyImportService()
-
-topic_service = TopicService()
 
 
 class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
@@ -63,16 +61,17 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		qs = qs.with_member_count()
 		return qs
 	  
-	@action(detail=True, methods=['post'], url_path='subcribe')
-	def subcribe(self, request, *args, **kwargs):
+	@action(detail=True, methods=['post'], url_path=SUBSCRIBE_ACTION_URL_PATH)
+	def subscribe(self, request, *args, **kwargs):
 		instance = self.get_object()
 		return self.create_update_members(
 			topic=instance, 
 			updated_members=[{
 				'member': request.user.id,
-				'topic': instance,
+				'topic': instance.id,
 				'status': TopicMember.TopicMemberStatusEnums.PENDING
-			}])
+			}]
+		)
 	  
 	@action(detail=True, methods=['get', 'post', 'put'], url_path='members')
 	def members(self, request, *args, **kwargs):
@@ -107,10 +106,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	def create_update_members(self, topic, updated_members, is_create=True):
 		serializers = self._get_create_update_topic_member_serializer(is_create=is_create)(
 			instance=None if is_create else topic.topic_members.all(), 
-			data=topic_service.get_create_update_members(
-				topic=topic, 
-				updating_members=updated_members
-			), 
+			data=updated_members, 
 			many=True
 		)
 		serializers.is_valid(raise_exception=True)

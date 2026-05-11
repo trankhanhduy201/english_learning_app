@@ -1,5 +1,6 @@
 from rest_framework import permissions
 from flashcards.models import Topic, TopicMember, Vocabulary
+from flashcards.constants import SUBSCRIBE_ACTION_URL_PATH
 
 
 class IsAdminMixin:
@@ -40,7 +41,15 @@ class IsAccessable(IsOwner):
 			)
 		
 		# For other requests like PUT/DELETE, only allow EDITABLE members regardless of topic status
-		return topic_member_status == TopicMember.TopicMemberStatusEnums.EDITABLE
+		# Or allow users to subscribe to a topic if they are not members yet
+		action = getattr(view, 'action', None)
+		verifying_actions = [
+			SUBSCRIBE_ACTION_URL_PATH
+		]
+		return (
+			(request.method == 'POST' and action in verifying_actions) or
+			topic_member_status == TopicMember.TopicMemberStatusEnums.EDITABLE
+		)
 
 	def _has_vocabulary_permission(self, request, view, vocabulary):
 		# Always allow access if the user is the owner
