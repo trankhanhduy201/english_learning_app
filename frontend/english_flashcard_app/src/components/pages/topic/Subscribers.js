@@ -82,10 +82,14 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
     setInitialMap(prev => {
       const newMemberDatas = { ...prev };
       fetcher.data.data.forEach(item => {
-        if (item?.is_remove) {
+        const { is_remove, ...updatedItem } = item;
+        if (is_remove) {
           delete newMemberDatas[item.member];
         } else {
-          newMemberDatas[item.member] = {...item}
+          newMemberDatas[item.member] = {
+            ...(newMemberDatas[item.member] || {}), 
+            ...updatedItem
+          }
         }
       });
       return newMemberDatas;
