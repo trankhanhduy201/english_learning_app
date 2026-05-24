@@ -2,6 +2,7 @@ from django.db import IntegrityError, models, transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import MANY_RELATION_KWARGS, ManyRelatedField
+from flashcards.exceptions import ConflictException
 
 
 class CustomManyRelatedField(ManyRelatedField):
@@ -149,3 +150,15 @@ class BaseListSerializer(serializers.ListSerializer):
 class BaseSerializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = BaseListSerializer
+
+    def run_validators(self, value):
+        try:
+            return super().run_validators(value)
+        except serializers.ValidationError as exc:
+            codes = exc.get_codes()
+
+            if isinstance(codes, list):
+                if 'unique' in codes:
+                    raise ConflictException()
+
+            raise

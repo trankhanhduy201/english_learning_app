@@ -32,7 +32,7 @@ from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
-from flashcards.permissions import IsAccessable
+from flashcards.permissions import IsAccessable, CanSubscribeTopic
 from flashcards.constants import SUBSCRIBE_ACTION_URL_PATH
 
 User = get_user_model()
@@ -61,16 +61,21 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		qs = qs.with_member_count()
 		return qs
 	  
-	@action(detail=True, methods=['post'], url_path=SUBSCRIBE_ACTION_URL_PATH)
+	@action(
+		detail=True, 
+		methods=['post'], 
+		url_path=SUBSCRIBE_ACTION_URL_PATH, 
+		permission_classes=[CanSubscribeTopic]
+	)
 	def subscribe(self, request, *args, **kwargs):
 		instance = self.get_object()
 		return self.create_update_members(
 			topic=instance, 
-			updated_members=[{
+			updated_members={
 				'member': request.user.id,
 				'topic': instance.id,
 				'status': TopicMember.TopicMemberStatusEnums.PENDING
-			}]
+			}
 		)
 	  
 	@action(detail=True, methods=['get', 'post', 'put'], url_path='members')
@@ -89,12 +94,15 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		
 		return Response(
 			'The method is not allowed',
-			status=status.HTTP_400_BAD_REQUEST
+			status=status.HTTP_405_METHOD_NOT_ALLOWED
 		)
 
 	def get_members(self, topic):
 		return Response(
-			self.list_topic_members_serializer_class(topic.topic_members.all(), many=True).data, 
+			self.list_topic_members_serializer_class(
+				topic.topic_members.all(), 
+				many=True
+			).data, 
 			status=status.HTTP_200_OK
 		)
 	
@@ -105,9 +113,9 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	
 	def create_update_members(self, topic, updated_members, is_create=True):
 		serializers = self._get_create_update_topic_member_serializer(is_create=is_create)(
-			instance=None if is_create else topic.topic_members.all(), 
-			data=updated_members, 
-			many=True
+			instance=(None if is_create else topic.topic_members.all()), 
+			many=(is_create is False),
+			data=updated_members
 		)
 		serializers.is_valid(raise_exception=True)
 		serializers.save()

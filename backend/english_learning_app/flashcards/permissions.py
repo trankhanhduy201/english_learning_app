@@ -1,4 +1,4 @@
-from rest_framework import permissions
+from rest_framework import exceptions, permissions
 from flashcards.models import Topic, TopicMember, Vocabulary
 from flashcards.constants import SUBSCRIBE_ACTION_URL_PATH
 
@@ -20,7 +20,39 @@ class IsOwner(IsOwnerMixin, permissions.BasePermission):
 	pass
 
 
-class IsAccessable(IsOwner):
+class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
+	def has_permission(self, request, view):
+		action = getattr(view, 'action', None)
+		return (
+			super().has_permission(request, view)
+			and action == SUBSCRIBE_ACTION_URL_PATH
+			and request.method == 'POST'
+		)
+
+	def has_object_permission(self, request, view, obj):
+		if not isinstance(obj, Topic):
+			return False
+
+		if super().has_object_permission(request, view, obj):
+			return False
+
+		if obj.status != Topic.TopicStatusEnums.PUBLIC:
+			return False
+
+		topic_member = (
+			TopicMember.objects
+			.filter(topic=obj, member=request.user)
+			.only('status')
+			.first()
+		)
+
+		topic_member_status = getattr(topic_member, 'status', None)
+		if topic_member_status == TopicMember.TopicMemberStatusEnums.BLOCK:
+			return False
+		
+		return True
+
+class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 	def _has_topic_permission(self, request, view, topic):
 		# Allow access if the user is the owner
 		if super().has_object_permission(request, view, topic):
@@ -41,15 +73,7 @@ class IsAccessable(IsOwner):
 			)
 		
 		# For other requests like PUT/DELETE, only allow EDITABLE members regardless of topic status
-		# Or allow users to subscribe to a topic if they are not members yet
-		action = getattr(view, 'action', None)
-		verifying_actions = [
-			SUBSCRIBE_ACTION_URL_PATH
-		]
-		return (
-			(request.method == 'POST' and action in verifying_actions) or
-			topic_member_status == TopicMember.TopicMemberStatusEnums.EDITABLE
-		)
+		return topic_member_status == TopicMember.TopicMemberStatusEnums.EDITABLE
 
 	def _has_vocabulary_permission(self, request, view, vocabulary):
 		# Always allow access if the user is the owner
