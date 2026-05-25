@@ -1,6 +1,6 @@
 from django.db import connection
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -65,17 +65,7 @@ class QueryLoggingMixin:
         return response
 
 
-class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
-    permission_classes = [IsOwner]
-    filter_backends = [DjangoFilterBackend]
-
-    list_serializer_class = None
-    create_serializer_class = None
-    update_serializer_class = None
-    invalidate_data_after_update = True
-
-    auto_add_created_by = False
-
+class PermissionMixin:
     def get_permissions(self):
         default_permissions = settings.REST_FRAMEWORK.get('DEFAULT_PERMISSION_CLASSES', [])
         default_permission_classes = [
@@ -99,23 +89,56 @@ class BaseModelViewSet(QueryLoggingMixin, MockUserMixin, viewsets.ModelViewSet):
 
         return [permission() for permission in unique_permission_classes]
 
-    def get_serializer(self, *args, **kwargs):
-        kwargs['context'] = self.get_serializer_context()
-        return (
-            self.serializer_class(*args, **kwargs) 
-            if not kwargs.get('many', False) else 
-            self.get_list_serializer_class()(*args, **kwargs)
-        )
-    
+
+class SerializerSelectionMixin:
+    list_serializer_class = None
+    create_serializer_class = None
+    update_serializer_class = None
+
     def get_list_serializer_class(self):
-        return self.list_serializer_class or self.serializer_class
+        return self.list_serializer_class or self.get_serializer_class()
 
     def get_create_serializer_class(self):
-        return self.create_serializer_class or self.serializer_class
+        return self.create_serializer_class or self.get_serializer_class()
     
     def get_update_serializer_class(self):
-        return self.update_serializer_class or self.serializer_class
-    
+        return self.update_serializer_class or self.get_serializer_class()
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs.setdefault('context', self.get_serializer_context())
+        serializer_class = (
+            self.get_list_serializer_class() if kwargs.get('many', False)
+            else self.get_serializer_class()
+        )
+        return serializer_class(*args, **kwargs)
+
+
+class BaseAPIViewMixin(
+    SerializerSelectionMixin, 
+    PermissionMixin, 
+    QueryLoggingMixin, 
+    MockUserMixin
+):
+    """Reuse permissions, query logging, request mocking, and serializer selection across DRF views."""
+    permission_classes = [IsOwner]
+    filter_backends = [DjangoFilterBackend]
+
+
+class BaseGenericAPIView(
+    BaseAPIViewMixin,
+    generics.GenericAPIView,
+):
+    """Base generic API view with shared permission, request, and serializer selection logic."""
+    pass
+
+
+class BaseModelViewSet(
+    BaseAPIViewMixin,
+    viewsets.ModelViewSet,
+):
+    auto_add_created_by = False
+    invalidate_data_after_update = True
+
     def create(self, request, *args, **kwargs):
         create_serializer_class = self.get_create_serializer_class()
         serializer = create_serializer_class(data=request.data, context={'request': request})
