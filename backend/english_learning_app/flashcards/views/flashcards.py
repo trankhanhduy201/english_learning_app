@@ -34,7 +34,6 @@ from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
 from flashcards.permissions import IsAccessable, CanSubscribeTopic
-from flashcards.constants import SUBSCRIBE_ACTION_URL_PATH
 
 User = get_user_model()
 
@@ -61,27 +60,6 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		qs = qs.with_owner()
 		qs = qs.with_member_count()
 		return qs
-	  
-	@action(
-		detail=True, 
-		methods=['post'], 
-		url_path=SUBSCRIBE_ACTION_URL_PATH, 
-		permission_classes=[CanSubscribeTopic]
-	)
-	def subscribe(self, request, *args, **kwargs):
-		instance = self.get_object()
-		serializers = self._get_create_update_topic_member_serializer(is_create=True)(
-			data={
-				'member': request.user.id,
-				'topic': instance.id,
-				'status': TopicMember.TopicMemberStatusEnums.PENDING
-			}
-		)
-		serializers.is_valid(raise_exception=True)
-		serializers.save()
-		return Response(
-			status=status.HTTP_204_NO_CONTENT
-		)
 	  
 	@action(detail=True, methods=['get', 'post', 'put'], url_path='members')
 	def members(self, request, *args, **kwargs):

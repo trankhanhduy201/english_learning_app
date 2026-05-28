@@ -1,6 +1,5 @@
 from rest_framework import exceptions, permissions
 from flashcards.models import Topic, TopicMember, Vocabulary
-from flashcards.constants import SUBSCRIBE_ACTION_URL_PATH
 
 
 class IsAdminMixin:
@@ -22,10 +21,8 @@ class IsOwner(IsOwnerMixin, permissions.BasePermission):
 
 class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 	def has_permission(self, request, view):
-		action = getattr(view, 'action', None)
 		return (
 			super().has_permission(request, view)
-			and action == SUBSCRIBE_ACTION_URL_PATH
 			and request.method == 'POST'
 		)
 

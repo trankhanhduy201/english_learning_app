@@ -1,1 +1,0 @@
-SUBSCRIBE_ACTION_URL_PATH = 'subscribe'
