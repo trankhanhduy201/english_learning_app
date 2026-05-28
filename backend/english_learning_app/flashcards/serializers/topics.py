@@ -4,6 +4,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField
 
 from flashcards.models import Topic, TopicMember
+from flashcards.decorators.handle_exceptions import handle_exceptions
 from flashcards.serializers.bases import BaseSerializer, CustomPrimaryKeyRelatedField
 from flashcards.serializers.images import UploadImageSerializer
 from flashcards.serializers.topic_members import RetrieveListTopicMembersSerializer
@@ -106,6 +107,11 @@ class RetrieveTopicSerializer(BaseSerializer):
             'member_count',
         ]
 
+    @handle_exceptions(
+        reraise=False, 
+        default_return=None, 
+        log_error=True
+    )
     def get_image_info(self, instance):
         if instance.image_path:
             return UploadImageSerializer(instance=instance.image_path).data
