@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from flashcards.models import Topic, TopicMember
 from flashcards.views.bases import BaseGenericAPIView
@@ -7,22 +7,15 @@ from flashcards.serializers.topic_members import CreateListTopicMembersSerialize
 
 
 class TopicSubscribeView(BaseGenericAPIView):
-	"""
-	View for handling topic subscription.
-	Endpoint: POST /topics/{id}/subscribe/
-	"""
+	"""Create-only nested view for topic subscription."""
 	queryset = Topic.objects.all()
-	permission_classes = [CanSubscribeTopic]
+	lookup_url_kwarg = 'topic_pk'
 	serializer_class = CreateListTopicMembersSerializer
+	permission_classes = [CanSubscribeTopic]
+	http_method_names = ['post', 'options']
 
 	def post(self, request, *args, **kwargs):
-		"""
-		Subscribe the authenticated user to a topic.
-		"""
 		topic = self.get_object()
-		print(topic)
-		
-		# Create topic membership using serializer
 		serializer = self.serializer_class(
 			data={
 				'member': request.user.id,
@@ -32,5 +25,4 @@ class TopicSubscribeView(BaseGenericAPIView):
 		)
 		serializer.is_valid(raise_exception=True)
 		serializer.save()
-		
 		return Response(status=status.HTTP_204_NO_CONTENT)

@@ -16,10 +16,9 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -27,8 +26,6 @@ from rest_framework_simplejwt.views import (
 )
 from flashcards.views.users import UserSignature, UserProfileViewSet
 from flashcards.views.tokens import RevoleTokenView
-from flashcards.views.flashcards import TopicViewSet, VocabularyViewSet
-from flashcards.views.topic_members import TopicSubscribeView
 
 
 urlpatterns = [
@@ -53,13 +50,10 @@ urlpatterns = [
         name='user_profile',
     ),
     path('user/gen-signature', UserSignature.as_view(), name='user_gen_signature'),
-    path('topics/<int:pk>/subscribe/', TopicSubscribeView.as_view(), name='topic_subscribe'),
+    
+    # Flashcards routes (including topics and vocabularies)
+    path('', include('flashcards.urls')),
 ]
-
-router = DefaultRouter()
-router.register(r'topics', TopicViewSet, basename='topic')
-router.register(r'vocabularies', VocabularyViewSet, basename='vocabulary')
-urlpatterns += router.urls
 
 if settings.DEBUG:
     import debug_toolbar

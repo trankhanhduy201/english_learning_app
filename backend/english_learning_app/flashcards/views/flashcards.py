@@ -33,7 +33,7 @@ from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
-from flashcards.permissions import IsAccessable, CanSubscribeTopic
+from flashcards.permissions import IsAccessable
 
 User = get_user_model()
 
