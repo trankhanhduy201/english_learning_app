@@ -8,6 +8,6 @@ router = DefaultRouter()
 router.register(r'profile', UserProfileViewSet, basename='user_profile')
 
 urlpatterns = [
-    path('gen-signature', UserSignature.as_view(), name='user_signature'),
+    path('signature/generate', UserSignature.as_view(), name='user_signature'),
     path('revoke-token', RevokeTokenView.as_view(), name='revoke_token'),
 ] + router.urls

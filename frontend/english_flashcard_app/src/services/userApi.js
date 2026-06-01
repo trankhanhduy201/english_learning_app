@@ -16,7 +16,7 @@ export const updateProfile = async (data, options = {}) => {
 };
 
 export const generateSignature = async (data, options = {}) => {
-  return await callApi("user/gen-signature", {
+  return await callApi("user/signature/generate", {
     method: "POST",
     body: JSON.stringify(data),
     ...options,
