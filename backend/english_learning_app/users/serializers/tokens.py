@@ -5,7 +5,7 @@ from rest_framework_simplejwt.serializers import (
     TokenVerifySerializer,
 )
 
-from flashcards.models import UserToken
+from users.models import UserToken
 from flashcards.serializers.mixins import TokenSerializerMixin
 
 

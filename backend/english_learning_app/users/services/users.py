@@ -1,7 +1,7 @@
 import secrets
 from django.shortcuts import get_object_or_404
 from django.core.signing import Signer, BadSignature
-from flashcards.models import UserSalt
+from users.models import UserSalt
 
 
 class UserSignatureService:

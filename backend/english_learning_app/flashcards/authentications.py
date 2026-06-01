@@ -2,7 +2,7 @@
 from django.db.models import Q
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from flashcards.models import UserToken
+from users.models import UserToken
 
 
 def check_token_version(user_id, token_version):

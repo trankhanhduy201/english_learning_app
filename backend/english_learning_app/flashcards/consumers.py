@@ -6,7 +6,7 @@ from channels.db import database_sync_to_async
 class NotificationConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        from flashcards.services.users import UserSignatureService
+        from users.services.users import UserSignatureService
         self.user_signature_service = UserSignatureService()
 
     @database_sync_to_async

@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Topic, TopicMember, Vocabulary, Translation,
-    UserToken, UserSalt
+    Topic, TopicMember, Vocabulary, Translation
 )
 # from django.contrib.auth.admin import UserAdmin
 # from .models import CustomUser
@@ -62,15 +61,3 @@ class TranslationAdmin(admin.ModelAdmin):
     search_fields = ('translation',)
     autocomplete_fields = ['vocabulary', 'created_by']
 
-
-@admin.register(UserToken)
-class UserTokenAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'refresh_token_version')
-    autocomplete_fields = ['user']
-
-
-@admin.register(UserSalt)
-class UserSaltAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'salt')
-    search_fields = ('user__username',)
-    autocomplete_fields = ['user']

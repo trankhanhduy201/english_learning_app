@@ -24,8 +24,6 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
-from flashcards.views.users import UserSignature, UserProfileViewSet
-from flashcards.views.tokens import RevoleTokenView
 
 
 urlpatterns = [
@@ -33,23 +31,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # JWT endpoints
-    path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
-    path('token/revoke', RevoleTokenView.as_view(), name="token_revoke"),
+    path('token/', include([
+        path('', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+        path('refresh', TokenRefreshView.as_view(), name='token_refresh'),
+        path('verify', TokenVerifyView.as_view(), name='token_verify'),
+    ])),
 
-    # User
-    path(
-        'user/profile',
-        UserProfileViewSet.as_view({
-            'get': 'retrieve',
-            'post': 'create',
-            'put': 'update',
-            'patch': 'partial_update',
-        }),
-        name='user_profile',
-    ),
-    path('user/gen-signature', UserSignature.as_view(), name='user_gen_signature'),
+    # Users app routes
+    path('user/', include('users.urls')),
     
     # Flashcards routes (including topics and vocabularies)
     path('', include('flashcards.urls')),

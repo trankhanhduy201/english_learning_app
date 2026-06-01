@@ -1,7 +1,7 @@
 import { callApi } from "./apiService";
 
 export const getToken = async (username, password, options = {}) => {
-  return await callApi("token", {
+  return await callApi("token/", {
     method: "POST",
     body: JSON.stringify({ username, password }),
     ...options,

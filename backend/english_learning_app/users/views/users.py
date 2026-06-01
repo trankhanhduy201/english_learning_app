@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from flashcards.services.users import UserSignatureService
+from users.services.users import UserSignatureService
 from flashcards.views.bases import BaseModelViewSet
-from flashcards.serializers.users import (
+from users.serializers.users import (
     RetrieveUserSerializer,
     CreateUserSerializer,
     UpdateUserSerializer,
@@ -52,4 +52,4 @@ class UserSignature(APIView):
                 request.user.id, 
                 request.data['value']
             )
-        })            
+        })
