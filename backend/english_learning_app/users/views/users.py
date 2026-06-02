@@ -28,6 +28,12 @@ class UserProfileViewSet(BaseModelViewSet):
         if getattr(self, "request", None) is not None and self.request.method == "POST":
             return []
         return super().get_authenticators()
+    
+    def get_permissions(self):
+        # For the create (POST) endpoint, we allow anyone to register.
+        if self.request.method == "POST":
+            return []
+        return super().get_permissions()
 
     def get_queryset(self):
         return self.queryset.select_related("profile")
