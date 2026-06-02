@@ -38,7 +38,7 @@ urlpatterns = [
     ])),
 
     # Users app routes
-    path('user/', include('users.urls')),
+    path('account/', include('users.urls')),
     
     # Flashcards routes (including topics and vocabularies)
     path('', include('flashcards.urls')),

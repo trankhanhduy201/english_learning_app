@@ -45,17 +45,11 @@ class UserProfileViewSet(BaseModelViewSet):
 
 class UserSignature(APIView):
     permission_classes = [IsAuthenticated]
-    http_method_names = ['post', 'options']
+    http_method_names = ['get']
 
-    def post(self, request):
-        if not 'value' in request.data:
-            return Response({
-                'detail': 'Invalid value'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
+    def get(self, request):
         return Response({
             'signature': user_signature_service.sign(
-                request.user.id, 
-                request.data['value']
+                request.user.id
             )
         })

@@ -32,7 +32,7 @@ export const revokeTokens = async (options = {}) => {
 };
 
 export const registerUser = async (userInfo, options = {}) => {
-  return await callApi("user/profile", {
+  return await callApi("account/", {
     method: "POST",
     body: JSON.stringify(userInfo),
     ...options,

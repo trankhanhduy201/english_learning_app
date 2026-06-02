@@ -5,7 +5,7 @@ from users.models import UserSalt
 
 
 class UserSignatureService:
-    def sign(self, user_id, value):
+    def sign(self, user_id):
         user_salt = UserSalt.objects.filter(user_id=user_id).first()
         if not user_salt:
             user_salt = UserSalt.objects.create(
@@ -14,7 +14,7 @@ class UserSignatureService:
             )
 
         signer = Signer(salt=user_salt.salt)
-        return signer.sign(value)
+        return signer.sign(user_id)
     
     def unsign(self, user_id, signature):
         try:
