@@ -1,5 +1,6 @@
 from django.contrib import admin
-from users.models import UserProfile, UserToken, UserSalt
+from users.models import UserProfile, UserSalt
+from tokens.models import UserToken
 
 
 @admin.register(UserProfile)

@@ -19,11 +19,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
 
 
 urlpatterns = [
@@ -31,11 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # JWT endpoints
-    path('token/', include([
-        path('', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-        path('refresh', TokenRefreshView.as_view(), name='token_refresh'),
-        path('verify', TokenVerifyView.as_view(), name='token_verify'),
-    ])),
+    path('token/', include('tokens.urls')),
 
     # Users app routes
     path('account/', include('users.urls')),

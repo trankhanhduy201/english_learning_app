@@ -1,13 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from users.models import UserToken
+from tokens.models import UserToken
 
 
-class RevokeTokenView(APIView):
+class TokenRevokeView(APIView):
     permission_classes = [IsAuthenticated]
+    http_method_names = ['post', 'options']
 
     def post(self, request):
         user_token = get_object_or_404(UserToken, user_id=request.user.id)

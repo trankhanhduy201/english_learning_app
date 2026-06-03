@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
     'users.apps.UsersConfig',
     'flashcards.apps.FlashcardsConfig',
+    'tokens.apps.TokensConfig',
     'django_q',
     'debug_toolbar'
 ]

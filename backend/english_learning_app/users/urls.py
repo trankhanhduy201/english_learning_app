@@ -1,6 +1,5 @@
 from django.urls import path
 from users.views.users import UserProfileViewSet, UserSignature
-from users.views.tokens import RevokeTokenView
 
 
 urlpatterns = [
@@ -15,5 +14,4 @@ urlpatterns = [
         name='user_profile'
     ),
     path('signature', UserSignature.as_view(), name='user_signature'),
-    path('revoke-token', RevokeTokenView.as_view(), name='revoke_token'),
 ]
