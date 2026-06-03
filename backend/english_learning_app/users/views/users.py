@@ -1,10 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from flashcards.views.bases import BaseAPIView, BaseModelViewSet
 from users.services.users import UserSignatureService
-from flashcards.views.bases import BaseModelViewSet
 from users.serializers.users import (
     RetrieveUserSerializer,
     CreateUserSerializer,
@@ -43,8 +41,7 @@ class UserProfileViewSet(BaseModelViewSet):
         return queryset.get(id=self.request.user.id)
     
 
-class UserSignature(APIView):
-    permission_classes = [IsAuthenticated]
+class UserSignature(BaseAPIView):
     http_method_names = ['post', 'options']
 
     def post(self, request):

@@ -1,15 +1,16 @@
 from django.db import connection
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets, status, generics
+from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from django.utils.module_loading import import_string
 from flashcards.permissions import IsOwner
+
 
 User = get_user_model()
 
@@ -114,17 +115,24 @@ class SerializerSelectionMixin:
 
 
 class BaseAPIViewMixin(
-    SerializerSelectionMixin, 
     PermissionMixin, 
     QueryLoggingMixin, 
     MockUserMixin
 ):
-    """Reuse permissions, query logging, request mocking, and serializer selection across DRF views."""
-    permission_classes = [IsOwner]
+    """Reuse permissions, query logging, request mocking across API views."""
     filter_backends = [DjangoFilterBackend]
 
 
+class BaseAPIView(
+    BaseAPIViewMixin,
+    APIView,
+):
+    """Base API view with shared permission, request mocking, and query logging logic."""
+    pass
+
+
 class BaseGenericAPIView(
+    SerializerSelectionMixin,
     BaseAPIViewMixin,
     generics.GenericAPIView,
 ):
@@ -133,9 +141,11 @@ class BaseGenericAPIView(
 
 
 class BaseModelViewSet(
+    SerializerSelectionMixin,
     BaseAPIViewMixin,
     viewsets.ModelViewSet,
 ):
+    permission_classes = [IsOwner]
     auto_add_created_by = False
     invalidate_data_after_update = True
 
