@@ -172,9 +172,9 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
     'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens
     "SIGNING_KEY": SECRET_KEY,
-    "TOKEN_OBTAIN_SERIALIZER": "users.serializers.tokens.CustomTokenObtainPairSerializer",
-    "TOKEN_REFRESH_SERIALIZER": "users.serializers.tokens.CustomTokenRefreshSerializer",
-    "TOKEN_VERIFY_SERIALIZER": "users.serializers.tokens.CustomTokenVerifySerializer",
+    "TOKEN_OBTAIN_SERIALIZER": "tokens.serializers.tokens.CustomTokenObtainPairSerializer",
+    "TOKEN_REFRESH_SERIALIZER": "tokens.serializers.tokens.CustomTokenRefreshSerializer",
+    "TOKEN_VERIFY_SERIALIZER": "tokens.serializers.tokens.CustomTokenVerifySerializer",
 
 }
 

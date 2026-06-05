@@ -16,7 +16,6 @@ class CustomTokenVerifySerializer(TokenSerializerMixin, TokenVerifySerializer):
 class CustomTokenRefreshSerializer(TokenSerializerMixin, TokenRefreshSerializer):
     pass
 
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
