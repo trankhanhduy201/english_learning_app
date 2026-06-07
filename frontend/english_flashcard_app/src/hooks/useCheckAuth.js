@@ -48,11 +48,8 @@ const useCheckAuth = ({
             return;
           }
 
-          const { token, refreshToken } = cookies.getAuthTokens();
-          const verified = await tokenCommon.verifyToken(
-            token,
-            refreshToken
-          );
+          const token = cookies.getAccessToken();
+          const verified = await tokenCommon.verifyToken(token);
           setIsLogged(verified);
         },
         THROTTLING_TOKEN_VERIFY,
@@ -72,11 +69,8 @@ const useCheckAuth = ({
     if (!hasCheckExpired) return;
 
     const checkExpired = async () => {
-      const { token, refreshToken } = cookies.getAuthTokens();
-      const verified = await tokenCommon.localVerifyToken(
-        token,
-        refreshToken
-      );
+      const token = cookies.getAccessToken();
+      const verified = await tokenCommon.localVerifyToken(token);
       setIsExpired(!verified);
     };
 

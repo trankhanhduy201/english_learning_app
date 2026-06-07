@@ -2,15 +2,10 @@ import * as authApi from "../services/authApi";
 import * as jwtUtils from "./jwt";
 import * as cookieUtils from "../commons/cookies";
 
-export const refreshNewToken = async (refreshToken) => {
-  if (!refreshToken) {
-    cookieUtils.clearAuthTokens();
-    return false;
-  }
-
-  const resp = await authApi.refreshToken(refreshToken);
+export const refreshNewToken = async () => {
+  const resp = await authApi.refreshToken();
   if (resp.status === "error") {
-    cookieUtils.clearAuthTokens();
+    cookieUtils.clearAccessToken();
     return false;
   }
 
@@ -19,7 +14,7 @@ export const refreshNewToken = async (refreshToken) => {
   return accessToken;
 };
 
-export const verifyToken = async (token, refreshToken) => {
+export const verifyToken = async (token) => {
   if (token) {
     const resp = await authApi.verifyToken(token);
     if (resp.code == 200) {
@@ -27,20 +22,16 @@ export const verifyToken = async (token, refreshToken) => {
     }
   }
 
-  const accessToken = await refreshNewToken(refreshToken);
+  const accessToken = await refreshNewToken();
   return !!accessToken;
 };
 
-export const localVerifyToken = async (token, refreshToken) => {
+export const localVerifyToken = async (token) => {
   if (token && !jwtUtils.checkTokenExpired(token, 120)) {
     return true;
   }
 
-  if (!refreshToken || jwtUtils.checkTokenExpired(refreshToken, 300)) {
-    return false;
-  }
-
-  const accessToken = refreshNewToken(refreshToken);
+  const accessToken = await refreshNewToken();
   return !!accessToken;
 };
 
@@ -58,6 +49,6 @@ export const getUserInfo = (token) => {
     id: payload.user_id,
     username: payload.username,
     email: payload.email,
-    full_name: payload.full_name
+    full_name: payload.full_name,
   };
 };

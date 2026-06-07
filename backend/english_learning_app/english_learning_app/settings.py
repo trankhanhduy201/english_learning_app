@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -167,7 +167,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=300), # Access token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=45), # Access token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # DEFAULT_AUTHENTICATION_CLASSES Refresh token lifetime
     'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
     'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens
@@ -175,14 +175,21 @@ SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "tokens.serializers.tokens.CustomTokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "tokens.serializers.tokens.CustomTokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "tokens.serializers.tokens.CustomTokenVerifySerializer",
-
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = []
+# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "localhost:3000"
+]
 
-CORS_ALLOW_HEADERS = ['*']
+# CORS_ALLOW_HEADERS = ['*']
 CORS_ALLOW_METHODS = ['*']
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+]
 
 Q_CLUSTER = {
     'name': 'DjangoORM',  # Use 'redis' if you prefer Redis as a broker

@@ -4,8 +4,8 @@ import { revokeTokens } from "../../services/authApi";
 
 export const refreshTokenThunk = createThunkWithCallback(
   "token/refresh",
-  async ({ refreshToken, originalAction }, { dispatch }) => {
-    const accessToken = await refreshNewToken(refreshToken);
+  async ({ originalAction }, { dispatch }) => {
+    const accessToken = await refreshNewToken();
     if (accessToken === false) {
       throw new Error("Can not refresh new access token");
     }
@@ -19,8 +19,8 @@ export const refreshTokenThunk = createThunkWithCallback(
 
 export const revokeTokensThunk = createThunkWithCallback(
   "tokens/revoke",
-  async (_, { dispatch, rejectWithValue }) => {
-    const response = await revokeTokens();
+  async ({ permanent }, { dispatch, rejectWithValue }) => {
+    const response = await revokeTokens({ permanent });
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }

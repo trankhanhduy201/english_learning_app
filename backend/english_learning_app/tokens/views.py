@@ -1,8 +1,89 @@
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from flashcards.views.bases import BaseAPIView
 from tokens.models import UserToken
+
+REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
+
+def _get_same_site_setting():
+    secure = not settings.DEBUG
+    if getattr(settings, 'CORS_ALLOW_ALL_ORIGINS', False) and secure:
+        return 'None'
+    return 'Lax'
+
+def _get_seceure_setting():
+    return not settings.DEBUG
+
+def _set_refresh_token_cookie(response, refresh_token):
+    response.set_cookie(
+        key=REFRESH_TOKEN_COOKIE_NAME,
+        value=refresh_token,
+        max_age=int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
+        httponly=True,
+        secure=_get_seceure_setting(),
+        samesite=_get_same_site_setting(),
+        path='/',
+    )
+
+def _delete_refresh_token_cookie(response):
+    response.delete_cookie(
+        REFRESH_TOKEN_COOKIE_NAME,
+        samesite=_get_same_site_setting(),
+        path='/'
+    )
+
+def _making_response_with_cookie(serializer_data, refresh_token=None):
+    if 'refresh' in serializer_data:
+        del serializer_data['refresh']
+
+    response = Response(serializer_data, status=status.HTTP_200_OK)
+    if refresh_token:
+        _set_refresh_token_cookie(response, refresh_token)
+    
+    return response
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """Override to attach refresh token to cookie"""
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as exc:
+            return Response(exc.detail, status=status.HTTP_401_UNAUTHORIZED)
+        
+        return _making_response_with_cookie(
+            serializer.validated_data, 
+            refresh_token=serializer.validated_data.get('refresh')
+        )
+        
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """Override to get refresh token from cookie and attach new one to cookie"""
+
+    def post(self, request, *args, **kwargs):
+        # Get request data and add refresh token from cookie if not present
+        data = dict(request.data)
+        refresh_token = request.COOKIES.get('refresh_token')
+        if refresh_token:
+            data['refresh'] = refresh_token
+        
+        # Instantiate serializer with combined data
+        serializer = self.get_serializer(data=data)
+        
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as exc:
+            return Response(exc.detail, status=status.HTTP_401_UNAUTHORIZED)
+        
+        return _making_response_with_cookie(
+            serializer.validated_data, 
+            refresh_token=serializer.validated_data.get('refresh')
+        )
 
 
 class TokenRevokeView(BaseAPIView):
@@ -11,4 +92,8 @@ class TokenRevokeView(BaseAPIView):
     def post(self, request):
         user_token = get_object_or_404(UserToken, user_id=request.user.id)
         user_token.increment_refresh_token_version()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+        _delete_refresh_token_cookie(response)
+        
+        return response

@@ -26,10 +26,10 @@ export const login = async ({ request }) => {
 export const logout = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  const revokeTokens = Boolean(Number(data?.revoke_tokens ?? 0));
+  const revokeTokenPermanent = Boolean(Number(data?.revoke_tokens ?? 0));
 
   try {
-    await store.dispatch(logoutThunk({ revokeTokens })).unwrap();
+    await store.dispatch(logoutThunk({ revokeTokenPermanent })).unwrap();
     return redirect("/login");
   } catch (err) {
     return err;

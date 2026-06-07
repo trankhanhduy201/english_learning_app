@@ -14,7 +14,7 @@ const buildUrl = (endpoint, query) => {
 };
 
 export const callApi = async (endpoint, options = {}) => {
-  const { token } = cookies.getAuthTokens();
+  const token = cookies.getAccessToken();
   const headers = {
     Authorization: `Bearer ${token}`,
     ...options?.header,
@@ -31,7 +31,7 @@ export const callApi = async (endpoint, options = {}) => {
     let dataJson = {};
     const resp = await fetch(buildUrl(endpoint, query), {
       ...options,
-      headers,
+      headers
     });
 
     const contentType = resp.headers.get("Content-Type");
