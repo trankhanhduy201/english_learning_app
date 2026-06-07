@@ -167,7 +167,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=45), # Access token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=60), # Access token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # DEFAULT_AUTHENTICATION_CLASSES Refresh token lifetime
     'ROTATE_REFRESH_TOKENS': False,                  # Issue a new refresh token when refreshed
     'BLACKLIST_AFTER_ROTATION': False,               # Blacklist old refresh tokens
