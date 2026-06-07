@@ -1,5 +1,5 @@
+from django.db.models import F
 from django.conf import settings
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -90,10 +90,15 @@ class TokenRevokeView(BaseAPIView):
     http_method_names = ['post', 'options']
 
     def post(self, request):
-        user_token = get_object_or_404(UserToken, user_id=request.user.id)
-        user_token.increment_refresh_token_version()
-        
+        permanent = request.data.get('permanent', False)
+        if permanent:
+            UserToken.objects.filter(
+                user_id=request.user.id
+            ).update(
+                refresh_token_version=F('refresh_token_version') + 1
+            )
+
         response = Response(status=status.HTTP_204_NO_CONTENT)
         _delete_refresh_token_cookie(response)
-        
+
         return response
