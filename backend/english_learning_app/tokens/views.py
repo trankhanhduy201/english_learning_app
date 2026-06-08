@@ -9,13 +9,13 @@ from tokens.models import UserToken
 REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
 
 def _get_same_site_setting():
-    secure = not settings.DEBUG
-    if getattr(settings, 'CORS_ALLOW_ALL_ORIGINS', False) and secure:
-        return 'None'
     return 'Lax'
 
 def _get_seceure_setting():
     return not settings.DEBUG
+
+def _get_path_setting():
+    return '/token'
 
 def _set_refresh_token_cookie(response, refresh_token):
     response.set_cookie(
@@ -25,14 +25,14 @@ def _set_refresh_token_cookie(response, refresh_token):
         httponly=True,
         secure=_get_seceure_setting(),
         samesite=_get_same_site_setting(),
-        path='/',
+        path=_get_path_setting()
     )
 
 def _delete_refresh_token_cookie(response):
     response.delete_cookie(
         REFRESH_TOKEN_COOKIE_NAME,
         samesite=_get_same_site_setting(),
-        path='/'
+        path=_get_path_setting()
     )
 
 def _making_response_with_cookie(serializer_data, refresh_token=None):
