@@ -92,11 +92,7 @@ class TokenRevokeView(BaseAPIView):
     def post(self, request):
         permanent = request.data.get('permanent', False)
         if permanent:
-            UserToken.objects.filter(
-                user_id=request.user.id
-            ).update(
-                refresh_token_version=F('refresh_token_version') + 1
-            )
+            UserToken.objects.increase_token_version(request.user.id)
 
         response = Response(status=status.HTTP_204_NO_CONTENT)
         _delete_refresh_token_cookie(response)
