@@ -1,9 +1,19 @@
 import "./App.css";
 import { RouterProvider } from "react-router-dom";
-import routes from "./routes/route";
+import useCheckAuth from "./hooks/useCheckAuth";
+import LoadingOverlay from "./components/LoadingOverlay";
+import { createAppRouter } from "./routes/route";
 
 function App() {
-  return <RouterProvider router={routes} />;
+  const { isLogged } = useCheckAuth({
+    hasCheckExpired: false,
+  });
+
+  if (!isLogged) {
+    return <LoadingOverlay />;
+  }
+
+  return <RouterProvider router={createAppRouter()} />;
 }
 
 export default App;
