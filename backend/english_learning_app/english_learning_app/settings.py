@@ -140,18 +140,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'flashcards.authentications.CustomJWTAuthentication',
+        'tokens.authentications.CustomJWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_RENDERER_CLASSES': [
-        'flashcards.renderers.CustomJSONRenderer',
+        'shared.renderers.CustomJSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
         # 'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'EXCEPTION_HANDLER': 'flashcards.exceptions.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'shared.exceptions.custom_exception_handler',
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10
 }

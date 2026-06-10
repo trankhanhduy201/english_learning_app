@@ -2,7 +2,7 @@ from django.db import IntegrityError, models, transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import MANY_RELATION_KWARGS, ManyRelatedField
-from flashcards.exceptions import ConflictException
+from shared.exceptions import ConflictException
 
 
 class CustomManyRelatedField(ManyRelatedField):

@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
 from django.utils.module_loading import import_string
-from flashcards.permissions import IsOwner
+from shared.permissions import IsOwner
 
 
 User = get_user_model()

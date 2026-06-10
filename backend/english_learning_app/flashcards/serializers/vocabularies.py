@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 
 from flashcards.models import Topic, Translation, Vocabulary
-from flashcards.serializers.bases import (
+from shared.serializers.bases import (
     BaseListSerializer,
     BaseSerializer,
     CustomPrimaryKeyRelatedField,

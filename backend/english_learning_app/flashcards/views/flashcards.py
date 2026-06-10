@@ -6,6 +6,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from shared.views.bases import BaseModelViewSet
+from shared.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.serializers.topics import (
 	RetrieveTopicSerializer,
 	CreateTopicSerializer,
@@ -25,9 +27,6 @@ from flashcards.serializers.vocabularies import (
 from flashcards.serializers.requests import (
 	RequestImportVocabulariesSerializer
 )
-from flashcards.models import TopicMember
-from flashcards.views.bases import BaseModelViewSet
-from flashcards.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.views.paginations import CustomPageNumberPagination
 from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter

@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import BooleanField, CharField
-
 from flashcards.models import Topic, TopicMember
-from flashcards.serializers.bases import (
+from shared.serializers.bases import (
     BaseListSerializer,
     BaseSerializer,
     CustomPrimaryKeyRelatedField,

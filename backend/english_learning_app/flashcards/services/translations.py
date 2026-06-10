@@ -1,6 +1,6 @@
 from django.db import transaction
 from flashcards.models import Translation
-from flashcards.decorators import handle_exceptions
+from shared.decorators.handle_exceptions import handle_exceptions
 
 
 class TranslationService:

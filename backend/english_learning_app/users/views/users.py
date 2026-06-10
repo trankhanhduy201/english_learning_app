@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
-from flashcards.views.bases import BaseAPIView, BaseModelViewSet
+from shared.views.bases import BaseAPIView, BaseModelViewSet
 from users.services.users import UserSignatureService
 from users.serializers.users import (
     RetrieveUserSerializer,

@@ -1,7 +1,7 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from flashcards.models import Topic, TopicMember
-from flashcards.views.bases import BaseGenericAPIView
+from shared.views.bases import BaseGenericAPIView
 from flashcards.permissions import CanSubscribeTopic
 from flashcards.serializers.topic_members import CreateListTopicMembersSerializer
 

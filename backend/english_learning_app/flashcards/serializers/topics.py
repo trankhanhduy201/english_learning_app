@@ -4,9 +4,9 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField
 
 from flashcards.models import Topic, TopicMember
-from flashcards.decorators.handle_exceptions import handle_exceptions
-from flashcards.serializers.bases import BaseSerializer, CustomPrimaryKeyRelatedField
-from flashcards.serializers.images import UploadImageSerializer
+from shared.decorators.handle_exceptions import handle_exceptions
+from shared.serializers.bases import BaseSerializer, CustomPrimaryKeyRelatedField
+from shared.serializers.images import UploadImageSerializer
 from flashcards.serializers.topic_members import RetrieveListTopicMembersSerializer
 
 User = get_user_model()

@@ -1,8 +1,6 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from flashcards.serializers.fields import StringListField
-
 
 class UploadImageSerializer(serializers.Serializer):
     name = serializers.SerializerMethodField()

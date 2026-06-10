@@ -4,7 +4,6 @@ from rest_framework.serializers import (
     IntegerField,
     Serializer,
 )
-
 from flashcards.models import LanguageEnums
 
 

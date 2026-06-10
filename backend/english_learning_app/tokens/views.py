@@ -3,7 +3,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from flashcards.views.bases import BaseAPIView
+from shared.views.bases import BaseAPIView
 from tokens.models import UserToken
 
 REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
