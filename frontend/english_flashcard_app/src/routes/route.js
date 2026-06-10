@@ -67,7 +67,7 @@ const topicShouldRevalidate = ({
   return false;
 };
 
-export const createAppRouter = () => createBrowserRouter(
+const routes = createBrowserRouter(
   [
     {
       path: "/test",
@@ -181,3 +181,4 @@ export const createAppRouter = () => createBrowserRouter(
     },
   },
 );
+export default routes;
