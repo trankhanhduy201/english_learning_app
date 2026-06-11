@@ -11,7 +11,7 @@ export const getTokenExp = (token: string, adjustExp: int = 120): number | null 
 
 export const checkTokenExpired = (token, adjustExp) => {
   const expiresAt = getTokenExp(token, adjustExp);
-  return expiresAt && Date.now() >= expiresAt;
+  return expiresAt === null || Date.now() >= expiresAt;
 }
 
 export const getTokenPayload = (token) => {
