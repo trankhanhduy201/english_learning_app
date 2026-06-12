@@ -1,28 +1,14 @@
 import { useMemo } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { useFetcher } from "react-router-dom";
-import useCheckAuth from "../hooks/useCheckAuth";
-import LoadingOverlay from "../components/LoadingOverlay";
+import { Link, useFetcher } from "react-router-dom";
 import FieldErrors from "../components/FieldErrors";
 
 const Login = () => {
   const loginFetcher = useFetcher();
-  const { isLogged } = useCheckAuth({
-    hasCheckExpired: false,
-  });
 
   const apiErrors = useMemo(() => {
     if (loginFetcher.data?.status !== "error") return {};
     return loginFetcher.data?.errors ?? {};
   }, [loginFetcher.data]);
-
-  if (isLogged === null) {
-    return <LoadingOverlay />;
-  }
-
-  if (isLogged) {
-    return <Navigate to="/dashboard" />;
-  }
 
   const getFieldErrors = (fieldName) => {
     const errors = apiErrors?.[fieldName];

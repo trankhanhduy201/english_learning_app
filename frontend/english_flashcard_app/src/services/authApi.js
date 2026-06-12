@@ -38,7 +38,6 @@ export const registerUser = async (userInfo, options = {}) => {
   return await callApi("account/", {
     method: "POST",
     body: JSON.stringify(userInfo),
-    credentials: "include",
     ...options,
   });
 };

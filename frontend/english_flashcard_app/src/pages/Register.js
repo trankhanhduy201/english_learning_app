@@ -1,16 +1,10 @@
 import { useEffect, useMemo, useRef } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { useFetcher } from "react-router-dom";
+import { Link, useFetcher } from "react-router-dom";
 import FieldErrors from "../components/FieldErrors";
-import LoadingOverlay from "../components/LoadingOverlay";
-import useCheckAuth from "../hooks/useCheckAuth";
 
 const Register = () => {
   const registerFetcher = useFetcher();
   const formRef = useRef(null);
-  const { isLogged } = useCheckAuth({
-    hasCheckExpired: false,
-  });
 
   const apiErrors = useMemo(() => {
     if (registerFetcher.data?.status !== "error") return {};
@@ -25,14 +19,6 @@ const Register = () => {
       formRef.current?.reset();
     }
   }, [isSuccess]);
-
-  if (isLogged === null) {
-    return <LoadingOverlay />;
-  }
-
-  if (isLogged) {
-    return <Navigate to="/dashboard" />;
-  }
 
   const getFieldErrors = (fieldName) => {
     const errors = apiErrors?.[fieldName];
