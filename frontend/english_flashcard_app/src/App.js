@@ -15,16 +15,17 @@ function App() {
     return <LoadingOverlay />;
   }
 
-  const isLoginRoute = window.location.pathname.startsWith("/login");
-  const isRegisterRoute = window.location.pathname.startsWith("/register");
   const pathname = window.location.pathname;
+  const noAuthRoutes = ["/login", "/register"];
+  const isNoAuthRoute = noAuthRoutes.includes(pathname);
+
   let targetPath = pathname;
-  
-  if (isLogged === false && !isLoginRoute && !isRegisterRoute) {
-      targetPath = "/login";
+
+  if (isLogged === false && !isNoAuthRoute) {
+    targetPath = "/login";
   }
 
-  if (isLogged === true && (isLoginRoute || isRegisterRoute)) {
+  if (isLogged === true && isNoAuthRoute) {
     targetPath = "/dashboard";
   }
 
