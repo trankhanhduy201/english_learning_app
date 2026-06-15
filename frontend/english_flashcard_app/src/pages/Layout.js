@@ -6,7 +6,21 @@ import useCheckAuth from "../hooks/useCheckAuth";
 import LoadingOverlay from "../components/LoadingOverlay";
 import CountdownLogoutModal from "../components/CountdownLogoutModal";
 
-const Layout = () => {
+const GuestLayout = () => {
+  const { isLogged } = useCheckAuth({});
+
+  if (isLogged === null) {
+    return <LoadingOverlay />;
+  }
+
+  if (isLogged === true) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return <Outlet />;
+};
+
+const UserLayout = () => {
   const { isLogged, isExpired, setIsLogged, setIsExpired } = useCheckAuth({
     hasCheckExpired: true,
   });
@@ -15,7 +29,7 @@ const Layout = () => {
     return <LoadingOverlay />;
   }
 
-  if (!isLogged) {
+  if (isLogged === false) {
     return <Navigate to="/login" />;
   }
 
@@ -46,6 +60,13 @@ const Layout = () => {
       )}
     </>
   );
+};
+
+const Layout = ({ isGuest = false }) => {
+  if (isGuest) {
+    return <GuestLayout />;
+  }
+  return <UserLayout />;
 };
 
 export default Layout;

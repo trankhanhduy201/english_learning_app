@@ -12,7 +12,7 @@ const readVerifyCache = (token) => {
   if (
     parsed &&
     parsed.at &&
-    parsed.token === token &&
+    parsed?.token === token &&
     Date.now() - parsed.at < TOKEN_VERIFY_EXPIRE
   ) {
     return parsed.verified;
@@ -56,9 +56,8 @@ export const verifyToken = async (token) => {
 
     const accessToken = await refreshNewToken();
     const verified = !!accessToken;
-    if (verified) {
-      writeVerifyCache(accessToken, true);
-    }
+    writeVerifyCache(verified ? accessToken : undefined, verified);
+
     return verified;
   } catch (e) {
     return false;

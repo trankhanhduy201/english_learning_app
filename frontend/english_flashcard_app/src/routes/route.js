@@ -70,22 +70,27 @@ const topicShouldRevalidate = ({
 export const createAppRouter = () => createBrowserRouter(
   [
     {
-      path: "/test",
-      element: <Test />,
-    },
-    {
-      path: "/login",
-      element: <Login />,
-      action: loginAction.login,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-      action: registerAction.register,
-    },
-    {
       path: "/logout",
       action: loginAction.logout,
+    },
+    {
+      element: <Layout isGuest={true} />,
+      children: [
+        {
+          path: "/test",
+          element: <Test />,
+        },
+        {
+          path: "/login",
+          element: <Login />,
+          action: loginAction.login,
+        },
+        {
+          path: "/register",
+          element: <Register />,
+          action: registerAction.register,
+        },
+      ],
     },
     {
       path: "/",
