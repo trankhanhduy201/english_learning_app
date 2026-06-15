@@ -1,8 +1,7 @@
-import { useEffect, useState, useMemo, useRef } from "react";
-import throttle from "lodash/throttle";
+import { useEffect, useState, useRef, useCallback } from "react";
 import * as cookies from "../commons/cookies";
 import * as tokenCommon from "../commons/token";
-import { THROTTLING_TOKEN_VERIFY, TOKEN_VERIFY_INTERVAL } from "../configs/appConfig";
+import { TOKEN_VERIFY_INTERVAL } from "../configs/appConfig";
 
 const useCheckAuth = ({ 
   pageName = null, 
@@ -32,32 +31,23 @@ const useCheckAuth = ({
     );
   }
 
-  // Throttle auth verification
-  const throttledVerify = useMemo(
-    () =>
-      throttle(
-        async () => {
-          if (skipFirstVerify && countUpRef.current === 1) {
-            countUpRef.current += 1;
-            return;
-          }
+  const throttledVerify = useCallback(
+    async () => {
+      if (skipFirstVerify && countUpRef.current === 1) {
+        countUpRef.current += 1;
+        return;
+      }
 
-          setIsLogged(null);
-          if (isPassServerAuth) {
-            setIsLogged(true);
-            return;
-          }
+      setIsLogged(null);
+      if (isPassServerAuth) {
+        setIsLogged(true);
+        return;
+      }
 
-          const token = cookies.getAccessToken();
-          const verified = await tokenCommon.verifyToken(token);
-          setIsLogged(verified);
-        },
-        THROTTLING_TOKEN_VERIFY,
-        {
-          leading: true,
-          trailing: false,
-        }
-      ),
+      const token = cookies.getAccessToken();
+      const verified = await tokenCommon.verifyToken(token);
+      setIsLogged(verified);
+    },
     [isPassServerAuth, skipFirstVerify]
   );
 

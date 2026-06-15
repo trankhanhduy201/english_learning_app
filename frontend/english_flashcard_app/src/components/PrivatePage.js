@@ -14,11 +14,6 @@ const Profile = lazy(() => import("../pages/Profile"));
 const VocabModal = lazy(() => import("../pages/VocabModal"));
 const TopicModal = lazy(() => import("../pages/TopicModal"));
 
-const isPassServerAuth = pageName => [
-  "TopicModal",
-  "VocabModal"
-].includes(pageName);
-
 const Page = memo(({ pageName }) => {
   switch (pageName) {
     case "Dashboard":
@@ -49,8 +44,6 @@ const PrivatePage = memo(({ pageName }) => {
   const { isLogged } = useCheckAuth({
     pageName,
     hasCheckExpired: false,
-    isPassServerAuth: isPassServerAuth(pageName),
-    skipFirstVerify: true
   });
 
   if (isLogged === null) {

@@ -4,7 +4,7 @@ import {
   setAccessToken as setAccessTokenCookie, 
   clearAccessToken as clearAccessTokenCookie 
 } from "../../commons/cookies";
-import { getUserInfo } from "../../commons/token";
+import { getUserInfo, writeVerifyCache as setVerifyCache, clearVerifyCache } from "../../commons/token";
 import { 
   setUser as setUserLocalStorage,
 } from "../../commons/localStorage";
@@ -29,6 +29,7 @@ export const loginThunk = createThunkWithCallback(
     }
     
     setAccessTokenCookie(response.data.access);
+    setVerifyCache(response.data.access, true);
     setUserLocalStorage(userInfo);
     dispatchSuccessAlert(dispatch, `Hi ${userInfo?.full_name}, wellcome back!`);
     return response;
@@ -47,6 +48,7 @@ export const logoutThunk = createThunkWithCallback(
     }
     
     clearAccessTokenCookie();
+    clearVerifyCache();
     setUserLocalStorage({});
     return {
       status: 'success',

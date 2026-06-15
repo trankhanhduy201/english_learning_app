@@ -9,7 +9,6 @@ import CountdownLogoutModal from "../components/CountdownLogoutModal";
 const Layout = () => {
   const { isLogged, isExpired, setIsLogged, setIsExpired } = useCheckAuth({
     hasCheckExpired: true,
-    skipFirstVerify: true
   });
 
   if (isLogged === null) {

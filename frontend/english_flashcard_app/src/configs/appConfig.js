@@ -2,6 +2,8 @@ export const THROTTLING_TOKEN_VERIFY = 10 * 1000; // 10 seconds
 
 export const TOKEN_VERIFY_INTERVAL = 5 * 1000; // 5 seconds
 
+export const TOKEN_VERIFY_EXPIRE = 10 * 1000; // 10 seconds
+
 export const TOPIC_STATUS = {
   PRIVATE: {
     key: "private",
