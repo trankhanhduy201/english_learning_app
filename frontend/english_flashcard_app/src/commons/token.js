@@ -1,13 +1,26 @@
 import * as authApi from "../services/authApi";
 import * as jwtUtils from "./jwt";
-import * as cookieUtils from "../commons/cookies";
 import { TOKEN_VERIFY_EXPIRE } from "../configs/appConfig";
 import { clearValue, getValue, setValue } from "./localStorage";
 
-const CACHE_KEY = "token_verify_cache";
+const VERIFY_CACHE_KEY = "token_verify_cache";
 
-const readVerifyCache = (token) => {
-  const parsed = getValue(CACHE_KEY, null);
+const TOKEN_KEY = "access_token";
+
+export const setAccessToken = (newToken) => {
+  setValue(TOKEN_KEY, newToken);
+};
+
+export const getAccessToken = () => {
+  return getValue(TOKEN_KEY, null);
+};
+
+export const clearAccessToken = () => {
+  clearValue(TOKEN_KEY);
+};
+
+export const readVerifyCache = (token) => {
+  const parsed = getValue(VERIFY_CACHE_KEY, null);
   if (!parsed) return null;
   if (
     parsed &&
@@ -21,22 +34,22 @@ const readVerifyCache = (token) => {
 };
 
 export const writeVerifyCache = (token, verified) => {
-  setValue(CACHE_KEY, JSON.stringify({ at: Date.now(), verified, token }));
+  setValue(VERIFY_CACHE_KEY, JSON.stringify({ at: Date.now(), verified, token }));
 };
 
 export const clearVerifyCache = () => {
-  clearValue(CACHE_KEY);
+  clearValue(VERIFY_CACHE_KEY);
 };
 
 export const refreshNewToken = async () => {
   const resp = await authApi.refreshToken();
   if (resp.status === "error") {
-    cookieUtils.clearAccessToken();
+    clearAccessToken();
     return false;
   }
 
   const accessToken = resp.data.access;
-  cookieUtils.setAccessToken(accessToken);
+  setAccessToken(accessToken);
   return accessToken;
 };
 

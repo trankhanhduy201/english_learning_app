@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import * as cookies from "../commons/cookies";
 import * as tokenCommon from "../commons/token";
 import { TOKEN_VERIFY_INTERVAL } from "../configs/appConfig";
 
@@ -44,7 +43,7 @@ const useCheckAuth = ({
         return;
       }
 
-      const token = cookies.getAccessToken();
+      const token = tokenCommon.getAccessToken();
       const verified = await tokenCommon.verifyToken(token);
       setIsLogged(verified);
     },
@@ -59,7 +58,7 @@ const useCheckAuth = ({
     if (!hasCheckExpired) return;
 
     const checkExpired = async () => {
-      const token = cookies.getAccessToken();
+      const token = tokenCommon.getAccessToken();
       const verified = await tokenCommon.localVerifyToken(token);
       setIsExpired(!verified);
     };

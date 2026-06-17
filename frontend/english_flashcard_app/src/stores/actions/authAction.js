@@ -3,7 +3,7 @@ import { getToken as getTokenApi, registerUser as registerUserApi } from "../../
 import { 
   setAccessToken as setAccessTokenCookie, 
   clearAccessToken as clearAccessTokenCookie 
-} from "../../commons/cookies";
+} from "../../commons/token";
 import { getUserInfo, writeVerifyCache as setVerifyCache, clearVerifyCache } from "../../commons/token";
 import { 
   setUser as setUserLocalStorage,

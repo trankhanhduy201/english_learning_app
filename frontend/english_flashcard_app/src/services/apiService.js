@@ -1,5 +1,5 @@
 import * as apiConfig from "../configs/apiConfig";
-import * as cookies from "../commons/cookies";
+import * as tokenUtils from "../commons/token";
 
 const API_BASE_URL = apiConfig.API_BASE_URL;
 
@@ -14,7 +14,7 @@ const buildUrl = (endpoint, query) => {
 };
 
 export const callApi = async (endpoint, options = {}) => {
-  const token = cookies.getAccessToken();
+  const token = tokenUtils.getAccessToken();
   const headers = {
     Authorization: `Bearer ${token}`,
     ...options?.header,
