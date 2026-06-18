@@ -12,7 +12,21 @@ export const getValue = (key, defaultValue) => {
 
 export const setValue = (key, value) => localStorage.setItem(key, value);
 
-export const clearValue = (key) => localStorage.removeItem(key);
+export const clearValue = (key) => {
+  try {
+    localStorage.removeItem(key);
+  } catch (err) {
+    console.warn(`Error removing ${key} from localStorage`, err);
+  }
+};
+
+export const clearAll = () => {
+  try {
+    localStorage.clear();
+  } catch (err) {
+    console.warn("Error clearing localStorage", err);
+  }
+};
 
 export const LANG_KEY = "lang";
 

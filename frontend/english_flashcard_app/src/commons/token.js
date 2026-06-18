@@ -4,8 +4,20 @@ import { TOKEN_VERIFY_EXPIRE } from "../configs/appConfig";
 import { clearValue, getValue, setValue } from "./localStorage";
 
 const VERIFY_CACHE_KEY = "token_verify_cache";
-
 const TOKEN_KEY = "access_token";
+const REFRESH_TOKEN_KEY = "refresh_token_key";
+
+export const setRefreshTokenKey = (key) => {
+  setValue(REFRESH_TOKEN_KEY, key);
+};
+
+export const getRefreshTokenKey = () => {
+  return getValue(REFRESH_TOKEN_KEY, null);
+};
+
+export const clearRefreshTokenKey = () => {
+  clearValue(REFRESH_TOKEN_KEY);
+};
 
 export const setAccessToken = (newToken) => {
   setValue(TOKEN_KEY, newToken);
@@ -33,7 +45,7 @@ export const readVerifyCache = (token) => {
   return null;
 };
 
-export const writeVerifyCache = (token, verified) => {
+export const setVerifyCache = (token, verified) => {
   setValue(VERIFY_CACHE_KEY, JSON.stringify({ at: Date.now(), verified, token }));
 };
 
@@ -42,9 +54,19 @@ export const clearVerifyCache = () => {
 };
 
 export const refreshNewToken = async () => {
-  const resp = await authApi.refreshToken();
+  const refreshTokenKey = getRefreshTokenKey()
+  if (!refreshTokenKey) {
+    clearAccessToken();
+    return false
+  }
+
+  const resp = await authApi.refreshToken({ 
+    refresh_token_key: refreshTokenKey
+   });
+
   if (resp.status === "error") {
     clearAccessToken();
+    clearRefreshTokenKey();
     return false;
   }
 
@@ -62,14 +84,14 @@ export const verifyToken = async (token) => {
     if (token) {
       const resp = await authApi.verifyToken(token);
       if (resp.code == 200) {
-        writeVerifyCache(token, true);
+        setVerifyCache(token, true);
         return true;
       }
     }
 
     const accessToken = await refreshNewToken();
     const verified = !!accessToken;
-    writeVerifyCache(verified ? accessToken : undefined, verified);
+    setVerifyCache(verified ? accessToken : undefined, verified);
 
     return verified;
   } catch (e) {

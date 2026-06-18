@@ -1,10 +1,12 @@
 import { createThunkWithCallback, rejectWithErrorValue, dispatchSuccessAlert } from "./commonAction";
 import { getToken as getTokenApi, registerUser as registerUserApi } from "../../services/authApi";
 import { 
-  setAccessToken as setAccessTokenCookie, 
-  clearAccessToken as clearAccessTokenCookie 
+  setAccessToken, 
+  setRefreshTokenKey,
+  getUserInfo, 
+  setVerifyCache
 } from "../../commons/token";
-import { getUserInfo, writeVerifyCache as setVerifyCache, clearVerifyCache } from "../../commons/token";
+import { clearAll as localStorageClearAll } from "../../commons/localStorage";
 import { 
   setUser as setUserLocalStorage,
 } from "../../commons/localStorage";
@@ -28,7 +30,8 @@ export const loginThunk = createThunkWithCallback(
       );
     }
     
-    setAccessTokenCookie(response.data.access);
+    setAccessToken(response.data.access);
+    setRefreshTokenKey(response.data.refresh_token_key)
     setVerifyCache(response.data.access, true);
     setUserLocalStorage(userInfo);
     dispatchSuccessAlert(dispatch, `Hi ${userInfo?.full_name}, wellcome back!`);
@@ -47,9 +50,7 @@ export const logoutThunk = createThunkWithCallback(
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
     
-    clearAccessTokenCookie();
-    clearVerifyCache();
-    setUserLocalStorage({});
+    localStorageClearAll()
     return {
       status: 'success',
     };

@@ -5,6 +5,8 @@ import Alerts from "../components/Alerts";
 import useCheckAuth from "../hooks/useCheckAuth";
 import LoadingOverlay from "../components/LoadingOverlay";
 import CountdownLogoutModal from "../components/CountdownLogoutModal";
+import { clearAll as localStorageClearAll } from "../commons/localStorage";
+
 
 const GuestLayout = () => {
   const { isLogged } = useCheckAuth({});
@@ -53,6 +55,7 @@ const UserLayout = () => {
         <CountdownLogoutModal
           seconds={5}
           onFinish={() => {
+            localStorageClearAll();
             setIsLogged(false);
             setIsExpired(false);
           }}

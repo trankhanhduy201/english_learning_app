@@ -1,3 +1,4 @@
+import base64
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
@@ -9,6 +10,8 @@ from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import UntypedToken
 from tokens.models import UserToken
 from tokens.authentications import check_token_version
+from tokens.views import REFRESH_TOKEN_COOKIE_NAME
+from users.services.users import UserSignatureService
 
 
 class TokenSerializerMixin:
@@ -30,18 +33,55 @@ class CustomTokenVerifySerializer(TokenSerializerMixin, TokenVerifySerializer):
 
 
 class CustomTokenRefreshSerializer(TokenSerializerMixin, TokenRefreshSerializer):
-    pass
+    refresh = serializers.CharField(required=False)
+    refresh_key = serializers.CharField()
+
+    def validate_refresh_key(self, value):
+        request = self.context.get('request') if self.context else None
+        try:
+            refresh_token = request.COOKIES.get(REFRESH_TOKEN_COOKIE_NAME)
+            token = self.token_class(refresh_token)
+
+            user_id = token.payload.get(api_settings.USER_ID_CLAIM)
+            if not user_id:
+                raise ValueError("Can not parse user id")
+
+            signed_key = base64.urlsafe_b64decode(value).decode()
+            return UserSignatureService().unsign(
+                user_id,
+                signed_key,
+            )
+        except Exception:
+            raise serializers.ValidationError("Invalid refresh key.")
+
+    def validate(self, attrs):
+        request = self.context.get('request') if self.context else None
+        refresh_key = attrs.get('refresh_key')
+
+        try:
+            attrs['refresh'] = request.COOKIES.get(refresh_key)
+        except Exception:
+            attrs['refresh'] = ""
+        
+        return super().validate(attrs)
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         if not getattr(self.user, "is_active", True):
-            raise serializers.ValidationError(
-                {
-                    "detail": "Account is not activated. Please check your email to activate it."
-                }
-            )
+            raise serializers.ValidationError({
+                "detail": "Account is not activated. Please check your email to activate it."
+            })
+
+        try:
+            signed_key = UserSignatureService().sign(self.user.id, 'refresh_token')
+            data['refresh_token_key'] = base64.urlsafe_b64encode(signed_key.encode()).decode()
+        except Exception as e:
+            raise serializers.ValidationError({
+                "detail": "Refresh token key is not found"
+            })
+
         return data
 
     @classmethod

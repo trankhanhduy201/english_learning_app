@@ -66,14 +66,10 @@ class CustomTokenRefreshView(TokenRefreshView):
     """Override to get refresh token from cookie and attach new one to cookie"""
 
     def post(self, request, *args, **kwargs):
-        # Get request data and add refresh token from cookie if not present
         data = dict(request.data)
-        refresh_token = request.COOKIES.get('refresh_token')
-        if refresh_token:
-            data['refresh'] = refresh_token
-        
-        # Instantiate serializer with combined data
-        serializer = self.get_serializer(data=data)
+        serializer = self.get_serializer(
+            data={"refresh_key": data.get("refresh_token_key", None)}
+        )
         
         try:
             serializer.is_valid(raise_exception=True)

@@ -17,9 +17,10 @@ export const verifyToken = async (token, options = {}) => {
   });
 };
 
-export const refreshToken = async (options = {}) => {
+export const refreshToken = async (data, options = {}) => {
   return await callApi("token/refresh", {
     method: "POST",
+    body: JSON.stringify(data),
     credentials: "include",
     ...options,
   });
