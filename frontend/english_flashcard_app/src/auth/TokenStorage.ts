@@ -4,6 +4,7 @@ import {
   VERIFY_CACHE_KEY,
   TOKEN_KEY,
   REFRESH_TOKEN_KEY,
+  TOKEN_VERIFY_EXPIRE,
 } from "./constants";
 
 export interface ITokenStorage {
@@ -51,12 +52,12 @@ export class TokenStorage implements ITokenStorage {
     if (token === null) {
       await this.storage.remove(TOKEN_KEY);
     } else {
-      await this.storage.set(TOKEN_KEY, token);
+      await this.storage.set<Token>(TOKEN_KEY, token);
     }
   }
 
   async getAccessToken(): Promise<Token> {
-    const v = await this.storage.get<string>(TOKEN_KEY);
+    const v = await this.storage.get<Token>(TOKEN_KEY);
     return v ?? null;
   }
 
@@ -75,7 +76,7 @@ export class TokenStorage implements ITokenStorage {
     if (
       parsed.at &&
       parsed.token === token &&
-      Date.now() - parsed.at < (parsed.expire ?? 0)
+      Date.now() - parsed.at < TOKEN_VERIFY_EXPIRE
     ) {
       return parsed.verified;
     }

@@ -105,7 +105,10 @@ export class TokenManager {
       );
 
       return verified;
-    } catch {
+    } catch (e) {
+      // Log error to aid debugging; return false to indicate not verified
+      // eslint-disable-next-line no-console
+      console.error("TokenManager.verifyToken error", e);
       return false;
     }
   }
