@@ -112,5 +112,20 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 			return self._has_vocabulary_permission(request, view, obj)
 		
 		return False
+
+
+class CanBulkDeleteVocab(permissions.BasePermission):
+	def has_permission(self, request, view):
+		if getattr(view, 'action', None) != 'bulk_delete':
+			return True
 		
-		
+		topic_id = request.GET.get('topic_id')
+		if not topic_id:
+			return False
+
+		topic = Topic.objects.filter(
+			id=topic_id,
+			created_by=request.user
+		).only('id').first()
+
+		return topic is not None

@@ -32,7 +32,7 @@ from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import VocabularyImportService
-from flashcards.permissions import IsAccessable
+from flashcards.permissions import CanBulkDeleteVocab, IsAccessable
 
 User = get_user_model()
 
@@ -113,7 +113,7 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
 	create_serializer_class = CreateVocabularySerializer
 	update_serializer_class = UpdateVocabularySerializer
 	filterset_class = VocabularyFilter
-	permission_classes = [IsAccessable]
+	permission_classes = [IsAccessable, CanBulkDeleteVocab]
 	auto_add_created_by = True
 
 	create_import_serializer_class = CreateImportVocabulariesSerializer
@@ -164,19 +164,6 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
 		
 	def import_text(self, request, validated_data):
 		return vocab_import_service.parse_import_text(request.user.id, **validated_data)
-
-	@action(detail=False, methods=['post'], url_path='delete')
-	def bulk_delete(self, request, *args, **kwargs):
-		topic = get_object_or_404(
-			Topic, 
-			id=request.GET.get('topic_id'), 
-			created_by=request.user
-		)
-		kwargs['conditions'] = {
-			'topic__id': topic.id,
-			'topic__created_by': request.user
-		}
-		return super().bulk_delete(request, *args, **kwargs)
 			  
 
 	# Below code for using simple filtering without defining filterset

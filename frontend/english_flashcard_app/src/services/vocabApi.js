@@ -51,8 +51,8 @@ export const deleteVocab = async (id, options = {}) => {
 };
 
 export const deleteAllVocabs = async (topicId, options = {}) => {
-  return await callApi(`vocabularies/delete/?${getQueryString(topicId)}`, {
-    method: "POST",
+  return await callApi(`vocabularies/bulk-delete/?${getQueryString(topicId)}`, {
+    method: "DELETE",
     ...options,
   });
 };

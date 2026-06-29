@@ -22,25 +22,14 @@ class OwnerListModelMixin:
 
 
 class BulkDestroyModelMixin:
-    bulk_delete_owner_field = 'created_by'
-
-    @action(detail=False, methods=['post'], url_path='delete')
+    @action(
+		detail=False, 
+		methods=['delete'], 
+		url_path='bulk-delete', 
+	)
     def bulk_delete(self, request, *args, **kwargs):
         try:
-            qs = self.get_queryset()
-            conditions = kwargs.get('conditions', None)
-            if isinstance(conditions, dict) and conditions:
-                conditions = kwargs['conditions']
-
-            if not conditions:
-                if not qs.model._meta.get_field(self.bulk_delete_owner_field):
-                    return Response(
-                        {'detail': 'Bulk delete is not supported for this model.'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-                conditions = {f"{self.bulk_delete_owner_field}": request.user}
-
-            qs.model.objects.filter(**conditions).delete()
+            self.filter_queryset(self.get_queryset()).only('id').delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response(

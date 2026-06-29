@@ -183,19 +183,6 @@ class BaseModelViewSet(
         serializer.save(**additional)
 
 
-class BulkDestroyModelMixin:
-    @action(detail=False, methods=['post'], url_path='delete')
-    def bulk_delete(self, request, *args, **kwargs):
-        try:
-            self.get_queryset().delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            return Response(
-                {'detail': 'Unexpected error occurred.', 'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-
 class CustomDjangoPagination(PageNumberPagination):
     page_size = 2
     page_size_query_param = 'page_size'
