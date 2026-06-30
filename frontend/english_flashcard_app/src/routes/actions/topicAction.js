@@ -101,7 +101,7 @@ export const editTopic = async ({ request, params }) => {
 export const deleteTopics = async () => {
   try {
     await store.dispatch(deleteTopicsThunk()).unwrap();
-    return true;
+    return redirect(`/topics`);
   } catch (err) {
     return err;
   }

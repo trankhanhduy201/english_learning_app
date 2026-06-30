@@ -51,7 +51,7 @@ const Topics = memo(() => {
   return (
     <>
       <TopicHeader />
-      <TopicFormSearch />
+      <TopicFormSearch key={searchParams.toString()}/>
       <Suspense fallback={<LoadingOverlay />}>
         <Await resolve={topicDatas}>
           {(topics) => 

@@ -38,7 +38,7 @@ const FormSearch = memo(() => {
                       className="form-check-input"
                       type="checkbox"
                       value="true"
-                      defaultChecked={searchParams.get("only_my_topic") == "true"}
+                      defaultChecked={searchParams.get("only_my_topic") === "true"}
                       id="onlyMyTopic"
                       name="only_my_topic"
                     />
