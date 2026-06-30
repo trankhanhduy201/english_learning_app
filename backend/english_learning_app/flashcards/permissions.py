@@ -126,6 +126,6 @@ class CanBulkDeleteVocab(permissions.BasePermission):
 		topic = Topic.objects.filter(
 			id=topic_id,
 			created_by=request.user
-		).only('id').first()
+		).exists()
 
-		return topic is not None
+		return topic is True
