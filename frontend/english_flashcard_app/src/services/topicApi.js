@@ -62,8 +62,8 @@ export const unsubcribeTopic = async (id, options = {}) => {
 
 
 export const deleteTopics = async (options = {}) => {
-  return await callApi(`topics/delete/`, {
-    method: "POST",
+  return await callApi(`topics/bulk-delete/`, {
+    method: "DELETE",
     ...options,
   });
 };

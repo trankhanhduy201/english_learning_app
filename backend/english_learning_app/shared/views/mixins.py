@@ -14,7 +14,7 @@ class OwnerListModelMixin:
 
     def get_queryset(self, **kwargs):
         qs = super().get_queryset()
-        skip_owner_filter = kwargs.get('skip_owner_filter', False)
+        skip_owner_filter = kwargs.get('skip_owner_filter', True)
         if not skip_owner_filter:
             owner_filters = self.get_owner_filters()
             return qs.filter(owner_filters)
@@ -29,7 +29,7 @@ class BulkDestroyModelMixin:
 	)
     def bulk_delete(self, request, *args, **kwargs):
         try:
-            self.filter_queryset(self.get_queryset()).only('id').delete()
+            self.filter_queryset(self.get_queryset(skip_owner_filter=False)).only('id').delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response(

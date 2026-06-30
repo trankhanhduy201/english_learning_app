@@ -53,8 +53,8 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	create_list_topic_members_serializer_class = CreateListTopicMembersSerializer
 	update_list_topic_members_serializer_class = UpdateListTopicMembersSerializer
 
-	def get_queryset(self):
-		qs = super().get_queryset(skip_owner_filter=True)
+	def get_queryset(self, **kwargs):
+		qs = super().get_queryset(**kwargs)
 		qs = qs.with_topic_members()
 		qs = qs.with_owner()
 		qs = qs.with_member_count()
@@ -107,7 +107,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		return self.update_list_topic_members_serializer_class
 		
 
-class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
+class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 	queryset = Vocabulary.objects.all()
 	serializer_class = RetrieveVocabularySerializer
 	create_serializer_class = CreateVocabularySerializer
@@ -119,8 +119,8 @@ class VocabularyViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelM
 	create_import_serializer_class = CreateImportVocabulariesSerializer
 	request_import_serializer_class = RequestImportVocabulariesSerializer
 
-	def get_queryset(self):
-		qs = super().get_queryset(skip_owner_filter=True)
+	def get_queryset(self, **kwargs):
+		qs = super().get_queryset()
 		qs = qs.with_owner()
 
 		with_param = self.request.GET.get('with', '').split(',')
