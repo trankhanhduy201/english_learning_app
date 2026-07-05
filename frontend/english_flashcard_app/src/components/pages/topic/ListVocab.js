@@ -131,7 +131,7 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
             label="Delete all"
             action={`/topic/${topicId}/vocab/delete`}
             formName={"deleting_all_vocab"}
-            confirmMessage={`Are you sure you want to delete all vocabularies of ${topic.name}?`}
+            confirmMessage={`Are you sure you want to delete all vocabularies of ${topic?.name}?`}
           />
         </div>
         {showImportTextModal && (
