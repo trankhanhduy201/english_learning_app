@@ -15,8 +15,11 @@ const DeleteConfirmButton = memo(
     color = "white",
     label = "Delete",
     confirmMessage = "Are you sure you want to delete data?",
+    fetcher: parentFetcher = null,
+    disabled = false,
   }) => {
-    const deleteAllFetcher = useFetcher();
+    const localFetcher = useFetcher();
+    const fetcher = parentFetcher ?? localFetcher;
     const confirmDeleteModal = useConfirmModal({ 
       submitActionCallback: async () => {
         const formData = new FormData();
@@ -26,29 +29,33 @@ const DeleteConfirmButton = memo(
         if (formName) {
           formData.append("_form_name", formName);
         }
-        return await deleteAllFetcher.submit(formData, { action, method });
+        return await fetcher.submit(formData, { action, method });
       }
     });
 
     useEffect(() => {
-      if (additionalCallback &&
-          deleteAllFetcher.state === 'idle' && 
-          deleteAllFetcher.data?.status === 'success') {
+      if (
+        additionalCallback &&
+        fetcher.state === "idle" &&
+        fetcher.data?.status === "success"
+      ) {
         additionalCallback();
       }
-    }, [deleteAllFetcher.state, deleteAllFetcher.data, additionalCallback]);
+    }, [fetcher.state, fetcher.data, additionalCallback]);
 
     return (
       <>
         <button
+          type="button"
           className={`btn ${btnClass}`}
           onClick={() => confirmDeleteModal.showConfirmModal()}
+          disabled={fetcher.state === "submitting" || disabled}
         >
           <i className="bi bi-trash" style={{ color }}></i>
           <span
             className={`btn-text ${allowHideBtnText ? '--d-sm-none' : ''}`}
             style={{ color }}
-          > {label}</span>
+          > {fetcher.state === "submitting" ? "Deleting..." : label}</span>
         </button>
         {confirmDeleteModal.isShowModal && (
           <ConfirmModal

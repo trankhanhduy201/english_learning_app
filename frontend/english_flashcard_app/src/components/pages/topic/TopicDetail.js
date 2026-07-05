@@ -1,5 +1,6 @@
 import { memo, useEffect } from "react";
 import { useFetcher, Link } from "react-router-dom";
+import DeleteConfirmButton from "../../DeleteConfirmButton";
 import { LANGUAGES } from "../../../configs/langConfig";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import FieldErrors from "../../../components/FieldErrors";
@@ -14,18 +15,9 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const delTopicFetcher = useFetcher();
   const { setTopic } = useTopicContext();
 
-  const isSubmitting = 
+  const isSubmitting =
     editTopicFetcher.state === "submitting" ||
     delTopicFetcher.state === "submitting";
-
-  const handleDelTopic = () => {
-    const formData = new FormData();
-    formData.append("_not_revalidate", "1");
-    delTopicFetcher.submit(formData, {
-      action: `/topic/${topicId}/delete?redirectTo=topics`,
-      method: "delete",
-    });
-  };
 
   useEffect(() => {
     setTopic(topic);
@@ -159,17 +151,15 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
             </span>
           </button>
           {!isNew && (
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={handleDelTopic}
-              disabled={isSubmitting}
-            >
-              <i className="bi bi-trash text-white"></i>{" "}
-              <span className="btn-text --d-sm-none">
-                {delTopicFetcher.state === "submitting" ? "Deleting..." : "Delete"}
-              </span>
-            </button>
+            <DeleteConfirmButton
+              action={`/topic/${topicId}/delete?redirectTo=topics`}
+              formName="deleting_topic"
+              btnClass="btn-danger"
+              color="white"
+              label="Delete"
+              fetcher={delTopicFetcher}
+              disabled={editTopicFetcher.state === "submitting"}
+            />
           )}
         </div>
       </editTopicFetcher.Form>
