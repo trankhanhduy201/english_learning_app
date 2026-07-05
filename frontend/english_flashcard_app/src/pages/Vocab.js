@@ -26,6 +26,7 @@ const Vocab = memo(() => {
   const handleDelVocab = () => {
     const formData = new FormData();
     formData.append("_form_name", "deleting_vocab");
+    formData.append("_redirect_to_topic", "1");
     delVocabFetcher.submit(formData, {
       action: `/topic/${topicId}/vocab/${vocabId}/delete`,
       method: "delete",

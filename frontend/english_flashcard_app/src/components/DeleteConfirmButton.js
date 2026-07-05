@@ -34,13 +34,11 @@ const DeleteConfirmButton = memo(
     });
 
     useEffect(() => {
-      if (
-        additionalCallback &&
-        fetcher.state === "idle" &&
-        fetcher.data?.status === "success"
-      ) {
-        additionalCallback();
-      }
+      if (!additionalCallback) return;
+      if (fetcher.state !== "idle" || fetcher.data?.status !== "success") return;
+
+      const respId = fetcher.data?.data?.id;
+      additionalCallback(respId);
     }, [fetcher.state, fetcher.data, additionalCallback]);
 
     return (

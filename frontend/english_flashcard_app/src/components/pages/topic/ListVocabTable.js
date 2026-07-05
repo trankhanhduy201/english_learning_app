@@ -8,7 +8,7 @@ const LIST_HEIGHT = ROW_HEIGHT * 7;
 const LIST_WIDTH = "100%";
 
 const RowComponent = ({ index, style, ...rest }) => {
-  const { vocabs, topicId, onPlayAudio, delVocabFetcher } = rest;
+  const { vocabs, topicId, onPlayAudio, delVocabFetcher, onDeleteVocabSuccess } = rest;
   const vocab = vocabs[index];
 
   return (
@@ -45,6 +45,9 @@ const RowComponent = ({ index, style, ...rest }) => {
             label=""
             confirmMessage={`Are you sure you want to delete "${vocab.word}"?`}
             allowHideBtnText={false}
+            revalidate={false}
+            expectedId={vocab.id}
+            additionalCallback={onDeleteVocabSuccess}
           />
         </div>
       </div>
@@ -60,11 +63,12 @@ const ListVocabTable = memo(
     onSearchVocab,
     onPlayAudio = null,
     delVocabFetcher = null,
+    onDeleteVocabSuccess = null,
   }) => {
     const listRef = useRef(null);
     const itemData = useMemo(
-      () => ({ vocabs, topicId, onPlayAudio, delVocabFetcher }),
-      [vocabs, topicId, onPlayAudio, delVocabFetcher],
+      () => ({ vocabs, topicId, onPlayAudio, delVocabFetcher, onDeleteVocabSuccess }),
+      [vocabs, topicId, onPlayAudio, delVocabFetcher, onDeleteVocabSuccess],
     );
 
     return (

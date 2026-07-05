@@ -5,7 +5,6 @@ import {
   useState,
   useTransition,
   useRef,
-  startTransition,
   useMemo,
 } from "react";
 import { Link, useFetcher } from "react-router-dom";
@@ -22,7 +21,7 @@ import { useDispatch } from "react-redux";
 import { SUCCESS_TYPE } from "../../../configs/alertConfig";
 import { setAlert } from "../../../stores/slices/alertSlice";
 
-const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
+const ListVocabDetail = memo(({ vocabDatas, topicId, onDeleteVocabSuccess }) => {
   const curSearchText = useRef("");
   const [ vocabs, setVocabs ] = useState([]);
   const [ showImportTextModal, setShowImportTextModal ] = useState(false);
@@ -33,15 +32,13 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
 
   const filterVocabs = useCallback((searchText) => {
     const normalized = (searchText ?? "").toString().trim().toLowerCase();
-    transition(() => {
-      setVocabs(() => {
-        if (!normalized) {
-          return [...vocabDatas];
-        }
-        return vocabDatas.filter((vocab) =>
-          vocab.word.toLowerCase().includes(normalized),
-        );
-      });
+    setVocabs(() => {
+      if (!normalized) {
+        return [...vocabDatas];
+      }
+      return vocabDatas.filter((vocab) =>
+        vocab.word.toLowerCase().includes(normalized),
+      );
     });
   }, [vocabDatas]);
 
@@ -57,7 +54,7 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
     const debounced = debounce((searchText) => {
       const normalized = (searchText ?? "").toString().trim().toLowerCase();
       curSearchText.current = normalized;
-      startTransition(() => {
+      transition(() => {
         filterVocabs(normalized);
       });
     }, 300);
@@ -69,14 +66,6 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
       onSearchVocab.cancel();
     };
   }, [onSearchVocab]);
-
-  useEffect(() => {
-    if (delVocabFetcher.data?.status === "success") {
-      setVocabs((prevVocabs) =>
-        prevVocabs.filter((vocab) => vocab.id != delVocabFetcher.data.data.id),
-      );
-    }
-  }, [delVocabFetcher.data]);
 
   return (
     <>
@@ -92,6 +81,7 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
           onSearchVocab={onSearchVocab}
           onPlayAudio={onPlayAudio}
           delVocabFetcher={delVocabFetcher}
+          onDeleteVocabSuccess={onDeleteVocabSuccess}
         />
         <div className="d-flex justify-content-end mt-2">
           <Link
@@ -140,6 +130,10 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
   const dispatch = useDispatch();
   const { audioDatas } = useFetchAudioNotification(userInfo?.id)
 
+  const handleDeleteVocabSuccess = useCallback((vocabId) => {
+    setVocabs(prev => prev.filter(item => item.id != vocabId));
+  }, []);
+
   useEffect(() => {
     setVocabs(vocabDatas);
   }, [vocabDatas])
@@ -162,8 +156,9 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
   
   return (
     <ListVocabDetail
-      vocabDatas={vocabs} 
-      topicId={topicId} 
+      vocabDatas={vocabs}
+      topicId={topicId}
+      onDeleteVocabSuccess={handleDeleteVocabSuccess}
     />
   )
 });
