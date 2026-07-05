@@ -53,18 +53,6 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
     setShowImportTextModal(false);
   });
 
-  const onDeleteVocab = useCallback(
-    (vocabId) => {
-      const formData = new FormData();
-      formData.append("_not_revalidate", "1");
-      delVocabFetcher.submit(formData, {
-        action: `/topic/${topicId}/vocab/${vocabId}/delete`,
-        method: "delete",
-      });
-    },
-    [topicId],
-  );
-
   const onSearchVocab = useMemo(() => {
     const debounced = debounce((searchText) => {
       const normalized = (searchText ?? "").toString().trim().toLowerCase();
@@ -101,9 +89,9 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
           vocabs={vocabs}
           topicId={topicId}
           isSearching={isSearching}
-          onDeleteVocab={onDeleteVocab}
           onSearchVocab={onSearchVocab}
           onPlayAudio={onPlayAudio}
+          delVocabFetcher={delVocabFetcher}
         />
         <div className="d-flex justify-content-end mt-2">
           <Link
@@ -131,7 +119,7 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
             label="Delete all"
             action={`/topic/${topicId}/vocab/delete`}
             formName={"deleting_all_vocab"}
-            confirmMessage={`Are you sure you want to delete all vocabularies of ${topic?.name}?`}
+            confirmMessage={`Are you sure you want to delete all vocabularies of "${topic?.name}" topic?`}
           />
         </div>
         {showImportTextModal && (

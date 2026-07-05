@@ -1,13 +1,14 @@
 import { memo, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { List } from "react-window";
+import DeleteConfirmButton from "../../DeleteConfirmButton";
 
 const ROW_HEIGHT = 60;
 const LIST_HEIGHT = ROW_HEIGHT * 7;
 const LIST_WIDTH = "100%";
 
 const RowComponent = ({ index, style, ...rest }) => {
-  const { vocabs, topicId, onDeleteVocab, onPlayAudio } = rest;
+  const { vocabs, topicId, onPlayAudio, delVocabFetcher } = rest;
   const vocab = vocabs[index];
 
   return (
@@ -35,13 +36,16 @@ const RowComponent = ({ index, style, ...rest }) => {
           <Link to={`/topic/${topicId}/vocab/${vocab.id}`} className="action-link">
             <i className="bi bi-pencil-square text-dark"></i>
           </Link>
-          <button
-            type="button"
-            className="btn btn-link p-0"
-            onClick={() => onDeleteVocab(vocab.id)}
-          >
-            <i className="bi bi-trash text-dark"></i>
-          </button>
+          <DeleteConfirmButton
+            action={`/topic/${topicId}/vocab/${vocab.id}/delete`}
+            formName={"deleting_vocab"}
+            fetcher={delVocabFetcher}
+            btnClass="btn-link p-0"
+            color="#212529"
+            label=""
+            confirmMessage={`Are you sure you want to delete "${vocab.word}"?`}
+            allowHideBtnText={false}
+          />
         </div>
       </div>
     </div>
@@ -53,14 +57,14 @@ const ListVocabTable = memo(
     vocabs,
     topicId,
     isSearching,
-    onDeleteVocab,
     onSearchVocab,
     onPlayAudio = null,
+    delVocabFetcher = null,
   }) => {
     const listRef = useRef(null);
     const itemData = useMemo(
-      () => ({ vocabs, topicId, onDeleteVocab, onPlayAudio }),
-      [vocabs, topicId, onDeleteVocab, onPlayAudio],
+      () => ({ vocabs, topicId, onPlayAudio, delVocabFetcher }),
+      [vocabs, topicId, onPlayAudio, delVocabFetcher],
     );
 
     return (
