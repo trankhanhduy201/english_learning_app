@@ -13,7 +13,7 @@ import ImportTextModal from "../topic/ImportTextModal";
 import ListVocabTable from "./ListVocabTable";
 import { debounce } from "lodash";
 import LoadingOverlay from "../../LoadingOverlay";
-import DeleteAllButton from "../../DeleteAllButton";
+import DeleteConfirmButton from "../../DeleteConfirmButton";
 import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
 import useFetchAudioNotification from "../../../hooks/useFetchAudioNotification";
@@ -127,9 +127,11 @@ const ListVocabDetail = memo(({ vocabDatas, topicId }) => {
             <i className="bi bi-plus-circle"></i>
             <span className="btn-text --d-sm-none"> New</span>
           </Link>
-          <DeleteAllButton
+          <DeleteConfirmButton
+            label="Delete all"
             action={`/topic/${topicId}/vocab/delete`}
             formName={"deleting_all_vocab"}
+            confirmMessage={`Are you sure you want to delete all vocabularies of ${topic.name}?`}
           />
         </div>
         {showImportTextModal && (

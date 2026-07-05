@@ -1,5 +1,5 @@
 import { memo } from "react";
-import DeleteAllButton from "../../DeleteAllButton";
+import DeleteConfirmButton from "../../DeleteConfirmButton";
 import { Link } from "react-router-dom";
 
 const Header = memo(() => {
@@ -12,9 +12,11 @@ const Header = memo(() => {
             <i className="bi bi-plus-circle"></i>
             <span className="btn-text --d-sm-none"> New topic</span>
           </Link>
-          <DeleteAllButton
+          <DeleteConfirmButton
+            label="Delete all"
             action={`/topics/delete`}
             formName={"deleting_all_topic"}
+            confirmMessage={"Are you sure you want to delete all your topics?"}
           />
         </div>
       </div>

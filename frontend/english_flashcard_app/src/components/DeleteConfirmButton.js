@@ -3,8 +3,19 @@ import { useFetcher } from "react-router-dom";
 import useConfirmModal from "../hooks/useConfirmModal";
 import ConfirmModal from "./ConfirmModal";
 
-const DeleteAllButton = memo(
-  ({ action, method = "delete", formName = "", allowHideBtnText = true, revalidate = true, additionalCallback = null }) => {
+const DeleteConfirmButton = memo(
+  ({
+    action,
+    method = "delete",
+    formName = "",
+    allowHideBtnText = true,
+    revalidate = true,
+    additionalCallback = null,
+    btnClass = "btn-danger",
+    color = "white",
+    label = "Delete",
+    confirmMessage = "Are you sure you want to delete data?",
+  }) => {
     const deleteAllFetcher = useFetcher();
     const confirmDeleteModal = useConfirmModal({ 
       submitActionCallback: async () => {
@@ -30,15 +41,18 @@ const DeleteAllButton = memo(
     return (
       <>
         <button
-          className="btn btn-danger"
+          className={`btn ${btnClass}`}
           onClick={() => confirmDeleteModal.showConfirmModal()}
         >
-          <i className="bi bi-trash text-white"></i>
-          <span className={`btn-text ${allowHideBtnText ? '--d-sm-none' : ''}`}> Delete all</span>
+          <i className="bi bi-trash" style={{ color }}></i>
+          <span
+            className={`btn-text ${allowHideBtnText ? '--d-sm-none' : ''}`}
+            style={{ color }}
+          > {label}</span>
         </button>
         {confirmDeleteModal.isShowModal && (
           <ConfirmModal
-            message="Are you sure you want to delete all of data?"
+            message={confirmMessage}
             isShow={confirmDeleteModal.isShowModal}
             isSubmmiting={confirmDeleteModal.isSubmmiting}
             onClose={confirmDeleteModal.onClickNo}
@@ -49,5 +63,4 @@ const DeleteAllButton = memo(
     );
   },
 );
-
-export default DeleteAllButton;
+export default DeleteConfirmButton;
