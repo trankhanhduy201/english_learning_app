@@ -6,6 +6,7 @@ from flashcards.querysets.mixins import OwnerMixin
 
 class TopicQuerySet(BaseQuerySet, OwnerMixin):
     TOPIC_MEMBER_MODEL = 'flashcards.TopicMember'
+    VOCAB_MODEL = 'flashcards.Vocabulary'
 
     def with_defaults(self, **kwargs):
         qs = (
@@ -31,6 +32,18 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
             member_count=Coalesce(
                 Subquery(qs, output_field=IntegerField()), 0
             )
+        )
+
+    def search_by_keyword(self, keyword):
+        Vocabulary = self.get_model(self.VOCAB_MODEL)
+        vocab_qs = Vocabulary.objects.filter(
+            topic=OuterRef('pk'),
+            word__icontains=keyword
+        )
+        return self.filter(
+            Q(name__icontains=keyword) |
+            Q(descriptions__icontains=keyword) |
+            Q(Exists(vocab_qs))
         )
 
     def accessible_by(self, user):

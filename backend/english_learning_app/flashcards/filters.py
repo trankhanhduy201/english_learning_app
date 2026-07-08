@@ -20,18 +20,12 @@ class TopicFilter(django_filters.FilterSet):
 	def filter_text_search(self, queryset, name, value):
 		if not value:
 			return queryset
-		vocab_qs = Vocabulary.objects.filter(topic=OuterRef('pk'), word__icontains=value)
-		return queryset.filter(
-			Q(name__icontains=value) | 
-			Q(descriptions__icontains=value) | 
-			Q(Exists(vocab_qs))
-		)
+		return queryset.search_by_keyword(value)
 	
 	def filter_only_my_topic(self, queryset, name, value):
 		if not value:
 			return queryset
-		user = self.request.user
-		return queryset.accessible_by(user)
+		return queryset.accessible_by(self.request.user)
 
 
 class VocabularyFilter(django_filters.FilterSet):
