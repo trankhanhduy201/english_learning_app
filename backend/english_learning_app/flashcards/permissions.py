@@ -20,14 +20,7 @@ class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 		if obj.status != Topic.TopicStatusEnums.PUBLIC:
 			return False
 
-		topic_member = (
-			TopicMember.objects
-			.filter(topic=obj, member=request.user)
-			.only('status')
-			.first()
-		)
-
-		topic_member_status = getattr(topic_member, 'status', None)
+		topic_member_status = TopicMember.objects.get_status_for(obj, request.user)
 		if topic_member_status == TopicMember.TopicMemberStatusEnums.BLOCK:
 			return False
 		
@@ -40,13 +33,7 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 			return True
 
 		# Check if the user is a member with EDITABLE status
-		topic_member = TopicMember.objects \
-			.filter(topic=topic, member=request.user) \
-			.only('status') \
-			.first()
-		
-		# Allow user access topic in GET/HEAD/OPTIONS requests except blocked users
-		topic_member_status = getattr(topic_member, 'status', None)
+		topic_member_status = TopicMember.objects.get_status_for(topic, request.user)
 		if request.method in permissions.SAFE_METHODS:
 			return (
 				topic.status == Topic.TopicStatusEnums.PUBLIC and
