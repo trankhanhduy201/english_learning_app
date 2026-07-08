@@ -7,10 +7,7 @@ from tokens.models import UserToken
 def check_token_version(user_id, token_version):
     if not user_id or token_version is None:
         return False
-    return UserToken.objects.filter(
-        Q(user_id=user_id) &
-        Q(refresh_token_version=token_version)
-    ).exists()
+    return UserToken.objects.exists_token_version(user_id, token_version)
 
 
 class CustomJWTAuthentication(JWTAuthentication):
