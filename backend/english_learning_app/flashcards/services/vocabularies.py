@@ -83,21 +83,6 @@ class VocabularyImportService:
 
 
 class VocabularyAudioService:
-    def get_audio_cache(self, words):
-        existing_audio_vocabs = (
-            Vocabulary.objects.filter(
-                word__in=words,
-                audio__isnull=False
-            )
-            .values('word', 'audio')
-            .distinct()
-        )
-
-        return {
-            vocab['word']: vocab['audio']
-            for vocab in existing_audio_vocabs
-        }
-
     def generate_audio(self, vocab_ids):
         results = {
             'audios': {}
@@ -109,7 +94,7 @@ class VocabularyAudioService:
         if not vocabs.exists():
             return results
         
-        audio_cache = self.get_audio_cache([
+        audio_cache = Vocabulary.objects.get_existing_audio([
             vocab.word for vocab in vocabs
         ])
         updated_vocabs = []

@@ -116,24 +116,19 @@ class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 	request_import_serializer_class = RequestImportVocabulariesSerializer
 
 	def get_queryset(self, **kwargs):
-		qs = super().get_queryset()
-		qs = qs.with_owner()
-
-		with_param = self.request.GET.get('with', '').split(',')
-		if with_param and 'translations' in with_param:
-			qs = qs.with_translations(
-				self.request.GET.get('lang', None)
-			)
-		return qs
+		return super().get_queryset().with_defaults(
+			language=self.request.GET.get('lang', None),
+			includes=self.request.GET.get('with', '').split(',')
+		)
 	
 	@action(detail=False, methods=['post'], url_path='generate-audio')
 	def generate_audio(self, request, *args, **kwargs):
 		topic_id = request.GET.get('topic_id')
 		if topic_id:
-			vocab_ids_qs = Vocabulary.objects.\
-				filter(Q(topic_id=topic_id) & Q(audio__isnull=True)).\
-				values_list('id', flat=True)
-			generate_vocab_audio_async(list(vocab_ids_qs), user_id=request.user.pk)
+			generate_vocab_audio_async(
+				Vocabulary.objects.get_ids_has_no_audio(topic_id), 
+				user_id=request.user.pk
+			)
 			
 		return Response(status=status.HTTP_204_NO_CONTENT)
 		
