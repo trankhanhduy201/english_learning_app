@@ -26,8 +26,8 @@ class TranslationService:
             if len(_translation_existing_ids) > 0:
                 # For update existed item
                 updated_ids = []
-                _update_translations = Translation.objects.filter(
-                    pk__in=_translation_existing_ids, vocabulary=vocab_instance
+                _update_translations = Translation.objects.filter_update_translations(
+                    _translation_existing_ids, vocab_instance
                 )
                 for translation in _update_translations:
                     update_data = next((

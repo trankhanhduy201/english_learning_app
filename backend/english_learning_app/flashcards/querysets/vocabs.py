@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Exists, OuterRef
 from flashcards.querysets.bases import BaseQuerySet
 from flashcards.querysets.mixins import OwnerMixin
 
@@ -18,3 +18,11 @@ class VocabQuerySet(BaseQuerySet, OwnerMixin):
         return self.prefetch_related(
             Prefetch('translations', queryset=qs)
         )
+
+    def filter_has_translation(self, language):
+        Translation = self.get_model(self.TRANSLATION_MODEL)
+        sub_query = Translation.objects.filter(
+            vocabulary=OuterRef('pk'),
+            language=language
+        )
+        return self.filter(Exists(sub_query))

@@ -1,6 +1,4 @@
 import django_filters
-from django.db.models import Exists, OuterRef
-from flashcards.models import Translation
 
 
 class TopicFilter(django_filters.FilterSet):
@@ -35,6 +33,5 @@ class VocabularyFilter(django_filters.FilterSet):
 	def filter_has_translation(self, queryset, name, value):
 		lang = self.request.GET.get('lang', 'en')
 		if lang:
-			sub_query = Exists(Translation.objects.filter(vocabulary=OuterRef('pk'), language=value))
-			queryset = queryset.filter(sub_query)
+			return queryset.filter_has_translation(lang)
 		return queryset

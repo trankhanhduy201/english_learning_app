@@ -7,3 +7,9 @@ class TranslationQuerySet(BaseQuerySet):
         if language:
             qs = qs.filter(language=language)
         return qs
+
+    def filter_update_translations(self, translation_ids, vocabulary):
+        return self.filter(
+            pk__in=translation_ids,
+            vocabulary=vocabulary
+        )
