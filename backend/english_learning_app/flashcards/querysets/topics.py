@@ -6,6 +6,14 @@ from flashcards.querysets.mixins import OwnerMixin
 
 class TopicQuerySet(BaseQuerySet, OwnerMixin):
     TOPIC_MEMBER_MODEL = 'flashcards.TopicMember'
+
+    def with_defaults(self, **kwargs):
+        qs = (
+            self.with_topic_members()
+            .with_owner()
+            .with_member_count()
+        )
+        return qs
     
     def with_topic_members(self):
         TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)

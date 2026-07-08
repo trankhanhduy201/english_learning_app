@@ -3,5 +3,9 @@ from flashcards.querysets.topics import TopicQuerySet
 
 
 class TopicManager(BaseManager.from_queryset(TopicQuerySet)):
-    # your extra manager functionality here
-    pass
+    def get_topic_for_permission(self, topic_id):
+        return (
+            self.only('id', 'created_by', 'status')
+            .filter(id=topic_id)
+            .first()
+        )

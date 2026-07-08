@@ -5,3 +5,6 @@ from django.db.models import QuerySet
 class BaseQuerySet(QuerySet):
     def get_model(self, name):
         return apps.get_model(*name.split("."))
+
+    def exists_by(self, id, **kwargs):
+        return self.filter(id=id, **kwargs).exists()

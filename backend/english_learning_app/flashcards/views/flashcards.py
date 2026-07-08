@@ -54,11 +54,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	update_list_topic_members_serializer_class = UpdateListTopicMembersSerializer
 
 	def get_queryset(self, **kwargs):
-		qs = super().get_queryset(**kwargs)
-		qs = qs.with_topic_members()
-		qs = qs.with_owner()
-		qs = qs.with_member_count()
-		return qs
+		return super().get_queryset(**kwargs).with_defaults()
 	  
 	@action(detail=True, methods=['get', 'post', 'put'], url_path='members')
 	def members(self, request, *args, **kwargs):

@@ -80,14 +80,11 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 			if not topic_id:
 				return False
 			
-			topic = Topic.objects \
-				.only('id', 'created_by', 'status') \
-				.filter(id=topic_id) \
-				.first()
-			if not topic:
-				return False
-			
-			return self._has_topic_permission(request, view, topic)
+			topic = Topic.objects.get_topic_for_permission(topic_id)
+			return (
+				topic is not None and
+				self._has_topic_permission(request, view, topic)
+			)
 
 		return True
 
@@ -110,9 +107,7 @@ class CanBulkDeleteVocab(permissions.BasePermission):
 		if not topic_id:
 			return False
 
-		topic = Topic.objects.filter(
-			id=topic_id,
+		return Topic.objects.exists_by(
+			topic_id,
 			created_by=request.user
-		).exists()
-
-		return topic is True
+		)
