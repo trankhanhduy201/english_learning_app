@@ -1,11 +1,12 @@
 import { createThunkWithCallback, rejectWithErrorValue } from "./commonAction";
-import { refreshNewToken } from "../../commons/token";
+import { getAuthManager } from "auth";
 import { revokeTokens } from "../../services/authApi";
 
 export const refreshTokenThunk = createThunkWithCallback(
   "token/refresh",
   async ({ originalAction }, { dispatch }) => {
-    const accessToken = await refreshNewToken();
+    const tokenManager = getAuthManager().getTokenManager();
+    const accessToken = await tokenManager.refreshNewToken();
     if (accessToken === false) {
       throw new Error("Can not refresh new access token");
     }

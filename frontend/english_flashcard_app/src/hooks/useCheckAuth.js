@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import * as tokenCommon from "../commons/token";
+import { getAuthManager } from "auth";
 import { TOKEN_VERIFY_INTERVAL } from "../configs/appConfig";
 
 const useCheckAuth = ({ 
@@ -43,8 +43,9 @@ const useCheckAuth = ({
         return;
       }
 
-      const token = tokenCommon.getAccessToken();
-      const verified = await tokenCommon.verifyToken(token);
+      const tokenManager = getAuthManager().getTokenManager();
+      const token = await tokenManager.getAccessToken();
+      const verified = await tokenManager.verifyToken(token);
       setIsLogged(verified);
     },
     [isPassServerAuth, skipFirstVerify]
@@ -58,8 +59,9 @@ const useCheckAuth = ({
     if (!hasCheckExpired) return;
 
     const checkExpired = async () => {
-      const token = tokenCommon.getAccessToken();
-      const verified = await tokenCommon.localVerifyToken(token);
+      const tokenManager = getAuthManager().getTokenManager();
+      const token = await tokenManager.getAccessToken();
+      const verified = await tokenManager.localVerifyToken(token);
       setIsExpired(!verified);
     };
 

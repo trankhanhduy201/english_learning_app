@@ -1,5 +1,5 @@
 import * as apiConfig from "../configs/apiConfig";
-import * as tokenUtils from "../commons/token";
+import { getAuthManager } from "auth";
 
 const API_BASE_URL = apiConfig.API_BASE_URL;
 
@@ -14,7 +14,8 @@ const buildUrl = (endpoint, query) => {
 };
 
 export const callApi = async (endpoint, options = {}) => {
-  const token = tokenUtils.getAccessToken();
+  const tokenManager = getAuthManager().getTokenManager();
+  const token = await tokenManager.getAccessToken();
   const headers = {
     Authorization: `Bearer ${token}`,
     ...options?.header,

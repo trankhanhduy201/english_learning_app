@@ -1,15 +1,6 @@
 import { createThunkWithCallback, rejectWithErrorValue, dispatchSuccessAlert } from "./commonAction";
 import { getToken as getTokenApi, registerUser as registerUserApi } from "../../services/authApi";
-import { 
-  setAccessToken, 
-  setRefreshTokenKey,
-  getUserInfo, 
-  setVerifyCache
-} from "../../commons/token";
-import { clearAll as localStorageClearAll } from "../../commons/localStorage";
-import { 
-  setUser as setUserLocalStorage,
-} from "../../commons/localStorage";
+import { getAuthManager } from "auth";
 import { revokeTokensThunk } from "./tokenAction";
 
 export const loginThunk = createThunkWithCallback(
@@ -19,8 +10,13 @@ export const loginThunk = createThunkWithCallback(
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
-    
-    const userInfo = getUserInfo(response.data.access);
+
+    const authManager = getAuthManager();
+    const userInfo = await authManager.login(
+      response.data?.access,
+      response.data?.refresh_token_key,
+    );
+
     if (!userInfo) {
       return rejectWithErrorValue(
         dispatch,
@@ -29,11 +25,7 @@ export const loginThunk = createThunkWithCallback(
         "Invalid user info",
       );
     }
-    
-    setAccessToken(response.data.access);
-    setRefreshTokenKey(response.data.refresh_token_key)
-    setVerifyCache(response.data.access, true);
-    setUserLocalStorage(userInfo);
+
     dispatchSuccessAlert(dispatch, `Hi ${userInfo?.full_name}, wellcome back!`);
     return response;
   },
@@ -42,6 +34,7 @@ export const loginThunk = createThunkWithCallback(
 export const logoutThunk = createThunkWithCallback(
   "auth/logout",
   async ({ revokeTokenPermanent }, { dispatch, rejectWithValue }) => {
+    const authManager = getAuthManager();
     const response = await dispatch(
       revokeTokensThunk({ permanent: revokeTokenPermanent })
     ).unwrap();
@@ -49,8 +42,8 @@ export const logoutThunk = createThunkWithCallback(
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
-    
-    localStorageClearAll()
+
+    await authManager.logout();
     return {
       status: 'success',
     };
