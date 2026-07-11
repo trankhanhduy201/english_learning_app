@@ -1,4 +1,4 @@
-import type { Storage } from "../storages/interfaces/Storage";
+import type { Storage } from "storages";
 import type { Token, VerifyCache } from "./types";
 import {
   VERIFY_CACHE_KEY,

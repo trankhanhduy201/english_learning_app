@@ -58,9 +58,9 @@ export class TokenManager {
       return false;
     }
 
-    const resp: RefreshTokenResponse = await authApi.refreshToken({
+    const resp = (await authApi.refreshToken({
       refresh_token_key: refreshTokenKey,
-    });
+    })) as RefreshTokenResponse;
 
     if (resp.status === "error") {
       await this.repo.clearAccessToken();
@@ -86,7 +86,7 @@ export class TokenManager {
       }
 
       if (token) {
-        const resp: VerifyTokenResponse = await authApi.verifyToken(token);
+        const resp = (await authApi.verifyToken(token)) as VerifyTokenResponse;
 
         if (resp.status === "success") {
           await this.repo.setVerifyCache(token, true);
