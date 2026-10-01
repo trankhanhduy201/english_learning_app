@@ -1,4 +1,4 @@
-from django.db.models import OuterRef, Exists, Q, Prefetch, Subquery, IntegerField
+from django.db.models import OuterRef, Exists, Q, Prefetch, Subquery, IntegerField, Count
 from django.db.models.functions import Coalesce
 from flashcards.querysets.bases import BaseQuerySet
 from flashcards.querysets.mixins import OwnerMixin
@@ -32,6 +32,22 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
             member_count=Coalesce(
                 Subquery(qs, output_field=IntegerField()), 0
             )
+        )
+
+    def with_subscriber_count(self):
+        TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
+        accessible_statuses = TopicMember.get_accessible_statuses()
+        return self.annotate(
+            subscriber_count=Count(
+                'topic_members',
+                filter=Q(topic_members__status__in=accessible_statuses),
+            )
+        )
+
+    def trending(self, limit=4):
+        return (
+            self.with_subscriber_count()
+            .order_by('-subscriber_count', '-id')[:limit]
         )
 
     def search_by_keyword(self, keyword):

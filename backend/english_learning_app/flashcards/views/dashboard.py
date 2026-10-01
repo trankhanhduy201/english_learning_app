@@ -8,22 +8,27 @@ class DashboardSummaryView(BaseAPIView):
     def get(self, request, *args, **kwargs):
         owned_topic_count = Topic.objects.filter(created_by=request.user).count()
         owned_vocab_count = Vocabulary.objects.filter(created_by=request.user).count()
-        member_count = (
-            TopicMember.objects.filter(
-                topic__created_by=request.user,
-            )
-            .values('member')
-            .distinct()
-            .count()
-        )
+        member_count = TopicMember.objects.filter(
+            topic__created_by=request.user,
+        ).count()
         subscribed_topic_count = TopicMember.objects.filter(
             member=request.user,
             status__in=TopicMember.get_accessible_statuses(),
         ).count()
+        trending_topics = list(
+            Topic.objects
+            .trending(limit=4)
+            .values(
+                'id',
+                'name',
+                'subscriber_count',
+            )
+        )
 
         return Response({
             'own_topic_count': owned_topic_count,
             'own_vocab_count': owned_vocab_count,
             'member_count': member_count,
             'subscribed_topic_count': subscribed_topic_count,
+            'trending_topics': trending_topics,
         })
