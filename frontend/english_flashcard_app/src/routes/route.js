@@ -7,6 +7,7 @@ import * as transAction from "./actions/transAction";
 import * as loginAction from "./actions/loginAction";
 import * as registerAction from "./actions/registerAction";
 import * as profileLoader from "./loaders/profileLoader";
+import * as dashboardLoader from "./loaders/dashboardLoader";
 import * as profileAction from "./actions/profileAction";
 import Error from "../components/errors/Error";
 import Login from "../pages/Login";
@@ -103,6 +104,7 @@ export const createAppRouter = () => createBrowserRouter(
               index: true,
               path: "/dashboard",
               element: <PrivatePage pageName="Dashboard" />,
+              loader: dashboardLoader.getDashboardSummaryLoader,
             },
             {
               path: "/settings",

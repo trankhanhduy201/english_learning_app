@@ -29,7 +29,7 @@ const Header = memo(() => {
       <h5 className="mb-0 ms-3 d-xl-block d-none">Flashcards</h5>
       <div className="d-flex justify-content-end align-items-center">
         <TopicAutocompleteSearch />
-        <div className="dropdown me-2">
+        {/* <div className="dropdown me-2">
           <Dropdown as={Nav.Item}>
             <Dropdown.Toggle
               key={"globalLang"}
@@ -49,7 +49,7 @@ const Header = memo(() => {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-        </div>
+        </div> */}
         <div className="dropdown">
           <Dropdown as={Nav.Item}>
             <Dropdown.Toggle

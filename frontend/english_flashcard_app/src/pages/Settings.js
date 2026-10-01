@@ -19,14 +19,14 @@ const Settings = memo(() => {
               </button>
             </LogoutItem>
           </div>
-          <div className="d-flex justify-content-between align-items-center">
+          {/* <div className="d-flex justify-content-between align-items-center">
             <p className="mb-0">
               Allow login multiple machines
             </p>
             <Form>
               <Form.Check type="switch" id="custom-switch" />
             </Form>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
