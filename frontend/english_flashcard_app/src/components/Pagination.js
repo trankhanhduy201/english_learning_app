@@ -42,7 +42,7 @@ const Pagination = ({ current_page, total_pages, onPageChange }) => {
 
   return (
     <div className="pagination-container">
-      <div className="pagination-info mb-3">
+      <div className="pagination-info mb-3 mt-3">
         <ul className="pagination">
           <li className={`page-item ${current_page == 1 ? "disabled" : ""}`}>
             <button

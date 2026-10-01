@@ -1,6 +1,7 @@
 import { memo, Suspense } from "react";
-import { Await, useLoaderData } from "react-router-dom";
+import { Await, Link, useLoaderData } from "react-router-dom";
 import LoadingOverlay from "../components/LoadingOverlay";
+import { getTopicImageSrc } from "../commons/topicImage";
 
 const Dashboard = memo(() => {
   const { dashboardSummaryPromise } = useLoaderData();
@@ -53,20 +54,34 @@ const Dashboard = memo(() => {
                   {(dashboardSummary?.trending_topics ?? []).map((topic, index) => (
                     <div className="col" key={topic.id}>
                       <div className="card h-100 shadow-sm">
-                        <div className="card-body text-start">
-                          <div className="d-flex justify-content-between align-items-start">
-                            <div>
-                              <div className="text-muted small">#{index + 1}</div>
-                              <div className="fw-semibold">{topic.name}</div>
+                        <Link
+                          to={`/topic/${topic.id}`}
+                          className="text-decoration-none text-reset"
+                        >
+                          <img
+                            src={getTopicImageSrc(topic?.image_info)}
+                            alt={topic.name}
+                            className="card-img-top"
+                            style={{ height: 180, objectFit: "cover" }}
+                          />
+                          <div className="card-body text-start">
+                            <div className="d-flex justify-content-between align-items-start">
+                              <div>
+                                <div className="text-muted small">#{index + 1}</div>
+                                <div className="fw-semibold">{topic.name}</div>
+                              </div>
+                              <span className="badge text-bg-primary">
+                                {topic.subscriber_count ?? 0}
+                              </span>
                             </div>
-                            <span className="badge text-bg-primary">
-                              {topic.subscriber_count ?? 0}
-                            </span>
+                            <div className="text-muted small mt-2">
+                              {topic?.created_by?.username ?? "Unknown author"}
+                            </div>
+                            <div className="text-muted small mt-1">
+                              {topic?.descriptions ?? "No description"}
+                            </div>
                           </div>
-                          <div className="text-muted small mt-2">
-                            subscribed members
-                          </div>
-                        </div>
+                        </Link>
                       </div>
                     </div>
                   ))}

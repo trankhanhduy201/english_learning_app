@@ -21,9 +21,8 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
 
   useEffect(() => {
     setTopic(topic);
-  }, []);
+  }, [setTopic, topic]);
 
-  // Update context topic after successful update
   useEffect(() => {
     if (
       editTopicFetcher.data?.status === "success" &&
@@ -31,7 +30,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
     ) {
       setTopic(editTopicFetcher.data.data);
     }
-  }, [editTopicFetcher.data]);
+  }, [editTopicFetcher.data, setTopic]);
 
   return (
     <>
@@ -50,7 +49,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
               <UploadImageInput
                 name="image"
                 imageUrl={editTopicFetcher?.data?.data?.image_info?.url ?? topic?.image_info?.url}
-                placeholderUrl={null}
+                placeholderUrl={undefined}
                 shape="circle"
               />
               {editTopicFetcher.data?.errors?.upload_image && (
@@ -118,7 +117,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
                 <RadioButtons
                   name="status"
                   options={Object.values(TOPIC_STATUS)}
-                  selectedOption={topic?.status ?? 'private'}
+                  selectedOption={topic?.status ?? "private"}
                 />
               </div>
               {editTopicFetcher.data?.errors?.status && (
@@ -130,7 +129,7 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
           </div>
         </fieldset>
         <div className="d-flex justify-content-end mt-2">
-          <Link to={`/topics`} className={`btn btn-secondary me-2 ${isNew ? "w-sm-50" : ""}`}>
+          <Link to="/topics" className={`btn btn-secondary me-2 ${isNew ? "w-sm-50" : ""}`}>
             <i className="bi bi-arrow-left"></i>
             <span className={`btn-text ${!isNew ? "--d-sm-none" : ""}`}> List topic</span>
           </Link>

@@ -36,10 +36,10 @@ const Topics = memo(() => {
 
   useEffect(() => {
     if (deleteTopicFetcher.state === 'idle' && deleteTopicFetcher.data?.status === 'success') {
-      const tableTr = document.querySelectorAll('table#topics__list-item tbody tr');
+      const topicCards = document.querySelectorAll('[data-topic-card="1"]');
       const page = parseInt(searchParams.get('page')) || 1;
       let newPage = 1;
-      if (tableTr.length > 1) {
+      if (topicCards.length > 1) {
         newPage = page;
       } else if (page > 1) {
         newPage = page - 1;

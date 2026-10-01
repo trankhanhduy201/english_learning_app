@@ -46,7 +46,8 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
 
     def trending(self, limit=4):
         return (
-            self.with_subscriber_count()
+            self.with_owner()
+            .with_subscriber_count()
             .order_by('-subscriber_count', '-id')[:limit]
         )
 

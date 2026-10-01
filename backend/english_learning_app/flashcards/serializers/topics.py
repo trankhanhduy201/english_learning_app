@@ -128,6 +128,34 @@ class RetrieveTopicSerializer(BaseSerializer):
         ).data
 
 
+class TrendingTopicSerializer(BaseSerializer):
+    image_info = SerializerMethodField()
+    created_by = AuthorSerializer(read_only=True)
+    subscriber_count = IntegerField(read_only=True)
+
+    class Meta(BaseSerializer.Meta):
+        model = Topic
+        fields = [
+            'id',
+            'name',
+            'descriptions',
+            'status',
+            'image_info',
+            'created_by',
+            'subscriber_count',
+        ]
+
+    @handle_exceptions(
+        reraise=False,
+        default_return=None,
+        log_error=True
+    )
+    def get_image_info(self, instance):
+        if instance.image_path:
+            return UploadImageSerializer(instance=instance.image_path).data
+        return None
+
+
 class CreateTopicSerializer(BaseSerializer):
     upload_image = Base64ImageField(
         source='image_path',
