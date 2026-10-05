@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { TOPIC_STATUS } from "../../../configs/appConfig";
 import { getTopicImageSrc } from "../../../commons/topicImage";
+import UserAvatar from "../../../commons/userAvatar";
 
 const ListTopic = memo(({ topics, removeTopic }) => {
   const allowLearn = (topic) =>
@@ -29,6 +30,37 @@ const ListTopic = memo(({ topics, removeTopic }) => {
     return `${description.slice(0, 137)}...`;
   };
 
+  const renderedMembers = (topic) => {
+    const members = Array.isArray(topic?.members) ? topic.members : [];
+    const displayMembers = members.slice(0, 2);
+    const restCount = Math.max(0, members.length - displayMembers.length);
+
+    return (
+      <div className="d-flex align-items-center gap-1">
+        <div className="d-flex align-items-center">
+          {displayMembers.map((member) => (
+            <div
+              key={member?.member_id ?? member?.id ?? member?.member_name}
+              className="me-1"
+            >
+              <UserAvatar
+                user={member?.member ?? member}
+                size={24}
+                className="border border-white shadow-sm"
+                alt={member?.member_name ?? member?.member?.username ?? "Member"}
+              />
+            </div>
+          ))}
+        </div>
+        {restCount > 0 && (
+          <span className="badge rounded-pill text-bg-light text-secondary border">
+            +{restCount}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
       {topics?.map((topic) => (
@@ -40,6 +72,7 @@ const ListTopic = memo(({ topics, removeTopic }) => {
                 alt={topic.name}
                 className="card-img-top"
                 style={{ height: 220, objectFit: "cover" }}
+                loading="lazy"
               />
             </Link>
 
@@ -62,40 +95,58 @@ const ListTopic = memo(({ topics, removeTopic }) => {
                 </span>
               </div>
 
-              <p className="text-muted mt-2 mb-3">
+              <div className="small text-muted mb-2">
+                <UserAvatar
+                    className="border border-white shadow-sm me-1"
+                    user={topic.created_by}
+                    size={20}
+                    alt={topic.created_by?.username ?? "Author"}
+                  />
+                <span>{topic.created_by?.username ?? "Unknown"}</span>
+              </div>
+
+              <p className="text-muted mt-0 mb-3">
                 {getShortDescription(topic.descriptions)}
               </p>
 
               <div className="small text-muted mt-auto">
-                <div className="mb-1">
-                  <i className="bi bi-people me-2"></i>
-                  {topic.member_count} members
-                </div>
-                <div>
-                  <i className="bi bi-person me-2"></i>
-                  {topic.created_by?.username ?? "Unknown"}
+                <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
+                  <div className="d-flex align-items-center gap-2">
+                    <i className="bi bi-people"></i>
+                    <span>{topic.member_count} members</span>
+                  </div>
+                  {renderedMembers(topic)}
                 </div>
               </div>
 
-              <div className="d-flex flex-wrap gap-2 mt-3">
+              <div className="d-flex flex-wrap gap-2 mt-3 justify-content-end">
                 {allowLearn(topic) && (
                   <Link
                     to={`/topic/${topic.id}/learn`}
                     className="btn btn-success btn-sm"
+                    title="Learn"
+                    aria-label="Learn"
                   >
-                    <i className="bi bi-clipboard-pulse text-white me-1"></i>
-                    Learn
+                    <i className="bi bi-clipboard-pulse"></i>
                   </Link>
                 )}
                 {allowEdit(topic) ? (
-                  <Link to={`/topic/${topic.id}`} className="btn btn-primary btn-sm">
-                    <i className="bi bi-pencil-square text-white me-1"></i>
-                    Edit
+                  <Link
+                    to={`/topic/${topic.id}`}
+                    className="btn btn-primary btn-sm"
+                    title="Edit"
+                    aria-label="Edit"
+                  >
+                    <i className="bi bi-pencil-square"></i>
                   </Link>
                 ) : allowWatch(topic) && (
-                  <Link to={`/topic/${topic.id}`} className="btn btn-outline-primary btn-sm">
-                    <i className="bi bi-eye me-1"></i>
-                    View
+                  <Link
+                    to={`/topic/${topic.id}`}
+                    className="btn btn-outline-primary btn-sm"
+                    title="View"
+                    aria-label="View"
+                  >
+                    <i className="bi bi-eye"></i>
                   </Link>
                 )}
                 {allowDelete(topic) && (
@@ -103,9 +154,10 @@ const ListTopic = memo(({ topics, removeTopic }) => {
                     type="button"
                     className="btn btn-danger btn-sm"
                     onClick={() => removeTopic(topic.id)}
+                    title="Delete"
+                    aria-label="Delete"
                   >
-                    <i className="bi bi-trash text-white me-1"></i>
-                    Delete
+                    <i className="bi bi-trash"></i>
                   </button>
                 )}
               </div>

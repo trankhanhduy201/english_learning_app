@@ -62,6 +62,7 @@ const Header = memo(() => {
                 alt="User Avatar"
                 className="rounded-circle"
                 style={{ width: "30px", height: "30px" }}
+                loading="lazy"
               />
             </Dropdown.Toggle>
             <Dropdown.Menu align="end">

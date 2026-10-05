@@ -43,6 +43,7 @@ const Test = () => {
               alt="User Avatar"
               className="rounded-circle"
               style={{ width: "30px", height: "30px" }}
+              loading="lazy"
             />
           </button>
           <ul

@@ -132,6 +132,7 @@ export default function TopicAutocompleteSearch({
                   alt={topic.name}
                   className="rounded"
                   style={{ width: "28px", height: "28px" }}
+                  loading="lazy"
                 />
                 <span className="text-truncate">{topic.name}</span>
               </button>

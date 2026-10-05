@@ -7,6 +7,7 @@ import { getMembers } from "../../../services/topicApi";
 import RadioButtons from "../../RadioButtons";
 import FieldErrors from "../../FieldErrors";
 import { SUBCRIBER_STATUS } from "../../../configs/appConfig";
+import UserAvatar from "../../../commons/userAvatar";
 
 const Subscribers = memo(({ defaultMembers, topicId }) => {
   const fetcher = useFetcher();
@@ -180,16 +181,14 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
     <>
       <div className="d-flex align-items-center">
         {defaultDisplayedMembers.map((user) => (
-          <img
-            key={user.id}
-            src={
-              user?.avartar ??
-              "https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=30"
-            }
-            alt={user.member_name}
-            title={user.member_name}
-            className="rounded-circle subcriber-avatar me-2"
-          />
+          <span key={user.id} className="me-2">
+            <UserAvatar
+              user={user}
+              size={32}
+              className="subcriber-avatar"
+              alt={user.member_name}
+            />
+          </span>
         ))}
 
         {defaultDisplayedMembers.length > 0 && (
@@ -266,14 +265,9 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
                     style={{ opacity: user.is_remove ? 0.4 : 1 }}
                   >
                     <div className="d-flex align-items-center">
-                      <img
-                        src={
-                          user.avartar ??
-                          "https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=40"
-                        }
-                        className="rounded-circle me-2"
-                        style={{ width: 30, height: 30, objectFit: "cover" }}
-                      />
+                      <div className="me-2">
+                        <UserAvatar user={user} size={30} alt={user.member_name} />
+                      </div>
                       <span>{user.member_name}</span>
                     </div>
 

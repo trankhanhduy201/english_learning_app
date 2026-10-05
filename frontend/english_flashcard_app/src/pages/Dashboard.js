@@ -63,6 +63,7 @@ const Dashboard = memo(() => {
                             alt={topic.name}
                             className="card-img-top"
                             style={{ height: 180, objectFit: "cover" }}
+                            loading="lazy"
                           />
                           <div className="card-body text-start">
                             <div className="d-flex justify-content-between align-items-start">
