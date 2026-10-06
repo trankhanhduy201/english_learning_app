@@ -185,7 +185,7 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
           <span key={user.id} className="me-2">
             <UserAvatar
               user={memberToUserData(user)}
-              size={32}
+              size={45}
               className="subcriber-avatar"
             />
           </span>
@@ -268,7 +268,7 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
                       <div className="me-2">
                         <UserAvatar
                           user={memberToUserData(user)}
-                          size={30}
+                          size={35}
                         />
                       </div>
                       <span>{getUserDisplayName(memberToUserData(user))}</span>
