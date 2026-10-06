@@ -7,7 +7,8 @@ import { getMembers } from "../../../services/topicApi";
 import RadioButtons from "../../RadioButtons";
 import FieldErrors from "../../FieldErrors";
 import { SUBCRIBER_STATUS } from "../../../configs/appConfig";
-import UserAvatar from "../../../commons/userAvatar";
+import UserAvatar, { getUserDisplayName } from "../../../commons/userAvatar";
+import { memberToUserData } from "../../../commons/topicMember"; 
 
 const Subscribers = memo(({ defaultMembers, topicId }) => {
   const fetcher = useFetcher();
@@ -63,7 +64,7 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
     let filtered = [...Object.values(initialMap)];
     if (search.trim() !== "") {
       filtered = filtered.filter((u) =>
-        u.member_name.toLowerCase().includes(search.toLowerCase())
+        getUserDisplayName(memberToUserData(u)).toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -183,10 +184,9 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
         {defaultDisplayedMembers.map((user) => (
           <span key={user.id} className="me-2">
             <UserAvatar
-              user={user}
+              user={memberToUserData(user)}
               size={32}
               className="subcriber-avatar"
-              alt={user.member_name}
             />
           </span>
         ))}
@@ -266,9 +266,12 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
                   >
                     <div className="d-flex align-items-center">
                       <div className="me-2">
-                        <UserAvatar user={user} size={30} alt={user.member_name} />
+                        <UserAvatar
+                          user={memberToUserData(user)}
+                          size={30}
+                        />
                       </div>
-                      <span>{user.member_name}</span>
+                      <span>{getUserDisplayName(memberToUserData(user))}</span>
                     </div>
 
                     <div className="d-flex align-items-center">

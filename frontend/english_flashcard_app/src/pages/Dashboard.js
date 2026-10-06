@@ -2,6 +2,7 @@ import { memo, Suspense } from "react";
 import { Await, Link, useLoaderData } from "react-router-dom";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { getTopicImageSrc } from "../commons/topicImage";
+import { getUserDisplayName } from "../commons/userAvatar";
 
 const Dashboard = memo(() => {
   const { dashboardSummaryPromise } = useLoaderData();
@@ -76,7 +77,7 @@ const Dashboard = memo(() => {
                               </span>
                             </div>
                             <div className="text-muted small mt-2">
-                              {topic?.created_by?.username ?? "Unknown author"}
+                              {getUserDisplayName(topic.created_by)}
                             </div>
                             <div className="text-muted small mt-1">
                               {topic?.descriptions ?? "No description"}

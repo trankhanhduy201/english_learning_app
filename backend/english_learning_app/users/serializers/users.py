@@ -9,8 +9,9 @@ from users.models import UserProfile
 
 
 class RetrieveUserSerializer(serializers.ModelSerializer):
-    avatar = serializers.ImageField(source='profile.avatar', read_only=True)
+    avatar = serializers.ImageField(source='profile.avatar', read_only=True, use_url=False)
     bio = serializers.CharField(source="profile.bio", read_only=True)
+    full_name = serializers.CharField(source="get_full_name", read_only=True)
 
     class Meta:
         model = get_user_model()
@@ -22,6 +23,7 @@ class RetrieveUserSerializer(serializers.ModelSerializer):
             "last_name",
             "avatar",
             "bio",
+            "full_name",
         ]
         read_only_fields = [
             "id",
@@ -31,6 +33,7 @@ class RetrieveUserSerializer(serializers.ModelSerializer):
             "last_name",
             "avatar",
             "bio",
+            "full_name",
         ]
 
 

@@ -92,15 +92,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['email'] = user.email
         token['is_staff'] = user.is_staff
-        token['full_name'] = self.get_user_full_name(user)
+        token['full_name'] = user.get_full_name().strip()
         token['token_version'] = self.get_refresh_token_version(user)
 
         return token
-
-    @classmethod
-    def get_user_full_name(self, user):
-        full_name = user.get_full_name()
-        return full_name if full_name else user.username
 
     @classmethod
     def get_refresh_token_version(self, user):

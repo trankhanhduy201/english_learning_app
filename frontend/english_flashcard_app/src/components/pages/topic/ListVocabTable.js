@@ -2,6 +2,7 @@ import { memo, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { List } from "react-window";
 import DeleteConfirmButton from "../../DeleteConfirmButton";
+import { getUserDisplayName } from "../../../commons/userAvatar";
 
 const ROW_HEIGHT = 60;
 const LIST_HEIGHT = ROW_HEIGHT * 7;
@@ -30,7 +31,7 @@ const RowComponent = ({ index, style, ...rest }) => {
         <span>{vocab.word}</span>
       </div>
       <div className="vocab-cell vocab-description">{vocab.descriptions}</div>
-      <div className="vocab-cell vocab-author">{vocab?.created_by?.username}</div>
+      <div className="vocab-cell vocab-author">{getUserDisplayName(vocab.created_by)}</div>
       <div className="vocab-cell vocab-actions">
         <div className="actions-container">
           <Link to={`/topic/${topicId}/vocab/${vocab.id}`} className="action-link">

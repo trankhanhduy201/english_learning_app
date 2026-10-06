@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField, ImageField
+from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField, CharField
 
 from flashcards.models import Topic, TopicMember
 from shared.decorators.handle_exceptions import handle_exceptions
@@ -13,6 +13,9 @@ User = get_user_model()
 
 
 class AuthorSerializer(BaseSerializer):
+    full_name = CharField(source="get_full_name", read_only=True)
+    avatar = CharField(source="profile.avatar", read_only=True)
+
     class Meta(BaseSerializer.Meta):
         model = User
         fields = [
@@ -20,7 +23,9 @@ class AuthorSerializer(BaseSerializer):
             'username', 
             'first_name', 
             'last_name', 
-            'email'
+            'email',
+            'full_name',
+            'avatar'
         ]
 
 

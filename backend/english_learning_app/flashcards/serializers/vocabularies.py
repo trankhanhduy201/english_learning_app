@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from rest_framework.serializers import SerializerMethodField, CharField
 
 from flashcards.models import Topic, Translation, Vocabulary
 from shared.serializers.bases import (
@@ -15,6 +16,8 @@ translation_service = TranslationService()
 
 
 class AuthorSerializer(BaseSerializer):
+    full_name = CharField(source="get_full_name", read_only=True)
+
     class Meta(BaseSerializer.Meta):
         model = User
         fields = [
@@ -23,6 +26,7 @@ class AuthorSerializer(BaseSerializer):
             'first_name',
             'last_name',
             'email',
+            'full_name'
         ]
 
 

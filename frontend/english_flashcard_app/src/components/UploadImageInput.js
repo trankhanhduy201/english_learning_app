@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { API_BASE_URL } from "../configs/apiConfig";
+import { resolveAvatarUrl } from "../commons/userAvatar";
 
 const DEFAULT_PLACEHOLDER_URL = "https://ui-avatars.com/api/?name=User&background=0D6EFD&color=fff&size=200";
 
@@ -63,11 +63,7 @@ const UploadImageInput = memo(({
       setRemoveRequested(false);
       return;
     }
-    setDefaultImage(
-      imageUrl.startsWith('http') 
-        ? imageUrl 
-        : API_BASE_URL + imageUrl
-    );
+    setDefaultImage(resolveAvatarUrl(imageUrl));
     setRemoveRequested(false);
   }, [imageUrl]);
 

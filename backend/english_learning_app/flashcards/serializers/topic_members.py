@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import BooleanField, CharField
+from rest_framework.serializers import BooleanField, CharField, SerializerMethodField
 from flashcards.models import Topic, TopicMember
 from shared.serializers.bases import (
     BaseListSerializer,
@@ -12,7 +12,9 @@ User = get_user_model()
 
 class RetrieveListTopicMembersSerializer(BaseSerializer):
     member_id = CharField(source='member.id', read_only=True)
-    member_name = CharField(source='member.username', read_only=True)
+    member_username = CharField(source='member.username', read_only=True)
+    member_name = CharField(source="member.get_full_name", read_only=True)
+    member_avatar = CharField(source="member.profile.avatar", read_only=True)
 
     class Meta(BaseSerializer.Meta):
         model = TopicMember
@@ -23,7 +25,9 @@ class RetrieveListTopicMembersSerializer(BaseSerializer):
             'topic',
             'member',
             'member_id',
+            'member_username',
             'member_name',
+            'member_avatar',
         ]
 
 

@@ -18,49 +18,45 @@ const normalizeNameValue = (value) =>
     .toString()
     .trim();
 
-const normalizeUserName = (user) => {
+export const getUserDisplayName = (user) => {
   if (!user || typeof user !== "object") {
     return "User";
   }
 
   const candidate =
-    user.last_name ||
-    user.member_name ||
-    user.name ||
+    user.full_name ||
     user.username ||
-    user.first_name ||
-    user.email ||
     "User";
 
   return normalizeNameValue(candidate);
 };
 
 export const getUserAvatarInitial = (user) => {
-  const fullName = normalizeUserName(user);
-  const lastName = fullName.split(/\s+/).pop() || fullName;
-  return (lastName.charAt(0) || "U").toUpperCase();
+  const fullName = getUserDisplayName(user);
+  return (fullName.charAt(0) || "U").toUpperCase();
 };
 
 export const getUserAvatarBackground = (user) => {
-  const source = normalizeUserName(user);
+  const source = getUserDisplayName(user);
   const hash = Array.from(source).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 };
 
-export const getUserAvatarImageSrc = (user) => {
-  const avatarValue =
-    user?.avatar ??
-    user?.avartar ??
-    user?.profile?.avatar ??
-    user?.image_url ??
-    null;
-
+export const resolveAvatarUrl = (avatarValue) => {
   if (!avatarValue) {
     return null;
   }
 
-  const value = avatarValue.toString();
-  return value.startsWith("http") ? value : `${API_BASE_URL}${value}`;
+  const value = avatarValue.toString().trim();
+  if (!value) {
+    return null;
+  }
+
+  return value.startsWith("http") ? value : `${API_BASE_URL}/media/${value}`;
+};
+
+export const getUserAvatarImageSrc = (user) => {
+  return resolveAvatarUrl(user?.avatar ?? null);
 };
 
 export const UserAvatar = ({
@@ -103,8 +99,8 @@ export const UserAvatar = ({
         fontSize: `${Math.max(12, size * 0.42)}px`,
         ...style,
       }}
-      title={alt ?? normalizeUserName(user)}
-      aria-label={alt ?? normalizeUserName(user)}
+      title={alt ?? getUserDisplayName(user)}
+      aria-label={alt ?? getUserDisplayName(user)}
     >
       {initial}
     </div>
