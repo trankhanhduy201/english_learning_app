@@ -4,7 +4,10 @@ from flashcards.querysets.bases import BaseQuerySet
 
 class TopicMemberQuerySet(BaseQuerySet):
     def with_member(self):
-        return self.select_related('member')
+        return self.select_related(
+            'member',
+            'member__profile'
+        )
 
     def count_members(self):
         return self.filter(topic=OuterRef('id')) \
