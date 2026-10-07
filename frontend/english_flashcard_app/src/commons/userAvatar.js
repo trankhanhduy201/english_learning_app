@@ -18,16 +18,24 @@ const normalizeNameValue = (value) =>
     .toString()
     .trim();
 
+export const normalizeUserData = (user = {}) => {
+  const normalized = user && typeof user === "object" ? user : {};
+  const firstName = normalizeNameValue(normalized.first_name);
+  const lastName = normalizeNameValue(normalized.last_name);
+  const fullName = normalizeNameValue(normalized.full_name) || [firstName, lastName].filter(Boolean).join(" ");
+
+  return {
+    username: normalizeNameValue(normalized.username),
+    full_name: fullName,
+    first_name: firstName,
+    last_name: lastName,
+    avatar: normalized.avatar ?? normalized.profile?.avatar ?? null,
+  };
+};
+
 export const getUserDisplayName = (user) => {
-  if (!user || typeof user !== "object") {
-    return "User";
-  }
-
-  const candidate =
-    user.full_name ||
-    user.username ||
-    "User";
-
+  const normalized = normalizeUserData(user);
+  const candidate = normalized.full_name || normalized.username || "User";
   return normalizeNameValue(candidate);
 };
 
@@ -52,11 +60,20 @@ export const resolveAvatarUrl = (avatarValue) => {
     return null;
   }
 
-  return value.startsWith("http") ? value : `${API_BASE_URL}/media/${value}`;
+  if (value.startsWith("http")) {
+    return value;
+  }
+
+  if (value.startsWith("/")) {
+    return `${API_BASE_URL}${value}`;
+  }
+
+  return `${API_BASE_URL}/media/${value}`;
 };
 
 export const getUserAvatarImageSrc = (user) => {
-  return resolveAvatarUrl(user?.avatar ?? null);
+  const normalized = normalizeUserData(user);
+  return resolveAvatarUrl(normalized.avatar ?? null);
 };
 
 export const UserAvatar = ({
@@ -66,9 +83,10 @@ export const UserAvatar = ({
   style = {},
   alt,
 }) => {
-  const src = getUserAvatarImageSrc(user);
-  const initial = getUserAvatarInitial(user);
-  const backgroundColor = getUserAvatarBackground(user);
+  const normalizedUser = normalizeUserData(user);
+  const src = getUserAvatarImageSrc(normalizedUser);
+  const initial = getUserAvatarInitial(normalizedUser);
+  const backgroundColor = getUserAvatarBackground(normalizedUser);
 
   if (src) {
     return (

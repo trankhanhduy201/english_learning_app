@@ -93,6 +93,7 @@ class RetrieveTopicSerializer(BaseSerializer):
     # For read-only and invoke get_upload_image to return serialized image data
     image_info = SerializerMethodField()
     member_count = IntegerField(read_only=True)
+    vocab_count = IntegerField(read_only=True)
     members = SerializerMethodField()
     current_member = SerializerMethodField()
     created_by = AuthorSerializer(read_only=True)
@@ -110,6 +111,7 @@ class RetrieveTopicSerializer(BaseSerializer):
             'members',
             'current_member',
             'member_count',
+            'vocab_count',
         ]
 
     @handle_exceptions(
@@ -137,6 +139,7 @@ class TrendingTopicSerializer(BaseSerializer):
     image_info = SerializerMethodField()
     created_by = AuthorSerializer(read_only=True)
     subscriber_count = IntegerField(read_only=True)
+    vocab_count = IntegerField(read_only=True)
 
     class Meta(BaseSerializer.Meta):
         model = Topic
@@ -148,6 +151,7 @@ class TrendingTopicSerializer(BaseSerializer):
             'image_info',
             'created_by',
             'subscriber_count',
+            'vocab_count',
         ]
 
     @handle_exceptions(

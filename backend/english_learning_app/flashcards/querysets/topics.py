@@ -13,6 +13,7 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
             self.with_topic_members()
             .with_owner()
             .with_member_count()
+            .with_vocab_count()
         )
         return qs
     
@@ -44,10 +45,16 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
             )
         )
 
+    def with_vocab_count(self):
+        return self.annotate(
+            vocab_count=Count('vocabularies', distinct=True)
+        )
+
     def trending(self, limit=4):
         return (
             self.with_owner()
             .with_subscriber_count()
+            .with_vocab_count()
             .order_by('-subscriber_count', '-id')[:limit]
         )
 
