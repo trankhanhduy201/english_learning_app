@@ -102,6 +102,11 @@ export const createAppRouter = () => createBrowserRouter(
           children: [
             {
               index: true,
+              path: "/",
+              element: <PrivatePage pageName="Dashboard" />,
+              loader: dashboardLoader.getDashboardSummaryLoader,
+            },
+            {
               path: "/dashboard",
               element: <PrivatePage pageName="Dashboard" />,
               loader: dashboardLoader.getDashboardSummaryLoader,
