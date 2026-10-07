@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { getAuthManager } from "auth";
 import {
   setUserReducer,
   clearUserReducer,
@@ -6,7 +7,7 @@ import {
 
 const userSlice = createSlice({
   name: "user",
-  initialState: {},
+  initialState: await getAuthManager().getUserManager().getUser() ?? {},
   reducers: {
     setUser: setUserReducer,
     clearUser: clearUserReducer,
