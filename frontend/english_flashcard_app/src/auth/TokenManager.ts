@@ -134,6 +134,7 @@ export class TokenManager {
       username: payload.username,
       email: payload.email,
       full_name: payload.full_name,
+      avatar: payload.avatar,
     };
   }
 }

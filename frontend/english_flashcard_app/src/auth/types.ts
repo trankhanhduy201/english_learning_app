@@ -15,6 +15,7 @@ export interface TokenPayload {
   username: string;
   email?: string;
   full_name: string;
+  avatar?: string;
   [key: string]: any;
 }
 
@@ -23,6 +24,7 @@ export interface UserInfo {
   username: string;
   email?: string;
   full_name: string;
+  avatar?: string;
 }
 
 export interface ApiResponse {

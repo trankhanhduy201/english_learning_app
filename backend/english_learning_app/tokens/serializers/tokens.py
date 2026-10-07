@@ -90,6 +90,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['username'] = user.username
+        token['avatar'] = str(user.profile.avatar)
         token['email'] = user.email
         token['is_staff'] = user.is_staff
         token['full_name'] = user.get_full_name().strip()

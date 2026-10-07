@@ -29,7 +29,7 @@ export const normalizeUserData = (user = {}) => {
     full_name: fullName,
     first_name: firstName,
     last_name: lastName,
-    avatar: normalized.avatar ?? normalized.profile?.avatar ?? null,
+    avatar: normalized.avatar ?? null
   };
 };
 

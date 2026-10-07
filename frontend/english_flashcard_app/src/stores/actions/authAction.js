@@ -2,6 +2,7 @@ import { createThunkWithCallback, rejectWithErrorValue, dispatchSuccessAlert } f
 import { getToken as getTokenApi, registerUser as registerUserApi } from "../../services/authApi";
 import { getAuthManager } from "auth";
 import { revokeTokensThunk } from "./tokenAction";
+import { setUser } from "../slices/userSlice";
 
 export const loginThunk = createThunkWithCallback(
   "auth/login",
@@ -26,6 +27,7 @@ export const loginThunk = createThunkWithCallback(
       );
     }
 
+    dispatch(setUser(userInfo));
     dispatchSuccessAlert(dispatch, `Hi ${userInfo?.full_name}, wellcome back!`);
     return response;
   },

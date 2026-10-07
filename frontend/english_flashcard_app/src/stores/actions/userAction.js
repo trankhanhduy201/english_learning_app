@@ -5,19 +5,7 @@ import {
 } from "./commonAction";
 import { setUser } from "../slices/userSlice";
 import * as userApi from "../../services/userApi";
-
-export const getInfo = createThunkWithCallback(
-  "user/info",
-  async (_, { dispatch, rejectWithValue }) => {
-    const response = await userApi.getProfile();
-    if (response.status === "error") {
-      return rejectWithErrorValue(dispatch, rejectWithValue, response);
-    }
-    const user = response?.data?.user ?? response?.data ?? {};
-    dispatch(setUser(user));
-    return response;
-  },
-);
+import { getAuthManager } from "auth";
 
 export const getProfileThunk = createThunkWithCallback(
   "user/profile/get",
@@ -26,6 +14,12 @@ export const getProfileThunk = createThunkWithCallback(
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
+    
+    const user = response?.data ?? {};
+    dispatch(setUser(user));
+
+    const authManager = getAuthManager();
+    await authManager.getUserManager().setUser(user);
     return response;
   },
 );
@@ -37,6 +31,13 @@ export const updateProfileThunk = createThunkWithCallback(
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
+
+    const updatedUser = response.data ?? {};
+    dispatch(setUser(updatedUser));
+
+    const authManager = getAuthManager();
+    await authManager.getUserManager().setUser(updatedUser);
+
     dispatchSuccessAlert(dispatch, "Profile updated successfully");
     return response;
   },

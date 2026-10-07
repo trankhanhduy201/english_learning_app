@@ -3,12 +3,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import alertSlice from "./slices/alertSlice";
 import langSlice from "./slices/langSlice";
 import sidebarSlice from "./slices/sidebarSlice";
+import userSlice from "./slices/userSlice";
 
 const store = configureStore({
   reducer: {
     alerts: alertSlice,
     lang: langSlice,
-    sidebar: sidebarSlice
+    sidebar: sidebarSlice,
+    user: userSlice,
   },
   // middleware: (getDefaultMiddleware) =>
   //   getDefaultMiddleware().concat(verifyTokenMiddleware),
