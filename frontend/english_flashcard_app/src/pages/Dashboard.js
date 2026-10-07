@@ -2,7 +2,9 @@ import { memo, Suspense } from "react";
 import { Await, Link, useLoaderData } from "react-router-dom";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { getTopicImageSrc } from "../commons/topicImage";
-import { getUserDisplayName } from "../commons/userAvatar";
+import UserAvatar, { getUserDisplayName } from "../commons/userAvatar";
+import TopicStatTag from "../components/TopicStatTag";
+import StatusBadge from "../components/StatusBadge";
 
 const Dashboard = memo(() => {
   const { dashboardSummaryPromise } = useLoaderData();
@@ -69,15 +71,38 @@ const Dashboard = memo(() => {
                           <div className="card-body text-start">
                             <div className="d-flex justify-content-between align-items-start">
                               <div>
-                                <div className="text-muted small">#{index + 1}</div>
-                                <div className="fw-semibold">{topic.name}</div>
+                                <div className="text-muted small d-flex align-items-center gap-2">
+                                  <StatusBadge
+                                    text={`Rank #${index + 1}`}
+                                    tone={index === 0 ? "primary" : index === 1 ? "success" : "secondary"}
+                                    className="position-absolute top-0 end-0 m-2"
+                                  />
+                                </div>
+                                <div className="d-flex flex-column justify-content-between align-items-start">
+                                  <div className="fw-semibold">{topic.name}</div>
+                                  <div className="d-flex align-items-center gap-1 text-muted small mt-1">
+                                    <UserAvatar
+                                      user={topic.created_by}
+                                      size={20}
+                                      className="border border-white shadow-sm"
+                                    />
+                                    <span>{getUserDisplayName(topic.created_by)}</span>
+                                  </div>
+                                </div> 
                               </div>
-                              <span className="badge text-bg-primary">
-                                {topic.subscriber_count ?? 0}
-                              </span>
-                            </div>
-                            <div className="text-muted small mt-2">
-                              {getUserDisplayName(topic.created_by)}
+                              <div className="d-flex flex-column align-items-end gap-1">
+                                <TopicStatTag
+                                  icon="bi-card-text"
+                                  value={topic.vocab_count ?? 0}
+                                  label="words"
+                                  tone="primary"
+                                />
+                                <TopicStatTag
+                                  icon="bi-people"
+                                  value={topic.subscriber_count ?? 0}
+                                  label="subscribers"
+                                />
+                              </div>
                             </div>
                             <div className="text-muted small mt-1">
                               {topic?.descriptions ?? "No description"}
