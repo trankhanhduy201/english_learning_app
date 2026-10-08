@@ -99,7 +99,7 @@ const Dashboard = memo(() => {
                                 />
                                 <TopicStatTag
                                   icon="bi-people"
-                                  value={topic.subscriber_count ?? 0}
+                                  value={topic.member_count ?? 0}
                                   label="subscribers"
                                 />
                               </div>

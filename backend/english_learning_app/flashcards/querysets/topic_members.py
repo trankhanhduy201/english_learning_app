@@ -1,4 +1,4 @@
-from django.db.models import OuterRef, Count
+from django.db.models import Count
 from flashcards.querysets.bases import BaseQuerySet
 
 
@@ -10,7 +10,8 @@ class TopicMemberQuerySet(BaseQuerySet):
         )
 
     def count_members(self):
-        return self.filter(topic=OuterRef('id')) \
+        accessible_statuses = self.model.get_accessible_statuses()
+        return self.filter(status__in=accessible_statuses) \
             .values('topic') \
             .annotate(count=Count('id')) \
             .values('count')

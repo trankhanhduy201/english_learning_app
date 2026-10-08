@@ -138,7 +138,7 @@ class RetrieveTopicSerializer(BaseSerializer):
 class TrendingTopicSerializer(BaseSerializer):
     image_info = SerializerMethodField()
     created_by = AuthorSerializer(read_only=True)
-    subscriber_count = IntegerField(read_only=True)
+    member_count = IntegerField(read_only=True)
     vocab_count = IntegerField(read_only=True)
 
     class Meta(BaseSerializer.Meta):
@@ -150,7 +150,7 @@ class TrendingTopicSerializer(BaseSerializer):
             'status',
             'image_info',
             'created_by',
-            'subscriber_count',
+            'member_count',
             'vocab_count',
         ]
 

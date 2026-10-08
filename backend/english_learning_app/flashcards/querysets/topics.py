@@ -25,37 +25,58 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
         return self.prefetch_related(
 	        Prefetch('topic_members', queryset=qs)
         )
-    
+
+    # subquery way for counting topic members
     def with_member_count(self):
         TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
         qs = TopicMember.objects.count_members()
         return self.annotate(
             member_count=Coalesce(
-                Subquery(qs, output_field=IntegerField()), 0
+                Subquery(
+                    qs.filter(topic=OuterRef('pk')), 
+                    output_field=IntegerField()
+                ), 0
             )
         )
 
-    def with_subscriber_count(self):
-        TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
-        accessible_statuses = TopicMember.get_accessible_statuses()
-        return self.annotate(
-            subscriber_count=Count(
-                'topic_members',
-                filter=Q(topic_members__status__in=accessible_statuses),
-            )
-        )
+    # postgresql (filter count distinct + join + group by)
+    # mysql (case when counting + join + group by)
+    # def with_member_count(self):
+    #     TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
+    #     accessible_statuses = TopicMember.get_accessible_statuses()
+    #     return self.annotate(
+    #         subscriber_count=Count(
+    #             'topic_members',
+    #             distinct=True,
+    #             filter=Q(
+    #                 topic_members__status__in=accessible_statuses
+    #             )
+    #         )
+    #     )
 
     def with_vocab_count(self):
+        Vocab = self.get_model(self.VOCAB_MODEL)
+        qs = Vocab.objects.count_vocabs()
         return self.annotate(
-            vocab_count=Count('vocabularies', distinct=True)
+            vocab_count=Coalesce(
+                Subquery(
+                    qs.filter(topic=OuterRef('pk')), 
+                    output_field=IntegerField()
+                ), 0
+            )
         )
+
+    # def with_vocab_count(self):
+    #     return self.annotate(
+    #         vocab_count=Count('vocabularies', distinct=True)
+    #     )
 
     def trending(self, limit=4):
         return (
             self.with_owner()
-            .with_subscriber_count()
+            .with_member_count()
             .with_vocab_count()
-            .order_by('-subscriber_count', '-id')[:limit]
+            .order_by('-member_count', '-id')[:limit]
         )
 
     def search_by_keyword(self, keyword):

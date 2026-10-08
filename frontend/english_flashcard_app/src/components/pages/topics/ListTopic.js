@@ -41,7 +41,7 @@ const ListTopic = memo(({ topics, removeTopic }) => {
           {displayMembers.map((member) => {
             const normalizedMember = memberToUserData(member);
             return (
-              <div key={member?.member_id} className="me-1">
+              <div key={member?.member_id}>
                 <UserAvatar
                   user={normalizedMember}
                   size={24}
@@ -87,7 +87,7 @@ const ListTopic = memo(({ topics, removeTopic }) => {
                   <div className="d-flex align-items-start gap-1 flex-column">
                     <Link
                       to={`/topic/${topic.id}`}
-                      className="text-decoration-none text-dark fw-semibold fs-5"
+                      className="text-decoration-none text-dark fw-semibold"
                     >
                       {topic.name}
                     </Link>
@@ -106,6 +106,7 @@ const ListTopic = memo(({ topics, removeTopic }) => {
                       icon="bi-card-text"
                       value={topic.vocab_count ?? 0}
                       label="words"
+                      tone="primary"
                     />
                     <TopicStatTag
                       icon="bi-people"

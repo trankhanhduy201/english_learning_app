@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, Exists, OuterRef
+from django.db.models import Prefetch, Exists, OuterRef, Count
 from flashcards.querysets.bases import BaseQuerySet
 from flashcards.querysets.mixins import OwnerMixin
 
@@ -26,3 +26,8 @@ class VocabQuerySet(BaseQuerySet, OwnerMixin):
             language=language
         )
         return self.filter(Exists(sub_query))
+
+    def count_vocabs(self):
+        return self.values('topic') \
+            .annotate(count=Count('id')) \
+            .values('count')
