@@ -33,6 +33,7 @@ urlpatterns = [
     
     # Flashcards routes (including topics and vocabularies)
     path('', include('flashcards.urls')),
+    path('', include('notifications.urls')),
 ]
 
 if settings.DEBUG:
