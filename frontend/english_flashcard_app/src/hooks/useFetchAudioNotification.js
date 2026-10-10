@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useWebSocket from "../hooks/useWebSocket";
 import { generateSignature } from '../services/userApi';
 import { WS_BASE_URL } from "../configs/apiConfig";
+import { getAuthManager } from "auth";
 
 export default function useFetchAudioNotification(user_id) {
   const [ audioDatas, setAudioDatas ] = useState(null);
@@ -21,11 +22,22 @@ export default function useFetchAudioNotification(user_id) {
 
   useEffect(() => {
     if (!user_id) return;
-    generateSignature({ value: user_id }).then(data => {
-      const signature = data.data.signature
-      const wsUrl = user_id ? `${WS_BASE_URL}/ws/notify/${signature}/` : null;
-      setWsUrl(wsUrl);
-    });
+
+    const setupSocketUrl = async () => {
+      const data = await generateSignature({ value: user_id });
+      const signature = data.data.signature;
+      const tokenManager = getAuthManager().getTokenManager();
+      const token = await tokenManager.getAccessToken();
+      const socketUrl = new URL(`${WS_BASE_URL}/ws/notify/${signature}/`);
+
+      if (token) {
+        socketUrl.searchParams.set("token", token);
+      }
+
+      setWsUrl(socketUrl.toString());
+    };
+
+    setupSocketUrl();
   }, [user_id]);
 
   return { audioDatas }
