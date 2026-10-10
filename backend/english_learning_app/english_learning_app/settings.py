@@ -211,3 +211,19 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+}
+
+NOTIFICATIONS = {
+    "SEND_RATE_LIMIT_COUNT": 60,
+    "SEND_RATE_LIMIT_WINDOW_SECONDS": 60,
+    "SEND_RATE_LIMIT_KEY_PREFIX": "notifications:send-rate-limit",
+}
