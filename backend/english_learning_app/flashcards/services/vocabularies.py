@@ -118,3 +118,7 @@ class VocabularyAudioService:
             Vocabulary.objects.bulk_update(updated_vocabs, ['audio'])
 
         return results
+
+
+vocabulary_import_service = VocabularyImportService()
+vocabulary_audio_service = VocabularyAudioService()

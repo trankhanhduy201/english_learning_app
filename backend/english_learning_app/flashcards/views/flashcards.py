@@ -31,12 +31,10 @@ from flashcards.views.paginations import CustomPageNumberPagination
 from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
-from flashcards.services.vocabularies import VocabularyImportService
+from flashcards.services.vocabularies import vocabulary_import_service
 from flashcards.permissions import CanBulkDeleteVocab, IsAccessable
 
 User = get_user_model()
-
-vocab_import_service = VocabularyImportService()
 
 
 class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
@@ -154,7 +152,7 @@ class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		
 	def import_text(self, request, validated_data):
-		return vocab_import_service.parse_import_text(request.user.id, **validated_data)
+		return vocabulary_import_service.parse_import_text(request.user.id, **validated_data)
 			  
 
 	# Below code for using simple filtering without defining filterset

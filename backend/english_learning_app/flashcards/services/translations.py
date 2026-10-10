@@ -61,3 +61,6 @@ class TranslationService:
             update_translations,
             delete_translations
         )
+
+
+translation_service = TranslationService()

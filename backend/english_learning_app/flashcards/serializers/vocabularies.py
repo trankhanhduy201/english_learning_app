@@ -8,11 +8,9 @@ from shared.serializers.bases import (
     BaseSerializer,
     CustomPrimaryKeyRelatedField,
 )
-from flashcards.services.translations import TranslationService
+from flashcards.services.translations import translation_service
 
 User = get_user_model()
-
-translation_service = TranslationService()
 
 
 class AuthorSerializer(BaseSerializer):
