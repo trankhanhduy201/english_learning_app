@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django_redis import get_redis_connection
 
+from flashcards.models import TopicMember
 from notifications.models import Notification
 
 
@@ -84,6 +85,9 @@ class NotificationService:
 
     def get_topic_group_name(self, topic_id):
         return f"topic_{topic_id}"
+
+    def get_joined_topic_ids(self, member_id):
+        return TopicMember.objects.joined_topic_ids(member_id)
 
     def notify_user(self, *, user_id, title, message, notification_type="notification", data=None):
         if user_id is None:

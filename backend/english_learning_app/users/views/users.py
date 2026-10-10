@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
 from shared.views.bases import BaseAPIView, BaseModelViewSet
-from users.services.users import UserSignatureService
+from users.services.users import user_signature_service
 from users.serializers.users import (
     RetrieveUserSerializer,
     CreateUserSerializer,
@@ -10,8 +10,6 @@ from users.serializers.users import (
 )
 
 User = get_user_model()
-
-user_signature_service = UserSignatureService()
 
 
 class UserProfileViewSet(BaseModelViewSet):

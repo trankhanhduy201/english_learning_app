@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import UntypedToken
 from tokens.models import UserToken
 from tokens.authentications import check_token_version
 from tokens.views import REFRESH_TOKEN_COOKIE_NAME
-from users.services.users import UserSignatureService
+from users.services.users import user_signature_service
 
 
 class TokenSerializerMixin:
@@ -47,7 +47,7 @@ class CustomTokenRefreshSerializer(TokenSerializerMixin, TokenRefreshSerializer)
                 raise ValueError("Can not parse user id")
 
             signed_key = base64.urlsafe_b64decode(value).decode()
-            return UserSignatureService().unsign(
+            return user_signature_service.unsign(
                 user_id,
                 signed_key,
             )
@@ -75,9 +75,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             })
 
         try:
-            signed_key = UserSignatureService().sign(self.user.id, 'refresh_token')
+            signed_key = user_signature_service.sign(self.user.id, 'refresh_token')
             data['refresh_token_key'] = base64.urlsafe_b64encode(signed_key.encode()).decode()
-        except Exception as e:
+        except Exception:
             raise serializers.ValidationError({
                 "detail": "Refresh token key is not found"
             })

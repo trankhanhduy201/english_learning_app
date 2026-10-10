@@ -23,3 +23,6 @@ class UserSignatureService:
             return signer.unsign(signature)
         except BadSignature as e:
             raise e
+
+
+user_signature_service = UserSignatureService()
