@@ -15,11 +15,10 @@ import LoadingOverlay from "../../LoadingOverlay";
 import DeleteConfirmButton from "../../DeleteConfirmButton";
 import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
-import useFetchAudioNotification from "../../../hooks/useFetchAudioNotification";
-import { getUser as getUserLocalStorage } from "../../../commons/localStorage";
 import { useDispatch } from "react-redux";
 import { SUCCESS_TYPE } from "../../../configs/alertConfig";
 import { setAlert } from "../../../stores/slices/alertSlice";
+import useFetchAudioNotification from "../../../hooks/useFetchAudioNotification";
 
 const ListVocabDetail = memo(({ vocabDatas, topicId, onDeleteVocabSuccess }) => {
   const curSearchText = useRef("");
@@ -126,9 +125,8 @@ const ListVocabDetail = memo(({ vocabDatas, topicId, onDeleteVocabSuccess }) => 
 
 const ListVocab = memo(({ vocabDatas, topicId }) => {
   const [vocabs, setVocabs] = useState([]);
-  const userInfo = getUserLocalStorage();
   const dispatch = useDispatch();
-  const { audioDatas } = useFetchAudioNotification(userInfo?.id)
+  const { audioDatas } = useFetchAudioNotification();
 
   const handleDeleteVocabSuccess = useCallback((vocabId) => {
     setVocabs(prev => prev.filter(item => item.id != vocabId));

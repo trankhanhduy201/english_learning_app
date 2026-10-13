@@ -1,44 +1,28 @@
-import { useEffect, useState } from "react";
-import useWebSocket from "../hooks/useWebSocket";
-import { generateSignature } from '../services/userApi';
-import { WS_BASE_URL } from "../configs/apiConfig";
-import { getAuthManager } from "auth";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { GENERATING_VOCAB_AUDIO_NOTIFY } from "../enums/notificationType";
 
-export default function useFetchAudioNotification(user_id) {
-  const [ audioDatas, setAudioDatas ] = useState(null);
-  const [ wsUrl, setWsUrl ] = useState();
+export default function useFetchAudioNotification() {
+  const lastSocketMessage = useSelector((state) => state.notifications?.lastSocketMessage ?? null);
 
-  useWebSocket(wsUrl, (message) => {
-    console.log("Message from server:", message);
-    try {
-      const { type, data } = message;
-      if (!type || !data || type !== 'generating_vocab_audio_notify') return;
-      setAudioDatas(JSON.parse(data));
-    } catch (error) {
-      console.error("Error parsing fetching audio message:", error);
-      return;
+  const audioDatas = useMemo(() => {
+    if (!lastSocketMessage || 
+        lastSocketMessage.type !== GENERATING_VOCAB_AUDIO_NOTIFY) {
+      return null;
     }
-  });
 
-  useEffect(() => {
-    if (!user_id) return;
-
-    const setupSocketUrl = async () => {
-      const data = await generateSignature({ value: user_id });
-      const signature = data.data.signature;
-      const tokenManager = getAuthManager().getTokenManager();
-      const token = await tokenManager.getAccessToken();
-      const socketUrl = new URL(`${WS_BASE_URL}/ws/notify/${signature}/`);
-
-      if (token) {
-        socketUrl.searchParams.set("token", token);
+    try {
+      const rawData = lastSocketMessage.data;
+      if (!rawData) {
+        return null;
       }
 
-      setWsUrl(socketUrl.toString());
-    };
+      return typeof rawData === "string" ? JSON.parse(rawData) : rawData;
+    } catch (error) {
+      console.error("Error parsing audio notification payload:", error);
+      return null;
+    }
+  }, [lastSocketMessage]);
 
-    setupSocketUrl();
-  }, [user_id]);
-
-  return { audioDatas }
+  return { audioDatas };
 }

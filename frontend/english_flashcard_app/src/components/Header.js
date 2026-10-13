@@ -3,6 +3,7 @@ import { Dropdown, Nav } from "react-bootstrap";
 import { toggleSidebar } from "../stores/slices/sidebarSlice";
 import { memo } from "react";
 import LogoutItem from "./LogoutItem";
+import NotificationBell from "./NotificationBell";
 import TopicAutocompleteSearch from "./TopicAutocompleteSearch";
 import UserAvatar from "../commons/userAvatar";
 
@@ -21,6 +22,7 @@ const Header = memo(() => {
       <h5 className="mb-0 ms-3 d-xl-block d-none">Flashcards</h5>
       <div className="d-flex justify-content-end align-items-center">
         <TopicAutocompleteSearch />
+        <NotificationBell />
         <div className="dropdown">
           <Dropdown as={Nav.Item}>
             <Dropdown.Toggle

@@ -2,7 +2,8 @@ import { createThunkWithCallback, rejectWithErrorValue, dispatchSuccessAlert } f
 import { getToken as getTokenApi, registerUser as registerUserApi } from "../../services/authApi";
 import { getAuthManager } from "auth";
 import { revokeTokensThunk } from "./tokenAction";
-import { setUser } from "../slices/userSlice";
+import { clearNotifications, disconnectNotificationSocket } from "../slices/notificationSlice";
+import { clearUser, setUser } from "../slices/userSlice";
 
 export const loginThunk = createThunkWithCallback(
   "auth/login",
@@ -45,6 +46,9 @@ export const logoutThunk = createThunkWithCallback(
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
 
+    dispatch(clearUser());
+    dispatch(clearNotifications());
+    dispatch(disconnectNotificationSocket());
     await authManager.logout();
     return {
       status: 'success',
