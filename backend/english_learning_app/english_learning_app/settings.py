@@ -153,6 +153,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'EXCEPTION_HANDLER': 'shared.exceptions.custom_exception_handler',
+    'DEFAULT_THROTTLE_RATES': {
+        'ticket_issuance': '10/min',
+    },
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10
 }
@@ -226,4 +229,5 @@ NOTIFICATIONS = {
     "SEND_RATE_LIMIT_COUNT": 60,
     "SEND_RATE_LIMIT_WINDOW_SECONDS": 60,
     "SEND_RATE_LIMIT_KEY_PREFIX": "notifications:send-rate-limit",
+    "WEBSOCKET_TICKET_TTL_SECONDS": 30,
 }

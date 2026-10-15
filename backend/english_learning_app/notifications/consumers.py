@@ -7,17 +7,13 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.signing import BadSignature
 from django.http import Http404
 
+from notifications.services import notification_send_rate_limiter, notification_service
+from users.services.users import user_signature_service
+
 logger = logging.getLogger(__name__)
 
 
 class NotificationConsumer(AsyncWebsocketConsumer):
-    def __init__(self, *args: object, **kwargs: object) -> None:
-        super().__init__(*args, **kwargs)
-        from notifications.services import notification_send_rate_limiter, notification_service
-        from users.services.users import user_signature_service
-        self.notification_send_rate_limiter = notification_send_rate_limiter
-        self.notification_service = notification_service
-        self.user_signature_service = user_signature_service
 
     @database_sync_to_async
     def validate_connection(self):
@@ -30,7 +26,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             raise ValueError("Signed user_id is required.")
 
         try:
-            unsigned_user_id = self.user_signature_service.unsign(user.id, signed_user_id)
+            unsigned_user_id = user_signature_service.unsign(user.id, signed_user_id)
         except (BadSignature, Http404) as exc:
             raise PermissionError("Signed user_id is invalid.") from exc
 
@@ -40,12 +36,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_group_names(self):
         user = self.scope.get("user")
-        topic_ids = self.notification_service.get_joined_topic_ids(user.id)
+        topic_ids = notification_service.get_joined_topic_ids(user.id)
 
         return [
-            self.notification_service.get_user_group_name(user.id),
+            notification_service.get_user_group_name(user.id),
             *[
-                self.notification_service.get_topic_group_name(topic_id)
+                notification_service.get_topic_group_name(topic_id)
                 for topic_id in topic_ids
             ],
         ]
@@ -75,7 +71,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             raise RuntimeError("Authenticated user is required for notifications.")
 
         should_send = await sync_to_async(
-            self.notification_send_rate_limiter.should_send,
+            notification_send_rate_limiter.should_send,
             thread_sensitive=False,
         )(user.id)
         if not should_send:

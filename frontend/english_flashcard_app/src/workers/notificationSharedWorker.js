@@ -1,9 +1,9 @@
+const AUTH_CLOSE_CODE = 4001;
 const ports = new Set();
 let socket = null;
 let sockUrl = null;
 
 const emit = (type, payload) => {
-  console.log(ports)
   ports.forEach((port) => {
     port.postMessage({ type, payload });
   });
@@ -32,6 +32,10 @@ const connectSocket = (url) => {
     return;
   }
 
+  if (socket && sockUrl === url && socket.readyState === WebSocket.CONNECTING) {
+    return;
+  }
+
   closeSocket();
   sockUrl = url;
   socket = new WebSocket(url);
@@ -52,16 +56,18 @@ const connectSocket = (url) => {
     emit("status", "error");
   };
 
-  socket.onclose = () => {
-    emit("status", "disconnected");
+  socket.onclose = (event) => {
+    if (event.code === AUTH_CLOSE_CODE) {
+      emit("status", "auth_error");
+    }
     socket = null;
     sockUrl = null;
+    emit("status", "disconnected");
   };
 };
 
 // eslint-disable-next-line no-restricted-globals
 self.onconnect = (event) => {
-  console.log("SharedWorker connected", event);
   const port = event.ports[0];
 
   if (!port) {
