@@ -28,7 +28,10 @@ const NotificationBell = memo(() => {
       >
         <i className="bi bi-bell fs-4" />
         {unreadCount > 0 && (
-          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          <span 
+            className="position-absolute start-100 translate-middle badge rounded-pill bg-danger" 
+            style={{ top: "10px" }}
+          >
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -36,8 +39,8 @@ const NotificationBell = memo(() => {
 
       {isOpen && (
         <div
-          className="dropdown-menu show position-absolute end-0 mt-2 shadow-sm border-0"
-          style={{ minWidth: 320, maxHeight: 420, overflowY: "auto" }}
+          className="dropdown-menu show position-absolute end-0 mt-2 shadow-sm border-0 pb-0"
+          style={{ minWidth: 420, maxHeight: 420, overflowY: "auto" }}
         >
           <div className="d-flex justify-content-between align-items-center border-bottom px-3 py-2">
             <strong>Notifications</strong>
@@ -52,11 +55,11 @@ const NotificationBell = memo(() => {
             <div className="px-3 py-2 text-muted small">No notifications yet.</div>
           )}
 
-          {!loading && sortedItems.map((item) => (
+          {!loading && sortedItems.map((item, index) => (
             <button
               key={item.id}
               type="button"
-              className={`list-group-item list-group-item-action border-0 text-start ${item.is_read ? "text-muted" : "bg-light"}`}
+              className={`list-group-item list-group-item-action border-0 text-start ${item.is_read ? "text-muted" : "bg-light"} p-3 ${index === sortedItems.length - 1 ? "" : "mb-2"}`}
               onClick={() => !item.is_read && handleMarkAsRead(item.id)}
             >
               <div className="d-flex justify-content-between align-items-start gap-2">
