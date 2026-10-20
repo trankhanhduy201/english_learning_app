@@ -15,9 +15,6 @@ import LoadingOverlay from "../../LoadingOverlay";
 import DeleteConfirmButton from "../../DeleteConfirmButton";
 import useAudio from "../../../hooks/useAudio";
 import { useTopicContext } from "../../../contexts/TopicContext";
-import { useDispatch } from "react-redux";
-import { SUCCESS_TYPE } from "../../../configs/alertConfig";
-import { setAlert } from "../../../stores/slices/alertSlice";
 import useFetchAudioNotification from "../../../hooks/useFetchAudioNotification";
 
 const ListVocabDetail = memo(({ vocabDatas, topicId, onDeleteVocabSuccess }) => {
@@ -125,7 +122,6 @@ const ListVocabDetail = memo(({ vocabDatas, topicId, onDeleteVocabSuccess }) => 
 
 const ListVocab = memo(({ vocabDatas, topicId }) => {
   const [vocabs, setVocabs] = useState([]);
-  const dispatch = useDispatch();
   const { audioDatas } = useFetchAudioNotification();
 
   const handleDeleteVocabSuccess = useCallback((vocabId) => {
@@ -144,12 +140,6 @@ const ListVocab = memo(({ vocabDatas, topicId }) => {
       }
       return item;
     }));
-    dispatch(
-      setAlert({
-        type: SUCCESS_TYPE,
-        message: "The audios have been generated successfully.",
-      })
-    );
   }, [audioDatas])
   
   return (

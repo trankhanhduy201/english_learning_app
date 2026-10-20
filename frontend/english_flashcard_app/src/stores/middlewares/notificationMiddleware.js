@@ -23,7 +23,6 @@ const ensureWorker = (store) => {
   worker = new SharedWorker(new URL("../../workers/notificationSharedWorker.js", import.meta.url), { type: "module" });
   worker.port.start();
   worker.port.onmessage = ({ data }) => {
-    console.log(data)
     const actionType = data?.type;
     const payload = data?.payload;
 

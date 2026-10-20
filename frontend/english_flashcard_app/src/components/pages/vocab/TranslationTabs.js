@@ -25,12 +25,7 @@ const EVENT_KEY_NEW_TAB = "new";
 const TranslationTabs = memo(({ data, errors = {}, vocabFormRef }) => {
   const [activeTab, setActiveTab] = useState("en");
 
-  const getKey = useCallback(() => {
-    if (crypto.randomUUID) {
-      return crypto.randomUUID();
-    }
-    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  }, []);
+  const getKey = useCallback(() => utils.generateUniqueId(), []);
 
   const getFieldError = (lang, key, field) => {
     return errors?.[lang]?.[key]?.[field];

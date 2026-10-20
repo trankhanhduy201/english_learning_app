@@ -3,6 +3,7 @@ import {
   fetchNotifications,
   markNotificationAsRead,
 } from "../actions/notificationAction";
+import { generateUniqueId } from "../../utils/commons";
 
 const syncUnreadCount = (state) => {
   state.unreadCount = (state.items || []).filter((item) => !item.is_read).length;
@@ -40,13 +41,17 @@ const notificationSlice = createSlice({
     },
     appendNotification: (state, action) => {
       const payload = action.payload;
-      const nextItem = normalizeNotification(payload?.notification || payload);
+      const nextItem = normalizeNotification(payload?.notification);
+
+      state.lastSocketMessage = {
+        ...payload,
+        message_id: generateUniqueId(),
+        status: "pending",
+      };
 
       if (!nextItem) {
         return;
       }
-
-      state.lastSocketMessage = payload;
 
       const existingIndex = state.items.findIndex(
         (item) => Number(item.id) === Number(nextItem.id),
@@ -68,6 +73,22 @@ const notificationSlice = createSlice({
     },
     clearNotificationError: (state) => {
       state.error = null;
+    },
+    markLastSocketMessageAsReceived: (state, action) => {
+      const messageId = action.payload?.id;
+
+      if (!state.lastSocketMessage || !messageId) {
+        return;
+      }
+
+      if (state.lastSocketMessage.message_id !== messageId) {
+        return;
+      }
+
+      state.lastSocketMessage = {
+        ...state.lastSocketMessage,
+        status: "received",
+      };
     },
     markNotificationReadLocally: (state, action) => {
       const id = Number(action.payload);
@@ -131,6 +152,7 @@ export const {
   appendNotification,
   clearNotifications,
   clearNotificationError,
+  markLastSocketMessageAsReceived,
   markNotificationReadLocally,
 } = notificationSlice.actions;
 
