@@ -7,7 +7,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.signing import BadSignature
 from django.http import Http404
 
-from notifications.services import notification_send_rate_limiter, notification_service
+from notifications.rate_limiters import notification_send_rate_limiter
+from notifications.services import notification_service
 from users.services.users import user_signature_service
 
 logger = logging.getLogger(__name__)
