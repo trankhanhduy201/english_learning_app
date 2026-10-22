@@ -13,7 +13,7 @@ const Alerts = () => {
 
   return (
     <>
-      <div className="position-absolute top-0 end-0 w-100">
+      <div className="position-fixed end-0 w-100" style={{ top: "20px", zIndex: 1050 }}>
         {alerts.map((alert, index) => (
           <div key={alert.idx} className="col-12 col-md-6 col-lg-4 ms-auto">
             <AutoDismissAlert
