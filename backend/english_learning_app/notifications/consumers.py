@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 
@@ -8,13 +9,41 @@ from django.core.signing import BadSignature
 from django.http import Http404
 
 from notifications.rate_limiters import notification_send_rate_limiter
+from notifications.settings import get_notification_setting
 from notifications.services import notification_service
 from users.services.users import user_signature_service
 
 logger = logging.getLogger(__name__)
 
+AUTH_REJECT_CLOSE_CODE = 4001
+CLIENT_MESSAGE_REJECT_CLOSE_CODE = 4003
+CONNECTION_TIMEOUT_CLOSE_CODE = 4000
+DEFAULT_WEBSOCKET_CONNECTION_TIMEOUT_SECONDS = 1800
+
 
 class NotificationConsumer(AsyncWebsocketConsumer):
+    @staticmethod
+    def _get_connection_timeout_seconds():
+        return int(
+            get_notification_setting(
+                "WEBSOCKET_CONNECTION_TIMEOUT_SECONDS",
+                default=DEFAULT_WEBSOCKET_CONNECTION_TIMEOUT_SECONDS,
+            )
+        )
+
+    async def _close_connection_on_timeout(self):
+        timeout_seconds = self._get_connection_timeout_seconds()
+        try:
+            await asyncio.sleep(timeout_seconds)
+            user = self.scope.get("user")
+            logger.info(
+                "Notification websocket connection timed out after %s seconds for user_id=%s",
+                timeout_seconds,
+                getattr(user, "id", None),
+            )
+            await self.close(code=CONNECTION_TIMEOUT_CLOSE_CODE)
+        except asyncio.CancelledError:
+            return
 
     @database_sync_to_async
     def validate_connection(self):
@@ -54,17 +83,36 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             for group_name in self.group_names:
                 await self.channel_layer.group_add(group_name, self.channel_name)
             await self.accept()
+            self.connection_timeout_task = asyncio.create_task(
+                self._close_connection_on_timeout()
+            )
         except (PermissionError, ValueError) as exc:
             logger.warning("Notification websocket rejected: %s", exc)
-            await self.close(code=4001)
+            await self.close(code=AUTH_REJECT_CLOSE_CODE)
 
     async def disconnect(self, close_code):
+        timeout_task = getattr(self, "connection_timeout_task", None)
+        if timeout_task and not timeout_task.done() and timeout_task is not asyncio.current_task():
+            timeout_task.cancel()
+
         if hasattr(self, "group_names"):
             for group_name in self.group_names:
                 await self.channel_layer.group_discard(group_name, self.channel_name)
 
-    async def receive(self, text_data):
-        return
+    async def receive(self, text_data=None, bytes_data=None):
+        user = self.scope.get("user")
+        query_string = self.scope.get("query_string", b"")
+        logger.warning(
+            "Suspicious notification websocket inbound message rejected. "
+            "user_id=%s client=%s path=%s query_string=%s text_data=%s has_bytes=%s",
+            getattr(user, "id", None),
+            self.scope.get("client"),
+            self.scope.get("path"),
+            query_string.decode("utf-8", errors="replace"),
+            text_data,
+            bytes_data is not None,
+        )
+        await self.close(code=CLIENT_MESSAGE_REJECT_CLOSE_CODE)
 
     async def send_notification(self, event):
         user = self.scope.get("user")

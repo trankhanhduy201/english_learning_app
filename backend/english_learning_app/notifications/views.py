@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -7,6 +6,7 @@ from rest_framework.response import Response
 
 from notifications.auth import issue_websocket_ticket
 from notifications.models import Notification
+from notifications.settings import get_notification_setting
 from notifications.serializers import NotificationSerializer
 from notifications.throttles import TicketIssuanceRateThrottle
 from shared.views.bases import BaseAPIView
@@ -60,11 +60,14 @@ class WebSocketTicketView(BaseAPIView):
     throttle_classes = [TicketIssuanceRateThrottle]
 
     def post(self, request):
-        notification_settings = getattr(settings, "NOTIFICATIONS", {})
-        ttl_seconds = int(notification_settings.get("WEBSOCKET_TICKET_TTL_SECONDS", 30))
+        ttl_seconds = int(
+            get_notification_setting("WEBSOCKET_TICKET_TTL_SECONDS", default=30)
+        )
         if ttl_seconds <= 0:
             raise ValidationError("Notification websocket ticket TTL must be greater than zero.")
-        signature_cache_seconds = int(notification_settings.get("WEBSOCKET_SIGNATURE_CACHE_SECONDS", 3600))
+        signature_cache_seconds = int(
+            get_notification_setting("WEBSOCKET_SIGNATURE_CACHE_SECONDS", default=3600)
+        )
         if signature_cache_seconds <= 0:
             raise ValidationError("Notification websocket signature cache TTL must be greater than zero.")
 

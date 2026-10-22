@@ -1,23 +1,11 @@
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-
+from notifications.settings import get_notification_setting
 from shared.rate_limiters.base import AbstractRedisRateLimiter
-
-
-def _get_notification_settings():
-    notification_settings = getattr(settings, "NOTIFICATIONS", None)
-    if notification_settings is None:
-        raise ImproperlyConfigured("NOTIFICATIONS settings are required.")
-    return notification_settings
 
 
 class NotificationSendRateLimiter(AbstractRedisRateLimiter):
 
     def _get_required_config(self, key):
-        notification_settings = _get_notification_settings()
-        if key not in notification_settings:
-            raise ImproperlyConfigured(f"NOTIFICATIONS['{key}'] is required.")
-        return notification_settings[key]
+        return get_notification_setting(key, required=True)
 
     def get_limit_count(self):
         return int(self._get_required_config("SEND_RATE_LIMIT_COUNT"))
