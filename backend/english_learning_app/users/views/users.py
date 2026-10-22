@@ -1,8 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework import status
-from rest_framework.response import Response
-from shared.views.bases import BaseAPIView, BaseModelViewSet
-from users.services.users import user_signature_service
+from shared.views.bases import BaseModelViewSet
 from users.serializers.users import (
     RetrieveUserSerializer,
     CreateUserSerializer,
@@ -37,20 +34,3 @@ class UserProfileViewSet(BaseModelViewSet):
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
         return queryset.get(id=self.request.user.id)
-    
-
-class UserSignature(BaseAPIView):
-    http_method_names = ['post', 'options']
-
-    def post(self, request):
-        if not 'value' in request.data:
-            return Response({
-                'detail': 'Invalid value'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({
-            'signature': user_signature_service.sign(
-                request.user.id, 
-                request.data['value']
-            )
-        })

@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice } from "@reduxjs/toolkit";
+import { WS_STATUS } from "../../configs/notificationSocketConfig";
 import {
   fetchNotifications,
   markNotificationAsRead,
@@ -28,7 +29,7 @@ const notificationSlice = createSlice({
     unreadCount: 0,
     loading: false,
     error: null,
-    websocketStatus: "disconnected",
+    websocketStatus: WS_STATUS.DISCONNECTED,
     lastSocketMessage: null,
   },
   reducers: {
@@ -156,7 +157,7 @@ export const {
   markNotificationReadLocally,
 } = notificationSlice.actions;
 
-export const connectNotificationSocket = () => ({ type: "notification/connect" });
-export const disconnectNotificationSocket = () => ({ type: "notification/disconnect" });
+export const connectNotificationSocket = createAction("notification/connect");
+export const disconnectNotificationSocket = createAction("notification/disconnect");
 
 export default notificationSlice.reducer;

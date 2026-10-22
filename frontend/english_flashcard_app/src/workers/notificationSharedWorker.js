@@ -1,4 +1,10 @@
-const AUTH_CLOSE_CODE = 4001;
+import {
+  WS_AUTH_CLOSE_CODE,
+  WS_STATUS,
+  WS_WORKER_COMMAND,
+  WS_WORKER_EVENT,
+} from "../configs/notificationSocketConfig";
+
 const ports = new Set();
 let socket = null;
 let sockUrl = null;
@@ -28,11 +34,15 @@ const connectSocket = (url) => {
     return;
   }
 
-  if (socket && sockUrl === url && socket.readyState === WebSocket.OPEN) {
+  if (socket && 
+      sockUrl === url && 
+      socket.readyState === WebSocket.OPEN) {
     return;
   }
 
-  if (socket && sockUrl === url && socket.readyState === WebSocket.CONNECTING) {
+  if (socket && 
+      sockUrl === url && 
+      socket.readyState === WebSocket.CONNECTING) {
     return;
   }
 
@@ -41,28 +51,28 @@ const connectSocket = (url) => {
   socket = new WebSocket(url);
 
   socket.onopen = () => {
-    emit("status", "connected");
+    emit(WS_WORKER_EVENT.STATUS, WS_STATUS.CONNECTED);
   };
 
   socket.onmessage = (event) => {
     try {
-      emit("message", JSON.parse(event.data));
+      emit(WS_WORKER_EVENT.MESSAGE, JSON.parse(event.data));
     } catch (error) {
-      emit("message", event.data);
+      emit(WS_WORKER_EVENT.MESSAGE, event.data);
     }
   };
 
   socket.onerror = () => {
-    emit("status", "error");
+    emit(WS_WORKER_EVENT.STATUS, WS_STATUS.ERROR);
   };
 
   socket.onclose = (event) => {
-    if (event.code === AUTH_CLOSE_CODE) {
-      emit("status", "auth_error");
+    if (event.code === WS_AUTH_CLOSE_CODE) {
+      emit(WS_WORKER_EVENT.STATUS, WS_STATUS.AUTH_ERROR);
     }
     socket = null;
     sockUrl = null;
-    emit("status", "disconnected");
+    emit(WS_WORKER_EVENT.STATUS, WS_STATUS.DISCONNECTED);
   };
 };
 
@@ -77,22 +87,27 @@ self.onconnect = (event) => {
   ports.add(port);
 
   if (socket) {
-    port.postMessage({ type: "status", payload: socket.readyState === WebSocket.OPEN ? "connected" : "connecting" });
+    port.postMessage({
+      type: WS_WORKER_EVENT.STATUS,
+      payload: socket.readyState === WebSocket.OPEN 
+        ? WS_STATUS.CONNECTED 
+        : WS_STATUS.CONNECTING,
+    });
   }
 
   port.onmessage = (messageEvent) => {
     const { type, payload } = messageEvent.data || {};
 
     switch (type) {
-      case "connect":
+      case WS_WORKER_COMMAND.CONNECT:
         connectSocket(payload);
         break;
-      case "disconnect":
+      case WS_WORKER_COMMAND.DISCONNECT:
         closeSocket();
-        emit("status", "disconnected");
+        emit(WS_WORKER_EVENT.STATUS, WS_STATUS.DISCONNECTED);
         break;
-      case "ping":
-        port.postMessage({ type: "pong", payload: Date.now() });
+      case WS_WORKER_COMMAND.PING:
+        port.postMessage({ type: WS_WORKER_EVENT.PONG, payload: Date.now() });
         break;
       default:
         break;

@@ -8,7 +8,11 @@ from notifications.views import (
 
 
 urlpatterns = [
-    path("notifications/", NotificationListView.as_view(), name="notification_list"),
+    path(
+        "notifications/", 
+        NotificationListView.as_view(), 
+        name="notification_list"
+    ),
     path(
         "notifications/ws-ticket/",
         WebSocketTicketView.as_view(),

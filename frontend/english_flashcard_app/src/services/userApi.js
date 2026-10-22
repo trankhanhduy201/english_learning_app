@@ -14,11 +14,3 @@ export const updateProfile = async (data, options = {}) => {
     ...options,
   });
 };
-
-export const generateSignature = async (data, options = {}) => {
-  return await callApi("account/signature", {
-    method: "POST",
-    body: JSON.stringify(data),
-    ...options,
-  });
-};
