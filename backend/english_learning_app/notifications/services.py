@@ -5,14 +5,13 @@ from channels.layers import get_channel_layer
 
 from flashcards.models import TopicMember
 from notifications.models import Notification
-
-
-def _validate_json_serializable(data):
-    json.dumps(data)
-    return data
+from shared.utils import validate_json_serializable
 
 
 def _serialize_notification(notification):
+    if notification is None:
+        return None
+    
     return {
         "id": notification.id,
         "title": notification.title,
@@ -32,23 +31,25 @@ class NotificationService:
     def get_joined_topic_ids(self, member_id):
         return TopicMember.objects.joined_topic_ids(member_id)
 
-    def notify_user(self, *, user_id, title, message, notification_type="notification", data=None):
+    def notify_user(self, *, user_id, title, message, notification_type="notification", data=None, store=True):
         if user_id is None:
             raise ValueError("user_id is required.")
 
         payload_data = {} if data is None else data
-        _validate_json_serializable(payload_data)
+        validate_json_serializable(payload_data)
 
-        notification = Notification.objects.create(
-            user_id=user_id,
-            title=title,
-            message=message,
-        )
+        notification = None
+        if store:
+            notification = Notification.objects.create(
+                user_id=user_id,
+                title=title,
+                message=message,
+            )
 
         payload = {
             "type": notification_type,
             "data": payload_data,
-            "notification": _serialize_notification(notification),
+            "notification": _serialize_notification(notification)
         }
 
         channel_layer = get_channel_layer()
