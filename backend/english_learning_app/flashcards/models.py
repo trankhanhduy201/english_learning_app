@@ -68,6 +68,7 @@ class TopicMember(models.Model):
 		PENDING = ('pending', _('Pending'))
 		READ_ONLY = ('read_only', _('Read only'))
 		EDITABLE = ('editable', _('Editable'))
+		LEAVING = ('leaving', _('Leaving'))
 		BLOCK = ('block', _('Block'))
 
 	member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="topic_members")

@@ -63,6 +63,7 @@ class CurrentTopicMemberSerializer(Serializer):
 
         pending_status = [
             TopicMember.TopicMemberStatusEnums.PENDING,
+            TopicMember.TopicMemberStatusEnums.LEAVING,
             TopicMember.TopicMemberStatusEnums.BLOCK,
         ]
         return current_topic_member.status not in pending_status
@@ -75,7 +76,10 @@ class CurrentTopicMemberSerializer(Serializer):
         if not current_topic_member:
             return False
 
-        return True
+        return (
+            current_topic_member.status !=
+            TopicMember.TopicMemberStatusEnums.LEAVING
+        )
     
     def get_is_blocking(self, instance):
         if self.get_is_owner(instance):

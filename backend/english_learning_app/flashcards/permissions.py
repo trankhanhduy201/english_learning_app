@@ -21,10 +21,33 @@ class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 			return False
 
 		topic_member_status = TopicMember.objects.get_status_for(obj, request.user)
-		if topic_member_status == TopicMember.TopicMemberStatusEnums.BLOCK:
+		return (
+			topic_member_status is None or
+			topic_member_status == TopicMember.TopicMemberStatusEnums.LEAVING
+		)
+
+
+class CanUnsubscribeTopic(IsOwnerMixin, permissions.BasePermission):
+	def has_permission(self, request, view):
+		return (
+			super().has_permission(request, view)
+			and request.method == 'POST'
+		)
+
+	def has_object_permission(self, request, view, obj):
+		if not isinstance(obj, Topic):
 			return False
-		
-		return True
+
+		if super().has_object_permission(request, view, obj):
+			return False
+
+		topic_member_status = TopicMember.objects.get_status_for(obj, request.user)
+		allow_unsubscribe = [
+			TopicMember.TopicMemberStatusEnums.PENDING,
+			TopicMember.TopicMemberStatusEnums.EDITABLE,
+			TopicMember.TopicMemberStatusEnums.READ_ONLY
+		]
+		return topic_member_status in allow_unsubscribe
 
 class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 	def _has_topic_permission(self, request, view, topic):
