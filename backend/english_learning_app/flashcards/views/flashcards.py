@@ -1,22 +1,15 @@
 import re
 from django.db.models import Q
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 from shared.views.bases import BaseModelViewSet
 from shared.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.serializers.topics import (
 	RetrieveTopicSerializer,
 	CreateTopicSerializer,
 	UpdateTopicSerializer
-)
-from flashcards.serializers.topic_members import (
-	RetrieveListTopicMembersSerializer,
-	CreateListTopicMembersSerializer,
-	UpdateListTopicMembersSerializer
 )
 from flashcards.serializers.vocabularies import (
 	RetrieveVocabularySerializer,
@@ -47,59 +40,9 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	permission_classes = [IsAccessable]
 	auto_add_created_by = True
 
-	list_topic_members_serializer_class = RetrieveListTopicMembersSerializer
-	create_list_topic_members_serializer_class = CreateListTopicMembersSerializer
-	update_list_topic_members_serializer_class = UpdateListTopicMembersSerializer
-
 	def get_queryset(self, **kwargs):
 		return super().get_queryset(**kwargs).with_defaults()
-	  
-	@action(detail=True, methods=['get', 'post', 'put'], url_path='members')
-	def members(self, request, *args, **kwargs):
-		instance = self.get_object()
 
-		# Handle fetch request
-		if request.method == 'GET':
-			return Response(
-				self.list_topic_members_serializer_class(
-					instance.topic_members.all(), 
-					many=True
-				).data, 
-				status=status.HTTP_200_OK
-			)
-		
-		# Handle submission request
-		if request.method in ['PUT', 'POST']:
-			if not isinstance(request.data, list):
-				raise ValidationError('Invalid data')
-
-			topic_member_ids = [
-				item.get('id')
-				for item in request.data
-				if item.get('id') is not None
-			]
-			serializers = self._get_create_update_topic_member_serializer(is_create=False)(
-				instance=instance.topic_members.filter(id__in=topic_member_ids), 
-				data=request.data,
-				many=True
-			)
-			serializers.is_valid(raise_exception=True)
-			serializers.save()
-			return Response(
-				serializers.data,
-				status=status.HTTP_200_OK
-			)
-		
-		return Response(
-			'The method is not allowed',
-			status=status.HTTP_405_METHOD_NOT_ALLOWED
-		)
-	
-	def _get_create_update_topic_member_serializer(self, is_create=True):
-		if is_create:
-			return self.create_list_topic_members_serializer_class
-		return self.update_list_topic_members_serializer_class
-		
 
 class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 	queryset = Vocabulary.objects.all()

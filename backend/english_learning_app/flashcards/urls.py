@@ -1,7 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from flashcards.views.flashcards import TopicViewSet, VocabularyViewSet
-from flashcards.views.topic_members import TopicSubscribeView, TopicUnsubscribeView
+from flashcards.views.topic_members import (
+    TopicMemberView,
+    TopicSubscribeView,
+    TopicUnsubscribeView,
+)
 from flashcards.views.dashboard import DashboardSummaryView
 
 
@@ -11,6 +15,7 @@ router.register(r'vocabularies', VocabularyViewSet, basename='vocabulary')
 
 # Nested topic routes
 topic_patterns = [
+    path('<int:topic_pk>/members/', TopicMemberView.as_view(), name='topic_members'),
     path('<int:topic_pk>/subscribe/', TopicSubscribeView.as_view(), name='topic_subscribe'),
     path('<int:topic_pk>/unsubscribe/', TopicUnsubscribeView.as_view(), name='topic_unsubscribe'),
 ]

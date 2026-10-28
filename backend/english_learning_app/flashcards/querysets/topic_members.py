@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Case, Count, IntegerField, Value, When
 from flashcards.querysets.bases import BaseQuerySet
 
 
@@ -8,6 +8,14 @@ class TopicMemberQuerySet(BaseQuerySet):
             'member',
             'member__profile'
         )
+
+    def ordered_by_status(self):
+        status_order = Case(
+            When(status=self.model.TopicMemberStatusEnums.PENDING, then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
+        )
+        return self.order_by(status_order, '-joined_at')
 
     def accessible(self):
         accessible_statuses = self.model.get_accessible_statuses()
