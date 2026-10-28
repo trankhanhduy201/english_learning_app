@@ -12,7 +12,6 @@ from flashcards.serializers.topic_members import (
 	UpdateListTopicMembersSerializer,
 )
 from shared.views.bases import BaseGenericAPIView
-from flashcards.utilities.tasks import notify_topic_owner_for_subscription_async
 
 
 class TopicMemberView(BaseGenericAPIView, ListModelMixin):
