@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.db import transaction
+from django.db import models, transaction
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField, CharField
+from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField, CharField, ListSerializer
 
 from flashcards.models import Topic, TopicMember
 from shared.decorators.handle_exceptions import handle_exceptions
@@ -10,6 +10,46 @@ from shared.serializers.images import UploadImageSerializer
 from flashcards.serializers.topic_members import RetrieveListTopicMembersSerializer
 
 User = get_user_model()
+
+
+class CurrentTopicMemberResolverMixin:
+    current_topic_member_map_context_key = 'current_topic_members_by_topic_id'
+
+    def _get_request_user(self):
+        request = self.context.get('request', None)
+        if request is None or request.user.is_anonymous:
+            return None
+        return request.user
+
+    def _resolve_current_topic_member(self, topic, user):
+        prefetched_topic_members = getattr(
+            topic,
+            '_prefetched_objects_cache',
+            {},
+        ).get('topic_members', None)
+        if prefetched_topic_members is not None:
+            return next(
+                (
+                    topic_member
+                    for topic_member in prefetched_topic_members
+                    if topic_member.member_id == user.id
+                ),
+                None,
+            )
+
+        return topic.topic_members.filter(member=user).first()
+
+    def _prepare_current_topic_members(self, topics):
+        user = self._get_request_user()
+        if user is None:
+            return {}
+
+        current_topic_members = {}
+        for topic in topics:
+            topic_member = self._resolve_current_topic_member(topic, user)
+            if topic_member is not None:
+                current_topic_members[topic.id] = topic_member
+        return current_topic_members
 
 
 class AuthorSerializer(BaseSerializer):
@@ -35,30 +75,21 @@ class CurrentTopicMemberSerializer(Serializer):
     is_subcribing = SerializerMethodField()
     is_blocking = SerializerMethodField()
 
-    def get_is_owner(self, instance):
-        user = self.context.get('request').user
-        return user == instance.created_by
+    def get_topic(self):
+        return self.context.get('topic', None)
 
-    def _get_current_topic_member(self, instance):
-        user = self.context.get('request').user
-        if not hasattr(self, '_current_topic_member'):
-            self._current_topic_member = next(
-                (
-                    topic_member
-                    for topic_member in instance.topic_members.all()
-                    if topic_member.member.id == user.id
-                    and topic_member.topic.id == instance.id
-                ),
-                None,
-            )
-        return self._current_topic_member
+    def get_is_owner(self, instance):
+        request = self.context.get('request', None)
+        topic = self.get_topic()
+        if request is None or topic is None:
+            return False
+        return request.user == topic.created_by
 
     def get_is_accepted(self, instance):
         if self.get_is_owner(instance):
             return False
 
-        current_topic_member = self._get_current_topic_member(instance)
-        if not current_topic_member:
+        if not instance:
             return False
 
         pending_status = [
@@ -66,34 +97,47 @@ class CurrentTopicMemberSerializer(Serializer):
             TopicMember.TopicMemberStatusEnums.LEAVING,
             TopicMember.TopicMemberStatusEnums.BLOCK,
         ]
-        return current_topic_member.status not in pending_status
-    
+        return instance.status not in pending_status
+
     def get_is_subcribing(self, instance):
         if self.get_is_owner(instance):
             return False
 
-        current_topic_member = self._get_current_topic_member(instance)
-        if not current_topic_member:
+        if not instance:
             return False
 
-        return (
-            current_topic_member.status !=
-            TopicMember.TopicMemberStatusEnums.LEAVING
-        )
-    
+        return instance.status != TopicMember.TopicMemberStatusEnums.LEAVING
+
     def get_is_blocking(self, instance):
         if self.get_is_owner(instance):
             return False
 
-        current_topic_member = self._get_current_topic_member(instance)
-        if not current_topic_member:
+        if not instance:
             return False
 
         blocking_status = [TopicMember.TopicMemberStatusEnums.BLOCK]
-        return current_topic_member.status in blocking_status
+        return instance.status in blocking_status
 
 
-class RetrieveTopicSerializer(BaseSerializer):
+class RetrieveTopicListSerializer(CurrentTopicMemberResolverMixin, ListSerializer):
+    def to_representation(self, data):
+        iterable = (
+            data.all()
+            if isinstance(data, models.manager.BaseManager)
+            else data
+        )
+        topic_instances = list(iterable)
+
+        current_topic_members = self._prepare_current_topic_members(
+            topic_instances
+        )
+        self.child.context[
+            self.current_topic_member_map_context_key
+        ] = current_topic_members
+        return super().to_representation(topic_instances)
+
+
+class RetrieveTopicSerializer(CurrentTopicMemberResolverMixin, BaseSerializer):
     # For read-only and invoke get_upload_image to return serialized image data
     image_info = SerializerMethodField()
     member_count = IntegerField(read_only=True)
@@ -117,6 +161,7 @@ class RetrieveTopicSerializer(BaseSerializer):
             'member_count',
             'vocab_count',
         ]
+        list_serializer_class = RetrieveTopicListSerializer
 
     @handle_exceptions(
         reraise=False, 
@@ -133,9 +178,30 @@ class RetrieveTopicSerializer(BaseSerializer):
             instance=instance.topic_members.all()[:15], many=True
         ).data
 
+    def _get_current_topic_member(self, instance):
+        current_topic_members = self.context.get(
+            self.current_topic_member_map_context_key,
+            None,
+        )
+        if isinstance(current_topic_members, dict):
+            return current_topic_members.get(instance.id, None)
+
+        user = self._get_request_user()
+        if user is None:
+            return None
+
+        return self._resolve_current_topic_member(instance, user)
+
     def get_current_member(self, instance):
+        current_topic_member = self._get_current_topic_member(instance)
+        serializer_context = {
+            **self.context,
+            'topic': instance,
+        }
         return CurrentTopicMemberSerializer(
-            instance=instance, read_only=True, context=self.context
+            instance=current_topic_member,
+            read_only=True,
+            context=serializer_context,
         ).data
 
 
