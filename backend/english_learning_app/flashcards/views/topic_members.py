@@ -7,10 +7,10 @@ from rest_framework.exceptions import ValidationError
 from flashcards.models import Topic, TopicMember
 from flashcards.permissions import CanSubscribeTopic, CanUnsubscribeTopic, IsAccessable
 from flashcards.serializers.topic_members import (
-	CreateListTopicMembersSerializer,
 	RetrieveListTopicMembersSerializer,
 	UpdateListTopicMembersSerializer,
 )
+from flashcards.serializers.topics import CurrentTopicMemberSerializer
 from shared.views.bases import BaseGenericAPIView
 
 
@@ -66,37 +66,45 @@ class TopicSubscribeView(BaseGenericAPIView):
 	"""Create-only nested view for topic subscription."""
 	queryset = Topic.objects.all()
 	lookup_url_kwarg = 'topic_pk'
-	serializer_class = CreateListTopicMembersSerializer
+	serializer_class = CurrentTopicMemberSerializer
 	permission_classes = [CanSubscribeTopic]
 	http_method_names = ['post', 'options']
 
 	def post(self, request, *args, **kwargs):
 		topic = self.get_object()
-		topic_member = TopicMember.objects.filter(
-			member=request.user,
-			topic=topic,
-		).first()
+		topic_member = (
+			TopicMember.objects
+				.filter(
+					member=request.user,
+					topic=topic,
+				).first()
+		)
+
 		if topic_member is not None:
 			topic_member.status = TopicMember.TopicMemberStatusEnums.READ_ONLY
 			topic_member.save(update_fields=['status'])
-			return Response(status=status.HTTP_204_NO_CONTENT)
+		else:
+			topic_member = TopicMember(
+				member=request.user,
+				topic=topic,
+				status=TopicMember.TopicMemberStatusEnums.PENDING,
+			)
+			topic_member.save()
 
-		serializer = self.serializer_class(
-			data={
-				'member': request.user.id,
-				'topic': topic.id,
-				'status': TopicMember.TopicMemberStatusEnums.PENDING
-			}
+		return Response(
+			data=self.serializer_class(
+				instance=topic_member,
+				context={'request': request, 'topic': topic},
+			).data,
+			status=status.HTTP_200_OK,
 		)
-		serializer.is_valid(raise_exception=True)
-		serializer.save()
-		return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TopicUnsubscribeView(BaseGenericAPIView):
 	"""Delete-only nested view for topic unsubscription."""
 	queryset = Topic.objects.all()
 	lookup_url_kwarg = 'topic_pk'
+	serializer_class = CurrentTopicMemberSerializer
 	permission_classes = [CanUnsubscribeTopic]
 	http_method_names = ['post', 'options']
 
@@ -107,6 +115,18 @@ class TopicUnsubscribeView(BaseGenericAPIView):
 			member=request.user,
 			topic=topic,
 		)
+
+		previous_status = topic_member.status
 		topic_member.status = TopicMember.TopicMemberStatusEnums.LEAVING
-		topic_member.save(update_fields=['status'])
-		return Response(status=status.HTTP_204_NO_CONTENT)
+		if previous_status != TopicMember.TopicMemberStatusEnums.PENDING:
+			topic_member.save(update_fields=['status'])
+		else:
+			topic_member.delete()
+		
+		return Response(
+			data=self.serializer_class(
+				instance=topic_member,
+				context={'request': request, 'topic': topic},
+			).data,
+			status=status.HTTP_200_OK,
+		)

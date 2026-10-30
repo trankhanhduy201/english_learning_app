@@ -20,7 +20,7 @@ const SubcribeButton = memo(({ buttonType = '', topicId, topicMember = null, upd
         handleSubcribeFetcher.data?.status === 'success'
       ) {
         updateTopicMember({
-          is_subcribing: !topicMember.is_subcribing
+          ...handleSubcribeFetcher.data?.data
         });
     }
   }, [

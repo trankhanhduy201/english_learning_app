@@ -1,10 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import BooleanField, CharField
 from flashcards.models import Topic, TopicMember
-from flashcards.utilities.tasks import (
-    notify_topic_owner_for_subscription_async,
-    notify_subscriber_for_accepted_subscription_async,
-)
 from shared.serializers.bases import (
     BaseListSerializer,
     BaseSerializer,
@@ -74,11 +70,6 @@ class CreateListTopicMembersSerializer(BaseSerializer):
         ]
         list_serializer_class = BaseListTopicMembersSerializer
 
-    def save(self, **kwargs):
-        instance = super().save(**kwargs)
-        notify_topic_owner_for_subscription_async(instance)
-        return instance
-
 
 class UpdateListTopicMembersSerializer(BaseSerializer):
     is_remove = BooleanField(write_only=True, required=False, default=False)
@@ -92,19 +83,6 @@ class UpdateListTopicMembersSerializer(BaseSerializer):
             'member',
         ]
         read_only_fields = ['id', 'member']
-
-    def save(self, **kwargs):
-        previous_status = self.instance.status if self.instance is not None else None
-        updated_instance = super().save(**kwargs)
-        updated_status = getattr(updated_instance, 'status', None)
-
-        if (
-            previous_status == TopicMember.TopicMemberStatusEnums.PENDING and
-            updated_status == TopicMember.TopicMemberStatusEnums.READ_ONLY
-        ):
-            notify_subscriber_for_accepted_subscription_async(updated_instance)
-
-        return updated_instance
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

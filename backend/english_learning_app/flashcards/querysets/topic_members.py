@@ -9,6 +9,9 @@ class TopicMemberQuerySet(BaseQuerySet):
             'member__profile'
         )
 
+    def with_topic(self):
+        return self.select_related('topic')
+
     def ordered_by_status(self):
         status_order = Case(
             When(status=self.model.TopicMemberStatusEnums.PENDING, then=Value(0)),
