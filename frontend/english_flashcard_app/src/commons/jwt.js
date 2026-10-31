@@ -1,8 +1,8 @@
 import { jwtDecode } from 'jwt-decode';
 
-export const getTokenExp = (token: string, adjustExp: int = 120): number | null => {
+export const getTokenExp = (token, adjustExp = 120) => {
   try {
-    const decoded: { exp: number } = getTokenPayload(token);
+    const decoded = getTokenPayload(token);
     return (decoded.exp - adjustExp) * 1000;
   } catch (error) {
     return null;
