@@ -27,9 +27,10 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 		topic_pk = self.kwargs.get('topic_pk')
 		return (
 			self.queryset
-			.filter(topic_id=topic_pk)
-			.select_related('member', 'member__profile')
-			.ordered_by_status()
+				.with_member()
+				.accessible()
+				.filter(topic_id=topic_pk)
+				.ordered_by_status()
 		)
 
 	def _check_topic_permissions(self, request, *args, **kwargs):
