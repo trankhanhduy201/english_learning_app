@@ -1,9 +1,11 @@
 import * as yup from "yup";
 import { SUBCRIBER_STATUS } from "../configs/appConfig";
 import { validateWithSchema } from "./base";
-import { parseJsonObjectValues } from "../utils/commons";
+import { parseJson } from "../utils/commons";
 
-const MEMBER_STATUS_KEYS = Object.values(SUBCRIBER_STATUS).map((item) => item.key);
+const MEMBER_STATUS_KEYS = Object.values(SUBCRIBER_STATUS).map(
+  (item) => item.key
+);
 
 const topicMemberItemSchema = yup
   .object({
@@ -27,18 +29,44 @@ const topicMemberItemSchema = yup
   })
   .required();
 
+const topicMemberDataSchema = yup
+  .mixed()
+  .transform((_value, originalValue) => {
+    const parseData = parseJson(originalValue);
+    if (parseData === null) return null;
+
+    const parseDataValues = Object.values(parseData);
+    if (parseDataValues.length === 0) return null;
+
+    if (typeof parseDataValues[0] === "object") {
+      return parseDataValues;
+    }
+    return parseData;
+  })
+  .test({
+    name: "topic-member-data",
+    test(value) {
+      return yup.lazy((val) => {
+        if (Array.isArray(val)) {
+          return yup
+            .array()
+            .of(topicMemberItemSchema)
+            .min(1, "Updating member data is invalid.")
+            .required("Updating member data is required.");
+        }
+        
+        return topicMemberItemSchema.required(
+          "Updating member data is required."
+        );
+      }).validateSync(value);
+    },
+  });
+
 export const topicMemberUpdateSchema = yup
   .object({
-    updating_member_data: yup
-      .array()
-      .transform((_value, originalValue) => {
-        const parsedValues = parseJsonObjectValues(originalValue);
-        return Array.isArray(parsedValues) ? parsedValues : null;
-      })
-      .of(topicMemberItemSchema)
-      .nullable()
-      .required("Updating member data is required.")
-      .min(1, "Updating member data is invalid."),
+    updating_member_data: topicMemberDataSchema.required(
+      "Updating member data is required."
+    ),
   })
   .required();
 

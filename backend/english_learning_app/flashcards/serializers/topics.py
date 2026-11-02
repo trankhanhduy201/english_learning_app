@@ -7,7 +7,7 @@ from flashcards.models import Topic, TopicMember
 from shared.decorators.handle_exceptions import handle_exceptions
 from shared.serializers.bases import BaseSerializer, CustomPrimaryKeyRelatedField
 from shared.serializers.images import UploadImageSerializer
-from flashcards.serializers.topic_members import RetrieveListTopicMembersSerializer
+from flashcards.serializers.topic_members import RetrieveTopicMembersSerializer
 
 User = get_user_model()
 
@@ -72,6 +72,7 @@ class AuthorSerializer(BaseSerializer):
 class CurrentTopicMemberSerializer(Serializer):
     is_owner = SerializerMethodField()
     is_accepted = SerializerMethodField()
+    is_accepting = SerializerMethodField()
     is_subcribing = SerializerMethodField()
     is_blocking = SerializerMethodField()
 
@@ -98,6 +99,15 @@ class CurrentTopicMemberSerializer(Serializer):
             TopicMember.TopicMemberStatusEnums.BLOCK,
         ]
         return instance.status not in pending_status
+
+    def get_is_accepting(self, instance):
+        if self.get_is_owner(instance):
+            return False
+
+        if not instance:
+            return False
+
+        return instance.status == TopicMember.TopicMemberStatusEnums.PENDING
 
     def get_is_subcribing(self, instance):
         if self.get_is_owner(instance):
@@ -174,7 +184,7 @@ class RetrieveTopicSerializer(CurrentTopicMemberResolverMixin, BaseSerializer):
         return None
 
     def get_members(self, instance):
-        return RetrieveListTopicMembersSerializer(
+        return RetrieveTopicMembersSerializer(
             instance=instance.topic_members.all()[:15], many=True
         ).data
 
@@ -199,7 +209,7 @@ class RetrieveTopicSerializer(CurrentTopicMemberResolverMixin, BaseSerializer):
             'topic': instance,
         }
         return CurrentTopicMemberSerializer(
-            instance=current_topic_member,
+            instance=current_topic_member or {},
             read_only=True,
             context=serializer_context,
         ).data

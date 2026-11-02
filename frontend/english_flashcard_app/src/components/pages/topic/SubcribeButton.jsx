@@ -30,7 +30,7 @@ const SubcribeButton = memo(({ buttonType = '', topicId, topicMember = null, upd
 
   return (
     <>
-      {(topicMember && !topicMember.is_owner) && (
+      {(Object.keys(topicMember).length > 0 && !topicMember.is_owner) && (
         <button 
           className={`btn ${btnSmallClass} ${btnTypeClass} ms-auto`}
           onClick={() => handleSubcribe(

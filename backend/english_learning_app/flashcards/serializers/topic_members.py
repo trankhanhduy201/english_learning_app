@@ -10,7 +10,7 @@ from shared.serializers.bases import (
 User = get_user_model()
 
 
-class RetrieveListTopicMembersSerializer(BaseSerializer):
+class RetrieveTopicMembersSerializer(BaseSerializer):
     member_id = CharField(source='member.id', read_only=True)
     member_username = CharField(source='member.username', read_only=True)
     member_name = CharField(source="member.get_full_name", read_only=True)
@@ -50,7 +50,7 @@ class BaseListTopicMembersSerializer(BaseListSerializer):
         return super().to_internal_value(data)
 
 
-class CreateListTopicMembersSerializer(BaseSerializer):
+class CreateTopicMembersSerializer(BaseSerializer):
     topic = CustomPrimaryKeyRelatedField(
         queryset=Topic.objects.all(), required=True
     )
@@ -71,7 +71,7 @@ class CreateListTopicMembersSerializer(BaseSerializer):
         list_serializer_class = BaseListTopicMembersSerializer
 
 
-class UpdateListTopicMembersSerializer(BaseSerializer):
+class UpdateTopicMembersSerializer(BaseSerializer):
     is_remove = BooleanField(write_only=True, required=False, default=False)
 
     class Meta(BaseSerializer.Meta):

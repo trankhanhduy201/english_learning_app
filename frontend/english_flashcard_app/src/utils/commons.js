@@ -29,14 +29,14 @@ export const getNextMaxId = (items, field) => {
   return Math.max(...items.map(v => v[field])) + 1;
 }
 
-export const parseJsonObjectValues = (rawValue) => {
+export const parseJson = (rawValue, valueOnly = false) => {
   if (typeof rawValue !== "string" || rawValue.trim() === "") return null;
 
   try {
     const parsed = JSON.parse(rawValue);
     if (!parsed || typeof parsed !== "object") return null;
 
-    return Object.values(parsed);
+    return valueOnly ? Object.values(parsed) : parsed;
   } catch {
     return null;
   }

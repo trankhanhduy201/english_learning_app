@@ -7,8 +7,8 @@ from rest_framework.exceptions import ValidationError
 from flashcards.models import Topic, TopicMember
 from flashcards.permissions import CanSubscribeTopic, CanUnsubscribeTopic, IsAccessable
 from flashcards.serializers.topic_members import (
-	RetrieveListTopicMembersSerializer,
-	UpdateListTopicMembersSerializer,
+	RetrieveTopicMembersSerializer,
+	UpdateTopicMembersSerializer,
 )
 from flashcards.serializers.topics import CurrentTopicMemberSerializer
 from shared.views.bases import BaseGenericAPIView
@@ -17,8 +17,8 @@ from shared.views.bases import BaseGenericAPIView
 class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 	"""Nested topic member list + bulk-update endpoint."""
 	queryset = TopicMember.objects.all()
-	serializer_class = RetrieveListTopicMembersSerializer
-	update_serializer_class = UpdateListTopicMembersSerializer
+	serializer_class = RetrieveTopicMembersSerializer
+	update_serializer_class = UpdateTopicMembersSerializer
 	lookup_url_kwarg = 'topic_pk'
 	permission_classes = [IsAccessable]
 	http_method_names = ['get', 'put', 'options']
@@ -44,22 +44,37 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 
 	def put(self, request, *args, **kwargs):
 		topic = self._check_topic_permissions(request, *args, **kwargs)
-		if not isinstance(request.data, list):
+		data = request.data
+		if not isinstance(data, list) and not isinstance(data, dict):
 			raise ValidationError('Invalid data')
 
-		topic_member_ids = [
-			item.get('id')
-			for item in request.data
-			if item.get('id') is not None
-		]
+		if isinstance(data, list):
+			topic_member_ids = [
+				item['id']
+				for item in data
+				if isinstance(item, dict) and item.get('id') is not None
+			]
+
+			instance = topic.topic_members.filter(id__in=topic_member_ids)
+			many = True
+
+		elif isinstance(data, dict):
+			topic_member_id = data.get('id')
+			if topic_member_id is None:
+				raise ValidationError('Missing id in data')
+
+			instance = topic.topic_members.filter(id=topic_member_id).first()
+			many = False
+
 		serializer = self.get_update_serializer_class()(
-			instance=topic.topic_members.filter(id__in=topic_member_ids),
-			data=request.data,
-			many=True,
+			instance=instance,
+			data=data,
+			many=many,
 			context={'request': request},
 		)
 		serializer.is_valid(raise_exception=True)
 		serializer.save()
+
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 

@@ -64,10 +64,21 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
     let filtered = [...Object.values(initialMap)];
     if (search.trim() !== "") {
       filtered = filtered.filter((u) =>
-        getUserDisplayName(memberToUserData(u)).toLowerCase().includes(search.toLowerCase())
+        getUserDisplayName(
+          memberToUserData(u)
+        )
+        .toLowerCase()
+        .includes(search.toLowerCase())
       );
     }
+    
+    // Prioritize pending members
+    filtered.sort((a, b) => {
+      if (a.status === "pending") return -1;
+      if (b.status === "pending") return 1;
 
+      return new Date(a.joined_at) - new Date(b.joined_at);
+    });
     setModalMembers(prev => ({ ...prev, displayedMembers: filtered }));
   }, [initialMap, search]);
 
@@ -78,12 +89,17 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
     // Reset updated data in modal
     setModalMembers(prev => ({ ...prev, updatedMembers: {} }));
 
-    if (!Array.isArray(fetcher.data?.data)) return;
+    let respData = fetcher.data?.data ?? [];
+    if (!Array.isArray(respData)) {
+      respData = respData ? [respData] : [];
+    }
+
+    if (respData.length === 0) return;
 
     // Set data for initial mapping for second time when settings are changed
     setInitialMap(prev => {
       const newMemberDatas = { ...prev };
-      fetcher.data.data.forEach(item => {
+      respData.forEach(item => {
         const { is_remove, ...updatedItem } = item;
         if (is_remove) {
           delete newMemberDatas[item.member];
@@ -148,6 +164,22 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
   const onChangeStatus = useCallback(
     (index, status) => changeSettings(index, { status })
   );
+
+  const acceptPendingMember = useCallback((member) => {
+    if (!member?.id || member.status !== "pending") return;
+
+    const formData = new FormData();
+    formData.append("_not_revalidate", "1");
+    formData.append(
+      "updating_member_data",
+      JSON.stringify({ id: member.id, status: "read_only" })
+    );
+
+    fetcher.submit(formData, {
+      action: `/topic/${topicId}/members/update`,
+      method: "post"
+    });
+  }, [fetcher, topicId]);
 
   const defaultDisplayedMembers = useMemo(
     () => {
@@ -275,21 +307,35 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
                     </div>
 
                     <div className="d-flex align-items-center">
-                      <RadioButtons
-                        name={`status-${index}`}
-                        options={Object.values(SUBCRIBER_STATUS)}
-                        selectedOption={user.status}
-                        disabled={user.is_remove}
-                        onChange={(e) => onChangeStatus(index, e.target.value)}
-                      />
+                      {user.status === "pending" ? (
+                        <Button
+                          variant="success"
+                          size="sm"
+                          disabled={fetcher.state === "submitting" || user.is_remove}
+                          onClick={() => acceptPendingMember(user)}
+                        >
+                          <i className="bi bi-check-circle text-white me-1"></i>
+                          Accept
+                        </Button>
+                      ) : (
+                        <>
+                          <RadioButtons
+                            name={`status-${index}`}
+                            options={Object.values(SUBCRIBER_STATUS)}
+                            selectedOption={user.status}
+                            disabled={user.is_remove}
+                            onChange={(e) => onChangeStatus(index, e.target.value)}
+                          />
 
-                      <a
-                        className="btn p-0 ms-2"
-                        onClick={() => toggleRemove(index, !user.is_remove)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <i className="bi bi-trash"></i>
-                      </a>
+                          <a
+                            className="btn p-0 ms-2"
+                            onClick={() => toggleRemove(index, !user.is_remove)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </a>
+                        </>
+                      )}
                     </div>
                   </div>
 
