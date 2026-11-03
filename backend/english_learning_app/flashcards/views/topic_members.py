@@ -34,7 +34,10 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 		)
 
 	def _check_topic_permissions(self, request, *args, **kwargs):
-		topic = get_object_or_404(Topic, pk=self.kwargs.get('topic_pk'))
+		topic = get_object_or_404(
+			Topic.objects.with_owner(),
+			pk=self.kwargs.get('topic_pk')
+		)
 		self.check_object_permissions(request, topic)
 		return topic
 
