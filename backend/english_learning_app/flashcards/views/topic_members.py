@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
 
 from flashcards.models import Topic, TopicMember
 from flashcards.permissions import CanSubscribeTopic, CanUnsubscribeTopic, IsAccessable
@@ -11,6 +10,7 @@ from flashcards.serializers.topic_members import (
 	UpdateTopicMembersSerializer,
 )
 from flashcards.serializers.topics import CurrentTopicMemberSerializer
+from flashcards.services.topic_members import topic_member_service
 from shared.views.bases import BaseGenericAPIView
 
 
@@ -45,26 +45,7 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 	def put(self, request, *args, **kwargs):
 		topic = self._check_topic_permissions(request, *args, **kwargs)
 		data = request.data
-		if not isinstance(data, list) and not isinstance(data, dict):
-			raise ValidationError('Invalid data')
-
-		if isinstance(data, list):
-			topic_member_ids = [
-				item['id']
-				for item in data
-				if isinstance(item, dict) and item.get('id') is not None
-			]
-
-			instance = topic.topic_members.filter(id__in=topic_member_ids)
-			many = True
-
-		elif isinstance(data, dict):
-			topic_member_id = data.get('id')
-			if topic_member_id is None:
-				raise ValidationError('Missing id in data')
-
-			instance = topic.topic_members.filter(id=topic_member_id).first()
-			many = False
+		instance, many = topic_member_service.resolve_for_update(topic, data)
 
 		serializer = self.get_update_serializer_class()(
 			instance=instance,
@@ -88,24 +69,7 @@ class TopicSubscribeView(BaseGenericAPIView):
 
 	def post(self, request, *args, **kwargs):
 		topic = self.get_object()
-		topic_member = (
-			TopicMember.objects
-				.filter(
-					member=request.user,
-					topic=topic,
-				).first()
-		)
-
-		if topic_member is not None:
-			topic_member.status = TopicMember.TopicMemberStatusEnums.READ_ONLY
-			topic_member.save(update_fields=['status'])
-		else:
-			topic_member = TopicMember(
-				member=request.user,
-				topic=topic,
-				status=TopicMember.TopicMemberStatusEnums.PENDING,
-			)
-			topic_member.save()
+		topic_member = topic_member_service.subscribe(request.user, topic)
 
 		return Response(
 			data=self.serializer_class(
@@ -126,19 +90,8 @@ class TopicUnsubscribeView(BaseGenericAPIView):
 
 	def post(self, request, *args, **kwargs):
 		topic = self.get_object()
-		topic_member = get_object_or_404(
-			TopicMember,
-			member=request.user,
-			topic=topic,
-		)
+		topic_member = topic_member_service.unsubscribe(request.user, topic)
 
-		previous_status = topic_member.status
-		topic_member.status = TopicMember.TopicMemberStatusEnums.LEAVING
-		if previous_status != TopicMember.TopicMemberStatusEnums.PENDING:
-			topic_member.save(update_fields=['status'])
-		else:
-			topic_member.delete()
-		
 		return Response(
 			data=self.serializer_class(
 				instance=topic_member,
