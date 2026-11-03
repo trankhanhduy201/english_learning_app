@@ -20,7 +20,8 @@ class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 		if obj.status != Topic.TopicStatusEnums.PUBLIC:
 			return False
 
-		topic_member_status = TopicMember.objects.get_status_for(obj, request.user)
+		topic_member = obj.topic_members.first()
+		topic_member_status = getattr(topic_member, 'status', None)
 		return (
 			topic_member_status is None or
 			topic_member_status == TopicMember.TopicMemberStatusEnums.LEAVING
@@ -41,7 +42,8 @@ class CanUnsubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 		if super().has_object_permission(request, view, obj):
 			return False
 
-		topic_member_status = TopicMember.objects.get_status_for(obj, request.user)
+		topic_member = obj.topic_members.first()
+		topic_member_status = getattr(topic_member, 'status', None)
 		allow_unsubscribe = [
 			TopicMember.TopicMemberStatusEnums.PENDING,
 			TopicMember.TopicMemberStatusEnums.EDITABLE,

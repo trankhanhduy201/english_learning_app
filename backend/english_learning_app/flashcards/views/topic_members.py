@@ -45,7 +45,11 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 	def put(self, request, *args, **kwargs):
 		topic = self._check_topic_permissions(request, *args, **kwargs)
 		data = request.data
-		instance, many = topic_member_service.resolve_for_update(topic, data)
+
+		instance, many = (
+			topic_member_service
+				.resolve_for_update(topic, data)
+		)
 
 		serializer = self.get_update_serializer_class()(
 			instance=instance,
@@ -67,9 +71,21 @@ class TopicSubscribeView(BaseGenericAPIView):
 	permission_classes = [CanSubscribeTopic]
 	http_method_names = ['post', 'options']
 
+	def get_queryset(self):
+		return (
+			self.queryset
+				.with_owner()
+				.with_topic_members(
+					user=self.request.user
+				)
+		)
+
 	def post(self, request, *args, **kwargs):
 		topic = self.get_object()
-		topic_member = topic_member_service.subscribe(request.user, topic)
+		topic_member = (
+			topic_member_service
+				.subscribe(request.user, topic)
+		)
 
 		return Response(
 			data=self.serializer_class(
@@ -88,9 +104,21 @@ class TopicUnsubscribeView(BaseGenericAPIView):
 	permission_classes = [CanUnsubscribeTopic]
 	http_method_names = ['post', 'options']
 
+	def get_queryset(self):
+		return (
+			self.queryset
+				.with_owner()
+				.with_topic_members(
+					user=self.request.user
+				)
+		)
+
 	def post(self, request, *args, **kwargs):
 		topic = self.get_object()
-		topic_member = topic_member_service.unsubscribe(request.user, topic)
+		topic_member = (
+			topic_member_service
+				.unsubscribe(request.user, topic)
+		)
 
 		return Response(
 			data=self.serializer_class(

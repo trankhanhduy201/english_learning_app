@@ -1,17 +1,11 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 
 from flashcards.models import TopicMember
 
 
 class TopicMemberService:
     def subscribe(self, user, topic):
-        topic_member = (
-            topic.topic_members
-                .filter(member=user)
-                .first()
-        )
-
+        topic_member = topic.topic_members.first()
         if topic_member is not None:
             topic_member.status = TopicMember.TopicMemberStatusEnums.READ_ONLY
             topic_member.save(update_fields=['status'])
@@ -26,9 +20,9 @@ class TopicMemberService:
         return topic_member
 
     def unsubscribe(self, user, topic):
-        topic_member = get_object_or_404(
-            TopicMember, member=user, topic=topic,
-        )
+        topic_member = topic.topic_members.first()
+        if topic_member is None:
+            raise NotFound('Topic member not found')
 
         previous_status = topic_member.status
         topic_member.status = TopicMember.TopicMemberStatusEnums.LEAVING

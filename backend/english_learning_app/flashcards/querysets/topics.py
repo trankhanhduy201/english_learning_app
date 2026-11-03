@@ -10,21 +10,32 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
 
     def with_defaults(self, **kwargs):
         qs = (
-            self.with_topic_members()
+            self.with_topic_members(
+                    check_accessible=True,
+                    with_member=True
+                )
                 .with_owner()
                 .with_member_count()
                 .with_vocab_count()
         )
         return qs
     
-    def with_topic_members(self):
+    def with_topic_members(self, **kwargs):
         TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
-        qs = (
-            TopicMember.objects
-                .accessible()
-                .with_member()
-                .order_by('-joined_at')
-        )
+        qs = TopicMember.objects.order_by('-joined_at')
+
+        check_accessible = kwargs.get('check_accessible', False)
+        if check_accessible is True:
+            qs = qs.accessible()
+
+        with_member = kwargs.get('with_member', False)
+        if with_member is True:
+            qs = qs.with_member()
+
+        user = kwargs.get('user', None)
+        if user is not None:
+            qs = qs.filter(member=user)
+
         return self.prefetch_related(
 	        Prefetch('topic_members', queryset=qs)
         )
