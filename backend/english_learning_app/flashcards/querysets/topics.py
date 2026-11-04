@@ -12,7 +12,7 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
         qs = (
             self.with_topic_members(
                     check_accessible=True,
-                    with_member=True
+                    includes=['member']
                 )
                 .with_owner()
                 .with_member_count()
@@ -20,7 +20,7 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
         )
         return qs
     
-    def with_topic_members(self, **kwargs):
+    def with_topic_members(self, includes=[], **kwargs):
         TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
         qs = TopicMember.objects.order_by('-joined_at')
 
@@ -28,8 +28,7 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
         if check_accessible is True:
             qs = qs.accessible()
 
-        with_member = kwargs.get('with_member', False)
-        if with_member is True:
+        if 'member' in includes:
             qs = qs.with_member()
 
         user = kwargs.get('user', None)
