@@ -148,10 +148,14 @@ class BaseModelViewSet(
     permission_classes = [IsOwner]
     auto_add_created_by = False
     invalidate_data_after_update = True
+    invalidate_serializer_after_update = True
 
     def create(self, request, *args, **kwargs):
         create_serializer_class = self.get_create_serializer_class()
-        serializer = create_serializer_class(data=request.data, context={'request': request})
+        serializer = create_serializer_class(
+            data=request.data, 
+            context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -161,24 +165,34 @@ class BaseModelViewSet(
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         update_serializer_class = self.get_update_serializer_class()
-        serializer = update_serializer_class(instance, data=request.data, partial=partial, context={'request': request})
+        serializer = update_serializer_class(
+            instance, 
+            data=request.data, 
+            partial=partial, 
+            context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        
-        if self.invalidate_data_after_update:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
+        if self.invalidate_serializer_after_update:
+            serializer = self.do_invalidate_serializer_after_update(serializer)
         return Response(serializer.data)
 
+    def do_invalidate_serializer_after_update(self, serializer):
+        instance = serializer.instance
+        if self.invalidate_data_after_update:
+            instance = self.get_object()
+        return self.get_serializer(instance)
+
     def perform_create(self, serializer):
-        self.perform_create_or_update(serializer)
+        self.perform_create_or_update(serializer, action='create')
 
     def perform_update(self, serializer):
-        self.perform_create_or_update(serializer)
+        self.perform_create_or_update(serializer, action='update')
 
-    def perform_create_or_update(self, serializer):
+    def perform_create_or_update(self, serializer, **kwargs):
         additional = {}
-        if self.auto_add_created_by and self.request.user.is_anonymous is False:
+        action = kwargs.get('action', None)
+        if action == 'create' and self.auto_add_created_by and self.request.user.is_anonymous is False:
             additional['created_by'] = self.request.user
         serializer.save(**additional)
 

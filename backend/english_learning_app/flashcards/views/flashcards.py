@@ -39,6 +39,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	pagination_class = CustomPageNumberPagination
 	permission_classes = [IsAccessable]
 	auto_add_created_by = True
+	invalidate_data_after_update = False
 
 	def get_queryset(self, **kwargs):
 		return super().get_queryset(**kwargs).with_defaults()
@@ -52,6 +53,7 @@ class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 	filterset_class = VocabularyFilter
 	permission_classes = [IsAccessable, CanBulkDeleteVocab]
 	auto_add_created_by = True
+	invalidate_data_after_update = False
 
 	create_import_serializer_class = CreateImportVocabulariesSerializer
 	request_import_serializer_class = RequestImportVocabulariesSerializer
