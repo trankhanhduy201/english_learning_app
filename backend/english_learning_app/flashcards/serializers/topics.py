@@ -1,15 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField, CharField, ListSerializer
 
 from flashcards.models import Topic, TopicMember
 from shared.decorators.handle_exceptions import handle_exceptions
 from shared.serializers.bases import BaseSerializer
-from shared.serializers.images import RelativeBase64ImageField, UploadImageSerializer
+from shared.serializers.images import RelativeBase64ImageField, ImageInfoSerializerMixin
 from flashcards.serializers.topic_members import RetrieveTopicMembersSerializer
 
 User = get_user_model()
+
+
+class TopicImageInfoSerializerMixin(ImageInfoSerializerMixin):
+    image_source = 'image_path'
 
 
 class CurrentTopicMemberResolverMixin:
@@ -129,7 +132,10 @@ class CurrentTopicMemberSerializer(Serializer):
         return instance.status in blocking_status
 
 
-class RetrieveTopicListSerializer(CurrentTopicMemberResolverMixin, ListSerializer):
+class RetrieveTopicListSerializer(
+    CurrentTopicMemberResolverMixin,
+    ListSerializer
+):
     def to_representation(self, data):
         iterable = (
             data.all()
@@ -147,7 +153,11 @@ class RetrieveTopicListSerializer(CurrentTopicMemberResolverMixin, ListSerialize
         return super().to_representation(topic_instances)
 
 
-class RetrieveTopicSerializer(CurrentTopicMemberResolverMixin, BaseSerializer):
+class RetrieveTopicSerializer(
+    CurrentTopicMemberResolverMixin,
+    TopicImageInfoSerializerMixin,
+    BaseSerializer
+):
     # For read-only and invoke get_upload_image to return serialized image data
     image_info = SerializerMethodField()
     member_count = IntegerField(read_only=True)
@@ -172,16 +182,6 @@ class RetrieveTopicSerializer(CurrentTopicMemberResolverMixin, BaseSerializer):
             'vocab_count',
         ]
         list_serializer_class = RetrieveTopicListSerializer
-
-    @handle_exceptions(
-        reraise=False, 
-        default_return=None, 
-        log_error=True
-    )
-    def get_image_info(self, instance):
-        if instance.image_path:
-            return UploadImageSerializer(instance=instance.image_path).data
-        return None
 
     def get_members(self, instance):
         return RetrieveTopicMembersSerializer(
@@ -215,7 +215,10 @@ class RetrieveTopicSerializer(CurrentTopicMemberResolverMixin, BaseSerializer):
         ).data
 
 
-class TrendingTopicSerializer(BaseSerializer):
+class TrendingTopicSerializer(
+    TopicImageInfoSerializerMixin,
+    BaseSerializer 
+):
     image_info = SerializerMethodField()
     created_by = AuthorSerializer(read_only=True)
     member_count = IntegerField(read_only=True)
@@ -234,23 +237,19 @@ class TrendingTopicSerializer(BaseSerializer):
             'vocab_count',
         ]
 
-    @handle_exceptions(
-        reraise=False,
-        default_return=None,
-        log_error=True
-    )
-    def get_image_info(self, instance):
-        if instance.image_path:
-            return UploadImageSerializer(instance=instance.image_path).data
-        return None
 
-
-class CreateTopicSerializer(BaseSerializer):
-    upload_image = Base64ImageField(
+class CreateTopicSerializer(
+    TopicImageInfoSerializerMixin,
+    BaseSerializer
+):
+    upload_image = RelativeBase64ImageField(
         source='image_path',
+        write_only=True,
         required=False,
         allow_null=True,
     )
+
+    image_info = SerializerMethodField()
 
     class Meta(BaseSerializer.Meta):
         model = Topic
@@ -261,15 +260,22 @@ class CreateTopicSerializer(BaseSerializer):
             'status',
             'descriptions',
             'upload_image',
+            'image_info',
         ]
 
 
-class UpdateTopicSerializer(BaseSerializer):
+class UpdateTopicSerializer(
+    TopicImageInfoSerializerMixin,
+    BaseSerializer
+):
     upload_image = RelativeBase64ImageField(
         source='image_path',
+        write_only=True,
         required=False,
         allow_null=True,
     )
+
+    image_info = SerializerMethodField()
 
     class Meta(BaseSerializer.Meta):
         model = Topic
@@ -279,7 +285,8 @@ class UpdateTopicSerializer(BaseSerializer):
             'learning_language',
             'status',
             'descriptions',
-            'upload_image'
+            'upload_image',
+            'image_info',
         ]
 
     @transaction.atomic
