@@ -15,6 +15,7 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
                     includes=['member']
                 )
                 .with_owner()
+                .with_owner_profile()
                 .with_member_count()
                 .with_vocab_count()
         )
@@ -87,6 +88,7 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
     def trending(self, limit=4):
         return (
             self.with_owner()
+                .with_owner_profile()
                 .with_member_count()
                 .with_vocab_count()
                 .order_by('-member_count', '-id')[:limit]

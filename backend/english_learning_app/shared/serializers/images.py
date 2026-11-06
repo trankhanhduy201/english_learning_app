@@ -1,5 +1,23 @@
+from urllib.parse import urlsplit
+
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+
+
+class RelativeBase64ImageField(Base64ImageField):
+    def to_representation(self, value):
+        url = super().to_representation(value)
+        if url is None:
+            return None
+
+        if not isinstance(url, str):
+            return url
+
+        parsed_url = urlsplit(url)
+        if parsed_url.scheme and parsed_url.netloc:
+            return parsed_url.path or url
+
+        return url
 
 
 class UploadImageSerializer(serializers.Serializer):

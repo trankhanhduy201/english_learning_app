@@ -7,7 +7,10 @@ class VocabQuerySet(BaseQuerySet, OwnerMixin):
     TRANSLATION_MODEL = 'flashcards.Translation'
 
     def with_defaults(self, language=None, includes=[]):
-        qs = self.with_owner()
+        qs = (
+            self.with_owner()
+                .with_owner_profile()
+        )
         if 'translations' in includes:
             qs = qs.with_translations(language)
         return qs

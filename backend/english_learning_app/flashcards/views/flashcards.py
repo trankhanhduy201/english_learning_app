@@ -40,9 +40,18 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	permission_classes = [IsAccessable]
 	auto_add_created_by = True
 	invalidate_data_after_update = False
+	invalidate_serializer_after_update = False
 
 	def get_queryset(self, **kwargs):
-		return super().get_queryset(**kwargs).with_defaults()
+		qs = super().get_queryset(**kwargs)
+		if self.request.method in ('GET'):
+			return qs.with_defaults()
+
+		if self.request.method in ('PUT', 'PATCH', 'DELETE'):
+			return qs.with_owner()
+		
+		return qs
+		
 
 
 class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):

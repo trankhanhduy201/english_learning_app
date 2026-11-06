@@ -5,8 +5,8 @@ from rest_framework.serializers import SerializerMethodField, Serializer, Intege
 
 from flashcards.models import Topic, TopicMember
 from shared.decorators.handle_exceptions import handle_exceptions
-from shared.serializers.bases import BaseSerializer, CustomPrimaryKeyRelatedField
-from shared.serializers.images import UploadImageSerializer
+from shared.serializers.bases import BaseSerializer
+from shared.serializers.images import RelativeBase64ImageField, UploadImageSerializer
 from flashcards.serializers.topic_members import RetrieveTopicMembersSerializer
 
 User = get_user_model()
@@ -248,7 +248,6 @@ class TrendingTopicSerializer(BaseSerializer):
 class CreateTopicSerializer(BaseSerializer):
     upload_image = Base64ImageField(
         source='image_path',
-        write_only=True,
         required=False,
         allow_null=True,
     )
@@ -266,19 +265,10 @@ class CreateTopicSerializer(BaseSerializer):
 
 
 class UpdateTopicSerializer(BaseSerializer):
-    upload_image = Base64ImageField(
+    upload_image = RelativeBase64ImageField(
         source='image_path',
-        write_only=True,
         required=False,
         allow_null=True,
-    )
-    updated_members = CustomPrimaryKeyRelatedField(
-        source='members',
-        many=True,
-        queryset=User.objects.all(),
-        allow_null=True,
-        required=False,
-        write_only=True,
     )
 
     class Meta(BaseSerializer.Meta):
@@ -289,16 +279,11 @@ class UpdateTopicSerializer(BaseSerializer):
             'learning_language',
             'status',
             'descriptions',
-            'upload_image',
-            'updated_members',
+            'upload_image'
         ]
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        updated_members = validated_data.pop('updated_members', None)
-        if updated_members:
-            instance.members.set(updated_members)
-
         if (
             'image_path' in validated_data
             and validated_data['image_path'] is None

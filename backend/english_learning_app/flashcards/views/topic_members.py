@@ -35,7 +35,7 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 
 	def _check_topic_permissions(self, request, *args, **kwargs):
 		topic = get_object_or_404(
-			Topic.objects.with_owner(),
+			Topic.objects.with_owner().with_owner_profile(),
 			pk=self.kwargs.get('topic_pk')
 		)
 		self.check_object_permissions(request, topic)
@@ -78,6 +78,7 @@ class TopicSubscribeView(BaseGenericAPIView):
 		return (
 			self.queryset
 				.with_owner()
+				.with_owner_profile()
 				.with_topic_members(
 					user=self.request.user
 				)
@@ -111,6 +112,7 @@ class TopicUnsubscribeView(BaseGenericAPIView):
 		return (
 			self.queryset
 				.with_owner()
+				.with_owner_profile()
 				.with_topic_members(
 					user=self.request.user
 				)
