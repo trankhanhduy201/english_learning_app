@@ -80,7 +80,7 @@ class CreateVocabularySerializer(BaseSerializer):
         instance = super().create(validated_data)
         translation_datas = {instance.word: self.initial_data.get('translations', [])}
         translation_service.bulk_create_update_translations(
-            [instance], translation_datas
+            'create', [instance], translation_datas
         )
         return instance
 
@@ -103,15 +103,8 @@ class UpdateVocabularySerializer(BaseSerializer):
         validated_data.pop('translations', [])
         instance = super().update(instance, validated_data)
         translation_datas = {instance.word: self.initial_data.get('translations', [])}
-        translation_existing_ids = {
-            instance.word: [
-                item['id']
-                for item in self.data.get('translations', [])
-                if 'id' in item
-            ]
-        }
         translation_service.bulk_create_update_translations(
-            [instance], translation_datas, translation_existing_ids
+            'update', [instance], translation_datas
         )
         return instance
 
@@ -124,7 +117,7 @@ class BaseListVocabulariesSerializer(BaseListSerializer):
         }
         vocab_instances = super().create(validated_data)
         translation_service.bulk_create_update_translations(
-            vocab_instances, validated_translations
+            'create', vocab_instances, validated_translations
         )
         return vocab_instances
 

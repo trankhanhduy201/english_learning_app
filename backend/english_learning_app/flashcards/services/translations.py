@@ -2,16 +2,37 @@ from django.db import transaction
 from flashcards.models import Translation
 from shared.decorators.handle_exceptions import handle_exceptions
 
+from collections import defaultdict
 
 class TranslationService:
+    def get_translation_existings(self, action, vocab_instances):
+        translation_existings = defaultdict(list)
+        if action == 'update':
+            vocab_key_instances = {item.id: item for item in vocab_instances}
+            translation_qs = (
+                Translation.objects
+                    .filter(vocabulary__in=vocab_instances)
+            )
+
+            for translation in translation_qs:
+                vocab_instance = vocab_key_instances.get(translation.vocabulary_id, None)
+                if vocab_instance:
+                    translation_existings[vocab_instance.word].append(translation)
+
+        return translation_existings
+
+
     @handle_exceptions(reraise=True, log_error=True)
-    def bulk_create_update_translations(self, vocab_instances, validated_translations, translation_existing_ids = {}):
+    def bulk_create_update_translations(self, action, vocab_instances, validated_translations):
+        print(validated_translations)
         new_translations = []
         update_translations = []
         delete_translations = []
         update_fields = ['translation', 'language', 'type', 'note']
+
+        translation_existings = self.get_translation_existings(action, vocab_instances)
         for word in validated_translations.keys():
-            _translation_existing_ids = translation_existing_ids.get(word, [])
+            _translation_existings = translation_existings.get(word, [])
             validated_translation = validated_translations[word]
             vocab_instance = next((
                 vocab for vocab in vocab_instances 
@@ -19,17 +40,15 @@ class TranslationService:
             ), None)
 
             # For create new item
+            _translation_existing_ids = {item.id for item in _translation_existings}
             for translation in validated_translation:
                 if 'id' not in translation or int(translation['id']) not in _translation_existing_ids:
                     new_translations.append(Translation(vocabulary=vocab_instance, **translation))
 
-            if len(_translation_existing_ids) > 0:
+            if len(_translation_existings) > 0:
                 # For update existed item
                 updated_ids = []
-                _update_translations = Translation.objects.filter_update_translations(
-                    _translation_existing_ids, vocab_instance
-                )
-                for translation in _update_translations:
+                for translation in _translation_existings:
                     update_data = next((
                         item for item in validated_translation
                         if 'id' in item and int(item['id']) == translation.id
