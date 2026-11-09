@@ -36,7 +36,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: nginx
+    container_name: django_nginx
     ports:
       - "54080:80"
     volumes:
@@ -63,7 +63,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: redis
+    container_name: django_redis
     restart: always
 
 volumes:
