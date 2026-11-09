@@ -10,9 +10,16 @@ class VocabQuerySet(BaseQuerySet, OwnerMixin):
         qs = (
             self.with_owner()
                 .with_owner_profile()
+                .with_topic(includes=['owner'])
         )
         if 'translations' in includes:
             qs = qs.with_translations(language)
+        return qs
+
+    def with_topic(self, includes=['owner']):
+        qs = self.select_related('topic')
+        if 'owner' in includes:
+            qs = qs.select_related('topic__created_by')
         return qs
 
     def with_translations(self, language):
