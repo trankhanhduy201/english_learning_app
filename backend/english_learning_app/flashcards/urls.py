@@ -1,6 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from flashcards.views.flashcards import TopicViewSet, VocabularyViewSet
+from flashcards.views.flashcards import (
+    TopicVocabularyImportView,
+    TopicViewSet,
+    VocabularyViewSet,
+)
 from flashcards.views.topic_members import (
     TopicMemberView,
     TopicSubscribeView,
@@ -18,6 +22,7 @@ topic_patterns = [
     path('<int:topic_pk>/members/', TopicMemberView.as_view(), name='topic_members'),
     path('<int:topic_pk>/subscribe/', TopicSubscribeView.as_view(), name='topic_subscribe'),
     path('<int:topic_pk>/unsubscribe/', TopicUnsubscribeView.as_view(), name='topic_unsubscribe'),
+    path('<int:topic_pk>/vocabularies/import/', TopicVocabularyImportView.as_view(), name='topic_vocabulary_import'),
 ]
 
 dashboard_patterns = [

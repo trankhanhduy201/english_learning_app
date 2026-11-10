@@ -1,10 +1,11 @@
 import re
 from django.db.models import Q
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from shared.views.bases import BaseModelViewSet
+from shared.views.bases import BaseGenericAPIView, BaseModelViewSet
 from shared.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.serializers.topics import (
 	RetrieveTopicSerializer,
@@ -51,7 +52,51 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 			return qs.with_owner()
 		
 		return qs
-		
+
+
+class TopicVocabularyImportView(BaseGenericAPIView):
+	queryset = Topic.objects.all()
+	lookup_url_kwarg = 'topic_pk'
+	permission_classes = [IsAccessable]
+	http_method_names = ['post', 'options']
+	request_import_serializer_class = RequestImportVocabulariesSerializer
+	create_import_serializer_class = CreateImportVocabulariesSerializer
+
+	def get_queryset(self):
+		return (
+			self.queryset
+				.with_owner()
+				.with_owner_profile()
+		)
+
+	def post(self, request, *args, **kwargs):
+		topic = self.get_object()
+		rq_serializer = self.request_import_serializer_class(data=request.data)
+		if not rq_serializer.is_valid():
+			return Response(rq_serializer.errors, status=400)
+
+		import_type = rq_serializer.validated_data.pop('import_type')
+		import_func = f'import_{import_type}'
+		data_import = getattr(self, import_func)(
+			request, topic, rq_serializer.validated_data
+		)
+
+		serializer = self.create_import_serializer_class(
+			data=data_import, many=True
+		)
+		if serializer.is_valid():
+			serializer.save()
+			vocab_ids = [vocab.id for vocab in serializer.instance]
+			generate_vocab_audio_async(vocab_ids, user_id=request.user.pk)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def import_text(self, request, topic, validated_data):
+		return vocabulary_import_service.parse_import_text(
+			request.user,
+			topic,
+			**validated_data,
+		)
 
 
 class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
@@ -84,31 +129,6 @@ class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 			
 		return Response(status=status.HTTP_204_NO_CONTENT)
 		
-	@action(detail=False, methods=['post'], url_path='import')
-	def bulk_import(self, request, *args, **kwargs):
-		rq_serializer = self.request_import_serializer_class(data=request.data)
-		if not rq_serializer.is_valid():
-			return Response(rq_serializer.errors, status=400)
-		
-		import_type = rq_serializer.validated_data.pop('import_type')
-		import_func = f'import_{import_type}'
-		data_import = getattr(self, import_func)(request, rq_serializer.validated_data)
-		
-		serializer = self.create_import_serializer_class(
-			data=data_import, many=True
-		)
-		if serializer.is_valid():
-			serializer.save()
-			# vocab_ids = list(serializer.instance.values_list('id', flat=True))
-			vocab_ids = [vocab.id for vocab in serializer.instance]
-			generate_vocab_audio_async(vocab_ids, user_id=request.user.pk)
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-		
-	def import_text(self, request, validated_data):
-		return vocabulary_import_service.parse_import_text(request.user, **validated_data)
-			  
-
 	# Below code for using simple filtering without defining filterset
 	# Note that using filterset_fields and filterset_class together is not supported.
 	# filter_backends = [DjangoFilterBackend]

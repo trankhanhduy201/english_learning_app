@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
@@ -24,7 +23,9 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 	http_method_names = ['get', 'put', 'options']
 
 	def get_queryset(self):
-		topic_pk = self.kwargs.get('topic_pk')
+		topic_pk = self.kwargs.get(
+			self.lookup_url_kwarg
+		)
 		return (
 			self.queryset
 				.with_member()

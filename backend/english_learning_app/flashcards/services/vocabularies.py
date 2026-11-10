@@ -1,6 +1,6 @@
 import re
 import base64
-from flashcards.models import Translation, Vocabulary, Topic
+from flashcards.models import Translation, Vocabulary
 from flashcards.utilities.audio import get_tts_audio
 
 
@@ -40,12 +40,11 @@ class VocabularyImportService:
 
         return translations_entries
 
-    def parse_import_text(self, user, topic_id, import_text, language_from, language_to):
-        if not import_text or not topic_id:
+    def parse_import_text(self, user, topic, import_text, language_from, language_to):
+        if not import_text or not topic:
             return []
-        
+
         vocab_entries = {}
-        topic = Topic.objects.get(id=topic_id)
         for line in import_text.strip().split("\n"):
             # Remove space in text
             line = line.strip()

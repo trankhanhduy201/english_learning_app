@@ -85,9 +85,9 @@ const doDeleteAllVocabs = async (topicId) => {
   }
 };
 
-const doImportVocab = async (data) => {
+const doImportVocab = async (topicId, data) => {
   try {
-    return await store.dispatch(importVocabThunk({ data })).unwrap();
+    return await store.dispatch(importVocabThunk({ topicId, data })).unwrap();
   } catch (err) {
     return err;
   }
@@ -139,7 +139,7 @@ export const editVocab = async ({ request, params }) => {
 export const importVocabs = async ({ request, params }) => {
   const formData = await request.formData();
   const importData = qs.parse(Object.fromEntries(formData));
-  return await doImportVocab({ ...importData, topic_id: params.topicId });
+  return await doImportVocab(params.topicId, importData);
 };
 
 export const deleteVocabs = async ({ request, params }) => {

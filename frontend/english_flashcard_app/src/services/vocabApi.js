@@ -35,8 +35,8 @@ export const createVocab = async (datas, options = {}) => {
   });
 };
 
-export const importVocabs = async (datas, options = {}) => {
-  return await callApi(`vocabularies/import/`, {
+export const importVocabs = async (topicId, datas, options = {}) => {
+  return await callApi(`topics/${topicId}/vocabularies/import/`, {
     method: "POST",
     body: JSON.stringify(datas),
     ...options,

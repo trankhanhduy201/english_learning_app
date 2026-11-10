@@ -8,8 +8,8 @@ import {
 
 export const importVocabThunk = createThunkWithCallback(
   "vocab/import",
-  async ({ data }, { dispatch, rejectWithValue }) => {
-    const response = await vocabApi.importVocabs(data);
+  async ({ topicId, data }, { dispatch, rejectWithValue }) => {
+    const response = await vocabApi.importVocabs(topicId, data);
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }

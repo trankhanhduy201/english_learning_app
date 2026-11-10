@@ -24,7 +24,6 @@ class TranslationService:
 
     @handle_exceptions(reraise=True, log_error=True)
     def bulk_create_update_translations(self, action, vocab_instances, validated_translations):
-        print(validated_translations)
         new_translations = []
         update_translations = []
         delete_translations = []
