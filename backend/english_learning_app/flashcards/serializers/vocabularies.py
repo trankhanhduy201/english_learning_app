@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from rest_framework.serializers import SerializerMethodField, CharField
+from rest_framework.serializers import CharField
 
 from flashcards.models import Topic, Translation, Vocabulary
 from shared.serializers.bases import (
@@ -28,7 +28,7 @@ class AuthorSerializer(BaseSerializer):
         ]
 
 
-class ListTranslationsSerializer(BaseSerializer):
+class RetrieveTranslationSerializer(BaseSerializer):
     class Meta(BaseSerializer.Meta):
         model = Translation
         fields = [
@@ -41,8 +41,28 @@ class ListTranslationsSerializer(BaseSerializer):
         ]
 
 
+class CreateTranslationSerializer(BaseSerializer):
+    created_by = CustomPrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        allow_null=False,
+        required=True,
+    )
+
+    class Meta(BaseSerializer.Meta):
+        list_serializer_class = BaseListSerializer
+        model = Translation
+        fields = [
+            'id',
+            'translation',
+            'language',
+            'type',
+            'note',
+            'created_by',
+        ]
+
+
 class RetrieveVocabularySerializer(BaseSerializer):
-    translations = ListTranslationsSerializer(many=True)
+    translations = RetrieveTranslationSerializer(many=True)
     created_by = AuthorSerializer(read_only=True)
 
     class Meta(BaseSerializer.Meta):
@@ -60,7 +80,7 @@ class RetrieveVocabularySerializer(BaseSerializer):
 
 
 class CreateVocabularySerializer(BaseSerializer):
-    translations = ListTranslationsSerializer(many=True)
+    translations = CreateTranslationSerializer(many=True)
 
     class Meta(BaseSerializer.Meta):
         model = Vocabulary
@@ -86,7 +106,7 @@ class CreateVocabularySerializer(BaseSerializer):
 
 
 class UpdateVocabularySerializer(BaseSerializer):
-    translations = ListTranslationsSerializer(many=True)
+    translations = RetrieveTranslationSerializer(many=True)
 
     class Meta(BaseSerializer.Meta):
         model = Vocabulary
@@ -121,23 +141,18 @@ class BaseListVocabulariesSerializer(BaseListSerializer):
         )
         return vocab_instances
 
-    def to_internal_value(self, data):
-        topic_ids = {
-            item.get('topic') 
-            for item in data
-        }
-        topics = Topic.objects.in_bulk(topic_ids)
-        for item in data:
-            topic = topics.get(item.get('topic'))
-            item['topic'] = topic
-        return super().to_internal_value(data)
-
 
 class CreateImportVocabulariesSerializer(CreateVocabularySerializer):
     topic = CustomPrimaryKeyRelatedField(
         queryset=Topic.objects.all(),
         allow_null=True,
         required=False,
+    )
+
+    created_by = CustomPrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        allow_null=False,
+        required=True,
     )
 
     class Meta(CreateVocabularySerializer.Meta):

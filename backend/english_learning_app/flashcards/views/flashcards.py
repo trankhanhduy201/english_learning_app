@@ -106,7 +106,7 @@ class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		
 	def import_text(self, request, validated_data):
-		return vocabulary_import_service.parse_import_text(request.user.id, **validated_data)
+		return vocabulary_import_service.parse_import_text(request.user, **validated_data)
 			  
 
 	# Below code for using simple filtering without defining filterset

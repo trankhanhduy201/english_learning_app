@@ -1,11 +1,11 @@
 import re
 import base64
-from flashcards.models import Translation, Vocabulary
+from flashcards.models import Translation, Vocabulary, Topic
 from flashcards.utilities.audio import get_tts_audio
 
 
 class VocabularyImportService:
-    def _parse_import_text_translations(self, user_id, import_text, language_to):
+    def _parse_import_text_translations(self, user, import_text, language_to):
         translations_entries = []
         split_pattern = r"\s*(\(v\)|\(adj\)|\(a\)|\(adv\)|\(n\)|\(prep\))\s*"
 
@@ -35,16 +35,17 @@ class VocabularyImportService:
                 "translation": translation_text,
                 "language": language_to,
                 "type": translation_type,
-                "created_by": user_id
+                "created_by": user
             })
 
         return translations_entries
 
-    def parse_import_text(self, user_id, topic_id, import_text, language_from, language_to):
+    def parse_import_text(self, user, topic_id, import_text, language_from, language_to):
         if not import_text or not topic_id:
             return []
         
         vocab_entries = {}
+        topic = Topic.objects.get(id=topic_id)
         for line in import_text.strip().split("\n"):
             # Remove space in text
             line = line.strip()
@@ -67,16 +68,16 @@ class VocabularyImportService:
                 vocab_entries[word]['translations']
             )
             translations_entries.extend(
-                self._parse_import_text_translations(user_id, description, language_to)
+                self._parse_import_text_translations(user, description, language_to)
             )
             
             # Update vocab data
             vocab_entries[word] = {
                 "word": word,
-                "topic": int(topic_id),
+                "topic": topic,
                 "language": language_from,
                 "translations": translations_entries,
-                "created_by": user_id
+                "created_by": user
             }
         
         return list(vocab_entries.values())
