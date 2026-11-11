@@ -45,7 +45,7 @@ const getValidatedVocabPayload = async (request) => {
 
 const createVocab = async (topicId, data) => {
   try {
-    const result = await store.dispatch(createVocabThunk({ data })).unwrap();
+    const result = await store.dispatch(createVocabThunk({ topicId, data })).unwrap();
     return redirect(`/topic/${topicId}`);
   } catch (err) {
     return err;
@@ -54,7 +54,7 @@ const createVocab = async (topicId, data) => {
 
 const updateVocab = async (topicId, vocabId, data) => {
   try {
-    await store.dispatch(updateVocabThunk({ vocabId, data })).unwrap();
+    await store.dispatch(updateVocabThunk({ topicId, vocabId, data })).unwrap();
     return redirect(`/topic/${topicId}`);
   } catch (err) {
     return err;
@@ -63,7 +63,7 @@ const updateVocab = async (topicId, vocabId, data) => {
 
 const deleteVocab = async (topicId, vocabId, params = {}) => {
   try {
-    const result = await store.dispatch(deleteVocabThunk({ vocabId, params })).unwrap();
+    const result = await store.dispatch(deleteVocabThunk({ topicId, vocabId, params })).unwrap();
     const isRedirectToTopic = params?._redirect_to_topic === "1";
     if (isRedirectToTopic) {
       return redirect(`/topic/${topicId}`);

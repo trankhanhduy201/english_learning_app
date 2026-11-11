@@ -8,7 +8,7 @@ from shared.exceptions import ConflictException
 class GetContextMixin:
     def get_context(self, field_name=None):
         if field_name is not None:
-            return getattr(self.context, field_name, None)
+            return self.context.get(field_name, None)
         return self.context
 
 

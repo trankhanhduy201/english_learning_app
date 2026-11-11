@@ -154,7 +154,10 @@ class BaseModelViewSet(
         create_serializer_class = self.get_create_serializer_class()
         serializer = create_serializer_class(
             data=request.data, 
-            context={'request': request}
+            context={
+                **kwargs.get('serializer_context', {}),
+                'request': request
+            }
         )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -169,7 +172,10 @@ class BaseModelViewSet(
             instance, 
             data=request.data, 
             partial=partial, 
-            context={'request': request}
+            context={
+                **kwargs.get('serializer_context', {}),
+                'request': request
+            }
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)

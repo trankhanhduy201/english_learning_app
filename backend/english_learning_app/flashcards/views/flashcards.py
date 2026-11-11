@@ -1,7 +1,10 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
+
 from shared.views.bases import BaseGenericAPIView, BaseModelViewSet
 from shared.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
 from flashcards.serializers.topics import (
@@ -109,11 +112,34 @@ class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 	create_import_serializer_class = CreateImportVocabulariesSerializer
 	request_import_serializer_class = RequestImportVocabulariesSerializer
 
+	topic_pk = 'topic_pk'
+	topic_queryset = Topic.objects.all()
+
+	def get_topic_pk(self):
+		topic_pk = self.kwargs.get(self.topic_pk)
+		if topic_pk is not None:
+			return topic_pk
+		raise NotFound('There is no topic pk')
+		
+	def get_topic_object(self):
+		topic = get_object_or_404(
+			self.topic_queryset.with_owner(),
+			pk=self.get_topic_pk(),
+		)
+		self.check_object_permissions(self.request, topic)
+		return topic
+
 	def get_queryset(self, **kwargs):
-		return super().get_queryset().with_defaults(
+		qs = super().get_queryset().with_defaults(
 			language=self.request.GET.get('lang', None),
 			includes=self.request.GET.get('with', '').split(',')
 		)
+		qs = qs.filter(topic_id=self.get_topic_pk())
+		return qs
+
+	def create(self, request, *args, **kwargs):
+		kwargs['serializer_context'] = {'topic': self.get_topic_object()}
+		return super().create(request, *args, **kwargs)
 	
 	@action(detail=False, methods=['post'], url_path='generate-audio')
 	def generate_audio(self, request, *args, **kwargs):

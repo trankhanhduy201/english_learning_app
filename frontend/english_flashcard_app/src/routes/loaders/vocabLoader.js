@@ -4,11 +4,12 @@ import { getVocabThunk } from "../../stores/actions/vocabAction";
 export const getVocab = async ({ request, params }) => {
   try {
     let vocabPromise = null;
-    const { vocabId } = params;
+    const { topicId, vocabId } = params;
     if (params.vocabId !== "new") {
       vocabPromise = store
         .dispatch(getVocabThunk({ 
-          vocabId, 
+          topicId,
+          vocabId,
           inclTranslations: true 
         }))
         .unwrap()

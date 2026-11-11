@@ -32,9 +32,9 @@ export const getVocabsThunk = createThunkWithCallback(
 
 export const getVocabThunk = createThunkWithCallback(
   "vocab/get",
-  async ({ vocabId, inclTranslations = false }, { dispatch, rejectWithValue }) => {
+  async ({ topicId, vocabId, inclTranslations = false }, { dispatch, rejectWithValue }) => {
     const query = inclTranslations ? { with: 'translations' } : {};
-    const response = await vocabApi.getVocab(vocabId, { query });
+    const response = await vocabApi.getVocab(topicId, vocabId, { query });
     if (response.status === "error") {
       return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
@@ -44,8 +44,8 @@ export const getVocabThunk = createThunkWithCallback(
 
 export const createVocabThunk = createThunkWithCallback(
   "vocab/create",
-  async ({ data }, { dispatch, rejectWithValue }) => {
-    const response = await vocabApi.createVocab(data);
+  async ({ topicId, data }, { dispatch, rejectWithValue }) => {
+    const response = await vocabApi.createVocab(topicId, data);
     if (response.status === "error") {
       return rejectWithErrorValue(null, rejectWithValue, response);
     }
@@ -56,8 +56,8 @@ export const createVocabThunk = createThunkWithCallback(
 
 export const updateVocabThunk = createThunkWithCallback(
   "vocab/update",
-  async ({ vocabId, data }, { dispatch, rejectWithValue }) => {
-    const response = await vocabApi.updateVocab(vocabId, data);
+  async ({ topicId, vocabId, data }, { dispatch, rejectWithValue }) => {
+    const response = await vocabApi.updateVocab(topicId, vocabId, data);
     if (response.status === "error") {
       return rejectWithErrorValue(null, rejectWithValue, response);
     }
@@ -68,10 +68,10 @@ export const updateVocabThunk = createThunkWithCallback(
 
 export const deleteVocabThunk = createThunkWithCallback(
   "vocab/delete",
-  async ({ vocabId, params }, { dispatch, rejectWithValue }) => {
+  async ({ topicId, vocabId, params }, { dispatch, rejectWithValue }) => {
     const vocabDetailPage = params?._form_name === "deleting_vocab";
     const respParams = { id: vocabId };
-    const response = await vocabApi.deleteVocab(vocabId);
+    const response = await vocabApi.deleteVocab(topicId, vocabId);
     if (response?.status === "error") {
       return rejectWithErrorValue(
         !vocabDetailPage ? dispatch : null, rejectWithValue, response

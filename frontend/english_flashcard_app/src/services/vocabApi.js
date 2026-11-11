@@ -6,29 +6,29 @@ const getQueryString = (topicId) => {
 };
 
 export const getVocabs = async (topicId, options = {}) => {
-  return await callApi(`vocabularies?${getQueryString(topicId)}`, {
+  return await callApi(`topics/${topicId}/vocabularies/`, {
     method: "GET",
     ...options,
   });
 };
 
-export const getVocab = async (id, options = {}) => {
-  return await callApi(`vocabularies/${id}/`, {
+export const getVocab = async (topicId, id, options = {}) => {
+  return await callApi(`topics/${topicId}/vocabularies/${id}/`, {
     method: "GET",
     ...options,
   });
 };
 
-export const updateVocab = async (id, datas, options = {}) => {
-  return await callApi(`vocabularies/${id}/`, {
+export const updateVocab = async (topicId, id, datas, options = {}) => {
+  return await callApi(`topics/${topicId}/vocabularies/${id}/`, {
     method: "PUT",
     body: JSON.stringify(datas),
     ...options,
   });
 };
 
-export const createVocab = async (datas, options = {}) => {
-  return await callApi(`vocabularies/`, {
+export const createVocab = async (topicId, datas, options = {}) => {
+  return await callApi(`topics/${topicId}/vocabularies/`, {
     method: "POST",
     body: JSON.stringify(datas),
     ...options,
@@ -43,15 +43,15 @@ export const importVocabs = async (topicId, datas, options = {}) => {
   });
 };
 
-export const deleteVocab = async (id, options = {}) => {
-  return await callApi(`vocabularies/${id}/`, {
+export const deleteVocab = async (topicId, id, options = {}) => {
+  return await callApi(`topics/${topicId}/vocabularies/${id}/`, {
     method: "DELETE",
     ...options,
   });
 };
 
 export const deleteAllVocabs = async (topicId, options = {}) => {
-  return await callApi(`vocabularies/bulk-delete/?${getQueryString(topicId)}`, {
+  return await callApi(`topics/${topicId}/vocabularies/bulk-delete/`, {
     method: "DELETE",
     ...options,
   });

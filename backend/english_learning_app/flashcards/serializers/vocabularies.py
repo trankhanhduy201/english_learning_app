@@ -159,21 +159,21 @@ class UpdateVocabularySerializer(BaseSerializer):
 class BaseListVocabulariesSerializer(BaseListSerializer):
     @transaction.atomic
     def create(self, validated_data):
-        validated_translations = _prepare_validated_translations(
-            validated_data, **{'user': self.get_user_context()}
-        )
+        validated_data, validated_translations = self._prepare_validated_data(validated_data)
         vocab_instances = super().create(validated_data)
         translation_service.bulk_create_update_translations(
             'create', vocab_instances, validated_translations
         )
         return vocab_instances
 
-    def _prepare_validated_translations(self, validated_data):
+    def _prepare_validated_data(self, validated_data):
         user = self.get_user_context()
-        return {
-            item['word']: _prepare_validated_translations(item, **{'user': user})
-            for item in validated_data
-        }
+        validated_translations = {}
+        for item in validated_data:
+            validated_translations[item['word']] = _prepare_validated_translations(
+                item.pop('translations'), **{'user': user}
+            )
+        return validated_data, validated_translations
 
 
 class CreateImportVocabulariesSerializer(CreateVocabularySerializer):

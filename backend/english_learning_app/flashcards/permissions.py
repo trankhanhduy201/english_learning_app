@@ -84,34 +84,6 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 
 		# Check ownership of the vocabulary
 		return self.has_ownership(request, view, vocabulary)
-	
-	def has_permission(self, request, view):
-		# Object-level permissions will handle detail routes.
-		# This hook is mainly for create actions (no object yet).
-		if request.method in permissions.SAFE_METHODS:
-			return True
-
-		action = getattr(view, 'action', None)
-		queryset = getattr(view, 'queryset', None)
-		model = getattr(queryset, 'model', None)
-
-		# Enforce topic permission before creating a new vocabulary
-		verifying_actions = [
-			'create',
-			'bulk_import'
-		]
-		if request.method == 'POST' and action in verifying_actions and model is Vocabulary:
-			topic_id = request.data.get('topic') or request.data.get('topic_id')
-			if not topic_id:
-				return False
-			
-			topic = Topic.objects.get_topic_for_permission(topic_id)
-			return (
-				topic is not None and
-				self._has_topic_permission(request, view, topic)
-			)
-
-		return True
 
 	def has_object_permission(self, request, view, obj):
 		if isinstance(obj, Topic):
