@@ -79,7 +79,7 @@ class TopicVocabularyImportView(BaseGenericAPIView):
 		)
 
 		serializer = self.create_import_serializer_class(
-			data=data_import, many=True
+			data=data_import, many=True, context={'request': request, 'topic': topic}
 		)
 		if serializer.is_valid():
 			serializer.save()

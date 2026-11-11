@@ -5,6 +5,58 @@ from rest_framework.relations import MANY_RELATION_KWARGS, ManyRelatedField
 from shared.exceptions import ConflictException
 
 
+class GetContextMixin:
+    def get_context(self, field_name=None):
+        if field_name is not None:
+            return getattr(self.context, field_name, None)
+        return self.context
+
+
+class GetUserContextMixin:
+    def get_user_context(self):
+        return getattr(self.get_context()['request'], 'user', None)
+
+
+class AddExtraDataBeforeCreateUpdateMixin:
+    created_by_field = 'created_by'
+
+    def _get_extra_fields(self):
+        return [self.created_by_field]
+
+    def _get_extra_field_values(self):
+        field_names = self._get_extra_fields()
+        extras = {}
+        for field_name in field_names:
+            if field_name == self.created_by_field:
+                extras[field_name] = self.get_user_context()
+            else:
+                extras[field_name] = self.get_context(field_name)
+        return extras
+
+    def _set_extra_fields(self, validated_data):
+        extras = self._get_extra_field_values()
+        if isinstance(validated_data, dict):
+            return {**validated_data, **extras}
+
+        if isinstance(validated_data, list):
+            for item in validated_data:
+                if isinstance(item, dict):
+                    item = {**item, **extras}
+            return validated_data
+
+        return validated_data
+
+
+class AddExtraDataBeforeCreateMixin(AddExtraDataBeforeCreateUpdateMixin):
+    def create(self, validated_data):
+        return super().create(self._set_extra_fields(validated_data))
+
+
+class AddExtraDataBeforeUpdateMixin(AddExtraDataBeforeCreateUpdateMixin):
+    def update(self, instance, validated_data):
+        return super().update(instance, self._set_extra_fields(validated_data))
+
+
 class CustomManyRelatedField(ManyRelatedField):
     def to_internal_value(self, data):
         if self.child_relation.queryset is None:
@@ -36,7 +88,11 @@ class CustomPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return super().to_internal_value(data)
 
 
-class BaseListSerializer(serializers.ListSerializer):
+class BaseListSerializer(
+    GetContextMixin,
+    GetUserContextMixin,
+    serializers.ListSerializer
+):
     def get_delete_field_name(self):
         return 'is_remove'
 
@@ -147,7 +203,11 @@ class BaseListSerializer(serializers.ListSerializer):
         return create_instances
 
 
-class BaseSerializer(serializers.ModelSerializer):
+class BaseSerializer(
+    GetContextMixin,
+    GetUserContextMixin,
+    serializers.ModelSerializer
+):
     class Meta:
         list_serializer_class = BaseListSerializer
 
