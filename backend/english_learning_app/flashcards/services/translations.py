@@ -1,8 +1,11 @@
+import logging
 from django.db import transaction
+from collections import defaultdict
 from flashcards.models import Translation
 from shared.decorators.handle_exceptions import handle_exceptions
 
-from collections import defaultdict
+logger = logging.getLogger(__name__)
+
 
 class TranslationService:
     def get_translation_existings(self, action, vocab_instances):
@@ -64,17 +67,51 @@ class TranslationService:
                 delete_ids = list(set(_translation_existing_ids).difference(updated_ids))
                 delete_translations.extend(delete_ids if delete_ids else [])
                 
-        with transaction.atomic():
-            if len(new_translations) > 0:
-                Translation.objects.bulk_create(new_translations)
+        try:
+            with transaction.atomic():
+                if len(new_translations) > 0:
+                    Translation.objects.bulk_create(new_translations)
+    
+                if len(update_translations) > 0:
+                    Translation.objects.bulk_update(update_translations, update_fields)
+                
+                if len(delete_translations) > 0:
+                    Translation.objects.bulk_delete(delete_translations)
 
-            if len(update_translations) > 0:
-                Translation.objects.bulk_update(update_translations, update_fields)
-            
-            if len(delete_translations) > 0:
-                Translation.objects.bulk_delete(delete_translations)
+            # Refresh prefetched cache
+            for vocab in vocab_instances:
+                if not hasattr(vocab, '_prefetched_objects_cache'):
+                    setattr(vocab, '_prefetched_objects_cache', {})
+
+                cached_translations = getattr(
+                    vocab._prefetched_objects_cache,
+                    'translations', 
+                    {}
+                )
+
+                # Remove deleted translations
+                cached_translations = [
+                    item for item in cached_translations
+                    if item.id not in delete_translations
+                ]
+
+                # Add newly created translations
+                cached_translations.extend([
+                    item for item in new_translations
+                    if item.vocabulary_id == vocab.id
+                ])
+
+                # Updated objects are already referenced in the cache,
+                # because you modified the existing instances in memory.
+                vocab._prefetched_objects_cache['translations'] = (
+                    cached_translations
+                )
+        except Exception as e:
+            logger.exception("Failed to bulk update translations")
+            raise e
 
         return (
+            vocab_instances,
             new_translations,
             update_translations,
             delete_translations
