@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework_nested.routers import NestedDefaultRouter
 from flashcards.views.flashcards import (
     TopicVocabularyImportView,
     TopicViewSet,
@@ -12,31 +13,53 @@ from flashcards.views.topic_members import (
 )
 from flashcards.views.dashboard import DashboardSummaryView
 
-
+# Root router
 router = DefaultRouter()
 router.register(r'topics', TopicViewSet, basename='topic')
-# router.register(r'vocabularies', VocabularyViewSet, basename='vocabulary')
 
-vocabulary_patterns = [
-    path('', VocabularyViewSet.as_view({'get': 'list', 'post': 'create'}), name='topic_vocabulary_list'),
-    path('<int:pk>/', VocabularyViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='topic_vocabulary_detail'),
-    path('bulk-delete/', VocabularyViewSet.as_view({'delete': 'bulk_delete'}), name='topic_vocabulary_bulk_delete'),
-    path('import/', TopicVocabularyImportView.as_view(), name='topic_vocabulary_import'),
+# Nested router under a topic: /topics/{topic_pk}/...
+nested_router = NestedDefaultRouter(
+    router,
+    r'topics',
+    lookup='topic',
+)
+
+# Nested router for vocab: /topics/{topic_pk}/vocabularies/
+nested_router.register(
+    r'vocabularies',
+    VocabularyViewSet,
+    basename='topic-vocabulary',
+)
+
+# Nested patterns for vocabs
+topic_vocab_patterns = [
+    path(
+        'import/',
+        TopicVocabularyImportView.as_view(),
+        name='topic-vocabulary-import',
+    ),
 ]
 
-# Nested topic routes
+# Nested patterns for topic members
+topic_member_patterns = [
+    path('members/', TopicMemberView.as_view(), name='topic-members'),
+    path('subscribe/', TopicSubscribeView.as_view(), name='topic-subscribe'),
+    path('unsubscribe/', TopicUnsubscribeView.as_view(), name='topic-unsubscribe'),
+]
+
+# Nested patterns for topic
 topic_patterns = [
-    path('<int:topic_pk>/members/', TopicMemberView.as_view(), name='topic_members'),
-    path('<int:topic_pk>/subscribe/', TopicSubscribeView.as_view(), name='topic_subscribe'),
-    path('<int:topic_pk>/unsubscribe/', TopicUnsubscribeView.as_view(), name='topic_unsubscribe'),
-    path('<int:topic_pk>/vocabularies/', include(vocabulary_patterns)),
+    path('/', include(topic_member_patterns)),
+    path('vocabularies/', include(topic_vocab_patterns)),
 ]
 
+# Nested patterns for dashboard
 dashboard_patterns = [
     path('summary/', DashboardSummaryView.as_view(), name='dashboard_summary'),
 ]
 
+# Main patterns and drf route
 urlpatterns = [
-    path('topics/', include(topic_patterns)),
     path('dashboard/', include(dashboard_patterns)),
-] + router.urls
+    path('topics/<int:topic_pk>/', include(topic_patterns)),
+] + router.urls + nested_router.urls
