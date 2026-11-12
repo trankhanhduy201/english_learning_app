@@ -49,7 +49,7 @@ topic_member_patterns = [
 
 # Nested patterns for topic
 topic_patterns = [
-    path('/', include(topic_member_patterns)),
+    path('', include(topic_member_patterns)),
     path('vocabularies/', include(topic_vocab_patterns)),
 ]
 
