@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from flashcards.models import Topic, TopicMember
 from flashcards.permissions import CanSubscribeTopic, CanUnsubscribeTopic, IsAccessable
+from flashcards.views.flashcards import TopicScopedViewMixin
 from flashcards.serializers.topic_members import (
 	RetrieveTopicMembersSerializer,
 	UpdateTopicMembersSerializer,
@@ -13,7 +14,7 @@ from flashcards.services.topic_members import topic_member_service
 from shared.views.bases import BaseGenericAPIView
 
 
-class TopicMemberView(BaseGenericAPIView, ListModelMixin):
+class TopicMemberView(TopicScopedViewMixin, BaseGenericAPIView, ListModelMixin):
 	"""Nested topic member list + bulk-update endpoint."""
 	queryset = TopicMember.objects.all()
 	serializer_class = RetrieveTopicMembersSerializer
@@ -23,31 +24,20 @@ class TopicMemberView(BaseGenericAPIView, ListModelMixin):
 	http_method_names = ['get', 'put', 'options']
 
 	def get_queryset(self):
-		topic_pk = self.kwargs.get(
-			self.lookup_url_kwarg
-		)
 		return (
 			self.queryset
 				.with_member()
 				.accessible()
-				.filter(topic_id=topic_pk)
+				.filter(topic_id=self.get_topic_pk())
 				.ordered_by_status()
 		)
 
-	def _check_topic_permissions(self, request, *args, **kwargs):
-		topic = get_object_or_404(
-			Topic.objects.with_owner().with_owner_profile(),
-			pk=self.kwargs.get('topic_pk')
-		)
-		self.check_object_permissions(request, topic)
-		return topic
-
 	def get(self, request, *args, **kwargs):
-		self._check_topic_permissions(request, *args, **kwargs)
+		self.get_topic_object()
 		return self.list(request, *args, **kwargs)
 
 	def put(self, request, *args, **kwargs):
-		topic = self._check_topic_permissions(request, *args, **kwargs)
+		topic = self.get_topic_object()
 		data = request.data
 
 		instance, many = (

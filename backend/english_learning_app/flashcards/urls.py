@@ -15,12 +15,13 @@ from flashcards.views.dashboard import DashboardSummaryView
 
 router = DefaultRouter()
 router.register(r'topics', TopicViewSet, basename='topic')
-router.register(r'vocabularies', VocabularyViewSet, basename='vocabulary')
+# router.register(r'vocabularies', VocabularyViewSet, basename='vocabulary')
 
 vocabulary_patterns = [
     path('', VocabularyViewSet.as_view({'get': 'list', 'post': 'create'}), name='topic_vocabulary_list'),
     path('<int:pk>/', VocabularyViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='topic_vocabulary_detail'),
     path('bulk-delete/', VocabularyViewSet.as_view({'delete': 'bulk_delete'}), name='topic_vocabulary_bulk_delete'),
+    path('import/', TopicVocabularyImportView.as_view(), name='topic_vocabulary_import'),
 ]
 
 # Nested topic routes
@@ -29,7 +30,6 @@ topic_patterns = [
     path('<int:topic_pk>/subscribe/', TopicSubscribeView.as_view(), name='topic_subscribe'),
     path('<int:topic_pk>/unsubscribe/', TopicUnsubscribeView.as_view(), name='topic_unsubscribe'),
     path('<int:topic_pk>/vocabularies/', include(vocabulary_patterns)),
-    path('<int:topic_pk>/vocabularies/import/', TopicVocabularyImportView.as_view(), name='topic_vocabulary_import'),
 ]
 
 dashboard_patterns = [

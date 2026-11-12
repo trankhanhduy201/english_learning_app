@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
 
 from shared.views.bases import BaseGenericAPIView, BaseModelViewSet
 from shared.views.mixins import BulkDestroyModelMixin, OwnerListModelMixin
@@ -31,6 +31,32 @@ from flashcards.permissions import CanBulkDeleteVocab, IsAccessable
 User = get_user_model()
 
 
+class TopicScopedViewMixin:
+	topic_pk = 'topic_pk'
+	topic_queryset = Topic.objects.all()
+
+	def get_topic_pk(self):
+		topic_pk = self.kwargs.get(self.topic_pk)
+		if topic_pk is not None:
+			return topic_pk
+		raise NotFound('There is no topic pk')
+
+	def get_topic_queryset(self):
+		return (
+			self.topic_queryset
+				.with_owner()
+				.with_owner_profile()
+		)
+
+	def get_topic_object(self):
+		topic = get_object_or_404(
+			self.get_topic_queryset(),
+			pk=self.get_topic_pk(),
+		)
+		self.check_object_permissions(self.request, topic)
+		return topic
+
+
 class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin):
 	queryset = Topic.objects.all()
 	serializer_class = RetrieveTopicSerializer
@@ -54,7 +80,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 		return qs
 
 
-class TopicVocabularyImportView(BaseGenericAPIView):
+class TopicVocabularyImportView(TopicScopedViewMixin, BaseGenericAPIView):
 	queryset = Topic.objects.all()
 	lookup_url_kwarg = 'topic_pk'
 	permission_classes = [IsAccessable]
@@ -70,7 +96,7 @@ class TopicVocabularyImportView(BaseGenericAPIView):
 		)
 
 	def post(self, request, *args, **kwargs):
-		topic = self.get_object()
+		topic = self.get_topic_object()
 		rq_serializer = self.request_import_serializer_class(data=request.data)
 		if not rq_serializer.is_valid():
 			return Response(rq_serializer.errors, status=400)
@@ -99,7 +125,7 @@ class TopicVocabularyImportView(BaseGenericAPIView):
 		)
 
 
-class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
+class VocabularyViewSet(TopicScopedViewMixin, BaseModelViewSet, BulkDestroyModelMixin):
 	queryset = Vocabulary.objects.all()
 	serializer_class = RetrieveVocabularySerializer
 	create_serializer_class = CreateVocabularySerializer
@@ -111,23 +137,6 @@ class VocabularyViewSet(BaseModelViewSet, BulkDestroyModelMixin):
 
 	create_import_serializer_class = CreateImportVocabulariesSerializer
 	request_import_serializer_class = RequestImportVocabulariesSerializer
-
-	topic_pk = 'topic_pk'
-	topic_queryset = Topic.objects.all()
-
-	def get_topic_pk(self):
-		topic_pk = self.kwargs.get(self.topic_pk)
-		if topic_pk is not None:
-			return topic_pk
-		raise NotFound('There is no topic pk')
-		
-	def get_topic_object(self):
-		topic = get_object_or_404(
-			self.topic_queryset.with_owner(),
-			pk=self.get_topic_pk(),
-		)
-		self.check_object_permissions(self.request, topic)
-		return topic
 
 	def get_queryset(self, **kwargs):
 		qs = super().get_queryset().with_defaults(

@@ -51,6 +51,7 @@ class CanUnsubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 		]
 		return topic_member_status in allow_unsubscribe
 
+
 class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 	def _has_topic_permission(self, request, view, topic):
 		# Allow access if the user is the owner
