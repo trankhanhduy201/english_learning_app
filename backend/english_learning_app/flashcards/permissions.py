@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from shared.permissions import IsOwnerMixin
+from shared.permissions import IsOwnerMixin, CanBulkDelete
 from flashcards.models import Topic, TopicMember, Vocabulary
 
 
@@ -96,16 +96,22 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 		return False
 
 
-class CanBulkDeleteVocab(permissions.BasePermission):
+class CanBulkDeleteTopic(CanBulkDelete):
+	pass
+
+
+class CanBulkDeleteVocab(CanBulkDelete):
 	def has_permission(self, request, view):
-		if getattr(view, 'action', None) != 'bulk_delete':
+		if not self.ask_bulk_delete(request, view):
 			return True
+
+		if not super().has_permission(request, view):
+			return False
 		
-		topic_id = request.GET.get('topic_id')
+		topic_id = view.kwargs.get('topic_pk')
 		if not topic_id:
 			return False
 
 		return Topic.objects.exists_by(
-			topic_id,
-			created_by=request.user
+			topic_id, created_by=request.user
 		)

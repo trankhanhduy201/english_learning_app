@@ -26,7 +26,11 @@ from flashcards.models import Topic, Vocabulary
 from flashcards.filters import VocabularyFilter, TopicFilter
 from flashcards.utilities.tasks import generate_vocab_audio_async
 from flashcards.services.vocabularies import vocabulary_import_service
-from flashcards.permissions import CanBulkDeleteVocab, IsAccessable
+from flashcards.permissions import (
+	CanBulkDeleteVocab, 
+	CanBulkDeleteTopic, 
+	IsAccessable
+)
 
 User = get_user_model()
 
@@ -64,7 +68,7 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	update_serializer_class = UpdateTopicSerializer
 	filterset_class = TopicFilter
 	pagination_class = CustomPageNumberPagination
-	permission_classes = [IsAccessable]
+	permission_classes = [IsAccessable, CanBulkDeleteTopic]
 	auto_add_created_by = True
 	invalidate_data_after_update = False
 	invalidate_serializer_after_update = False

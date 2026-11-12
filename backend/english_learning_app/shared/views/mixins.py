@@ -3,6 +3,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from shared.permissions import CanBulkDelete
+
 
 class OwnerListModelMixin:
     owner_identify_field = 'created_by'
@@ -22,6 +24,23 @@ class OwnerListModelMixin:
 
 
 class BulkDestroyModelMixin:
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+
+        permission_classes = getattr(cls, 'permission_classes', [])
+
+        has_bulk_delete_permission = any(
+            isinstance(permission, type)
+            and issubclass(permission, CanBulkDelete)
+            for permission in permission_classes
+        )
+
+        if not has_bulk_delete_permission:
+            raise TypeError(
+                f'{cls.__name__} must define at least one permission '
+                f'inheriting from CanBulkDelete.'
+            )
+
     @action(
 		detail=False, 
 		methods=['delete'], 
@@ -29,7 +48,8 @@ class BulkDestroyModelMixin:
 	)
     def bulk_delete(self, request, *args, **kwargs):
         try:
-            self.filter_queryset(self.get_queryset(skip_owner_filter=False)).only('id').delete()
+            qs = self.get_queryset(skip_owner_filter=False)
+            self.filter_queryset(qs).only('id').delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response(

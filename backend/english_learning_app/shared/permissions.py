@@ -1,5 +1,4 @@
-from rest_framework import exceptions, permissions
-from flashcards.models import Topic, TopicMember, Vocabulary
+from rest_framework import permissions
 
 
 class IsAdminMixin:
@@ -17,3 +16,11 @@ class IsOwnerMixin:
 
 class IsOwner(IsOwnerMixin, permissions.BasePermission):
     pass
+
+
+class CanBulkDelete(permissions.IsAuthenticated):
+    def ask_bulk_delete(self, request, view):
+        return (
+            request.method == 'DELETE' and
+            getattr(view, 'action', None) == 'bulk_delete'
+        )
