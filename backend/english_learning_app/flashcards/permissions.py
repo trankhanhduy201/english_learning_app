@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from shared.permissions import IsOwnerMixin, CanBulkDelete
 from flashcards.models import Topic, TopicMember, Vocabulary
+from flashcards.views import flashcards as flashcard_views
 
 
 class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
@@ -53,19 +54,26 @@ class CanUnsubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 
 
 class IsAccessable(IsOwnerMixin, permissions.BasePermission):
+	def ask_topic_delete(self, request, view):
+		return request.method == 'DELETE' and isinstance(view, flashcard_views.TopicViewSet)
+
 	def _has_topic_permission(self, request, view, topic):
 		# Allow access if the user is the owner
-		if super().has_object_permission(request, view, topic):
+		if self.has_ownership(request, view, topic):
 			return True
 
-		# Check if the user is a member with EDITABLE status
+		# Force prevent delete topic from member
+		if self.ask_topic_delete(request, view):
+			return False
+
+		# Check if the user can read topic
 		topic_member_status = TopicMember.objects.get_status_for(topic, request.user)
 		if request.method in permissions.SAFE_METHODS:
 			return (
 				topic.status == Topic.TopicStatusEnums.PUBLIC and
 				topic_member_status != TopicMember.TopicMemberStatusEnums.BLOCK
 			)
-		
+
 		# For other requests like PUT/DELETE, only allow EDITABLE members regardless of topic status
 		return topic_member_status == TopicMember.TopicMemberStatusEnums.EDITABLE
 
