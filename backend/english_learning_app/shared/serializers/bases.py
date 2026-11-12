@@ -39,9 +39,9 @@ class AddExtraDataBeforeCreateUpdateMixin:
             return {**validated_data, **extras}
 
         if isinstance(validated_data, list):
-            for item in validated_data:
+            for index, item in enumerate(validated_data):
                 if isinstance(item, dict):
-                    item = {**item, **extras}
+                    validated_data[index] = {**item, **extras}
             return validated_data
 
         return validated_data

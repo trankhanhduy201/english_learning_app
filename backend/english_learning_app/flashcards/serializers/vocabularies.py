@@ -156,7 +156,15 @@ class UpdateVocabularySerializer(BaseSerializer):
         return instance
 
 
-class BaseListVocabulariesSerializer(BaseListSerializer):
+class BaseListVocabulariesSerializer(
+    AddExtraDataBeforeCreateMixin,
+    BaseListSerializer
+):
+    def _get_extra_fields(self):
+        if isinstance(self.child, AddExtraDataBeforeCreateMixin):
+            return self.child._get_extra_fields()
+        return []
+    
     @transaction.atomic
     def create(self, validated_data):
         validated_data, validated_translations = self._prepare_validated_data(validated_data)
