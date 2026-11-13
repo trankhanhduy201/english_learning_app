@@ -56,24 +56,39 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 		)
 
 	def _has_topic_permission(self, request, view, topic):
-		# Allow access if the user is the owner
+		# Allow access if the user owns the topic.
 		if self.has_ownership(request, view, topic):
 			return True
 
-		# Force prevent delete topic from member
+		# Deny topic deletion requests from non-owners.
 		if self.ask_topic_delete(request, view):
 			return False
 
-		# Check if the user can read topic
-		topic_member_status = TopicMember.objects.get_status_for(topic, request.user)
-		if request.method in permissions.SAFE_METHODS:
-			return (
-				topic.status == Topic.TopicStatusEnums.PUBLIC and
-				topic_member_status != TopicMember.TopicMemberStatusEnums.BLOCK
-			)
+		# Get the current user's membership status for this topic.
+		topic_member_status = (
+			TopicMember.objects
+				.get_status_for(topic, request.user)
+		)
 
-		# For other requests like PUT/DELETE, only allow EDITABLE members regardless of topic status
-		return topic_member_status == TopicMember.TopicMemberStatusEnums.EDITABLE
+		# Check read permissions for safe methods (GET, HEAD, OPTIONS).
+		if request.method in permissions.SAFE_METHODS:
+			# For private topics, only members with READ_ONLY or EDITABLE status can access them.
+			if topic.status == Topic.TopicStatusEnums.PRIVATE:
+				return topic_member_status in [
+					TopicMember.TopicMemberStatusEnums.READ_ONLY,
+					TopicMember.TopicMemberStatusEnums.EDITABLE
+				]
+
+			# For non-private topics, allow access to all members except those with BLOCK status.
+			return topic_member_status not in [
+				TopicMember.TopicMemberStatusEnums.BLOCK
+			]
+
+		# For other methods (e.g. POST, PUT, PATCH, DELETE),
+		# only members with EDITABLE status are allowed, regardless of the topic's status.
+		return topic_member_status in [
+			TopicMember.TopicMemberStatusEnums.EDITABLE
+		]
 
 	def _has_vocabulary_permission(self, request, view, vocabulary):
 		# Always allow access if the user is the owner
