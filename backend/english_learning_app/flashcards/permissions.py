@@ -6,7 +6,7 @@ from flashcards.models import Topic, TopicMember, Vocabulary
 class CanSubscribeTopic(
 	PostOnlyMixin, 
 	IsOwnerMixin, 
-	permissions.BasePermission
+	permissions.IsAuthenticated
 ):
 	def has_object_permission(self, request, view, obj):
 		if not isinstance(obj, Topic):
@@ -29,7 +29,7 @@ class CanSubscribeTopic(
 class CanUnsubscribeTopic(
 	PostOnlyMixin, 
 	IsOwnerMixin, 
-	permissions.BasePermission
+	permissions.IsAuthenticated
 ):
 	def has_object_permission(self, request, view, obj):
 		if not isinstance(obj, Topic):
