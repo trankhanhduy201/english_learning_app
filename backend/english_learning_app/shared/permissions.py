@@ -14,6 +14,14 @@ class IsOwnerMixin:
         return self.has_ownership(request, view, obj)
 
 
+class PostOnlyMixin:
+    def has_permission(self, request, view):
+        return (
+            request.method == 'POST' and
+            super().has_permission(request, view)
+        )
+
+
 class IsOwner(IsOwnerMixin, permissions.BasePermission):
     pass
 

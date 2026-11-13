@@ -1,16 +1,14 @@
 from rest_framework import permissions
-from shared.permissions import IsOwnerMixin, CanBulkDelete
+from shared.permissions import IsOwnerMixin, CanBulkDelete, PostOnlyMixin
 from flashcards.models import Topic, TopicMember, Vocabulary
 from flashcards.views import flashcards as flashcard_views
 
 
-class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
-	def has_permission(self, request, view):
-		return (
-			super().has_permission(request, view)
-			and request.method == 'POST'
-		)
-
+class CanSubscribeTopic(
+	PostOnlyMixin, 
+	IsOwnerMixin, 
+	permissions.BasePermission
+):
 	def has_object_permission(self, request, view, obj):
 		if not isinstance(obj, Topic):
 			return False
@@ -29,13 +27,11 @@ class CanSubscribeTopic(IsOwnerMixin, permissions.BasePermission):
 		)
 
 
-class CanUnsubscribeTopic(IsOwnerMixin, permissions.BasePermission):
-	def has_permission(self, request, view):
-		return (
-			super().has_permission(request, view)
-			and request.method == 'POST'
-		)
-
+class CanUnsubscribeTopic(
+	PostOnlyMixin, 
+	IsOwnerMixin, 
+	permissions.BasePermission
+):
 	def has_object_permission(self, request, view, obj):
 		if not isinstance(obj, Topic):
 			return False
