@@ -1,7 +1,6 @@
 from rest_framework import permissions
 from shared.permissions import IsOwnerMixin, CanBulkDelete, PostOnlyMixin
 from flashcards.models import Topic, TopicMember, Vocabulary
-from flashcards.views import flashcards as flashcard_views
 
 
 class CanSubscribeTopic(
@@ -51,7 +50,10 @@ class CanUnsubscribeTopic(
 
 class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 	def ask_topic_delete(self, request, view):
-		return request.method == 'DELETE' and isinstance(view, flashcard_views.TopicViewSet)
+		return (
+			request.method == 'DELETE' and 
+			request.basename == 'topic'
+		)
 
 	def _has_topic_permission(self, request, view, topic):
 		# Allow access if the user is the owner
