@@ -51,7 +51,12 @@ def build_permission_request(api_request_factory):
         request = request_method('/test/', data or {}, format='json')
         request.user = user if user is not None else AnonymousUser()
         action = view_kwargs.pop('action', None)
-        view = SimpleNamespace(kwargs=view_kwargs, action=action)
+        basename = view_kwargs.pop('basename', None)
+        view = SimpleNamespace(
+            kwargs=view_kwargs,
+            action=action,
+            basename=basename
+        )
         return request, view
 
     return _build

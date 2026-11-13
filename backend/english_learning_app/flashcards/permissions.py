@@ -52,7 +52,7 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 	def ask_topic_delete(self, request, view):
 		return (
 			request.method == 'DELETE' and 
-			request.basename == 'topic'
+			view.basename == 'topic'
 		)
 
 	def _has_topic_permission(self, request, view, topic):

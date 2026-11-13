@@ -9,7 +9,6 @@ from flashcards.permissions import (
     CanUnsubscribeTopic,
     IsAccessable,
 )
-from flashcards.views import flashcards as flashcard_views
 
 
 @pytest.mark.django_db
@@ -189,8 +188,7 @@ class TestIsAccessable:
             member=requester,
             status=TopicMember.TopicMemberStatusEnums.EDITABLE,
         )
-        request, view = build_permission_request(requester, method='delete')
-        view = flashcard_views.TopicViewSet()
+        request, view = build_permission_request(requester, method='delete', basename='topic')
 
         assert IsAccessable().has_object_permission(request, view, topic) is False
 
