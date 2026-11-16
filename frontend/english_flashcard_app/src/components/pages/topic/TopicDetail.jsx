@@ -8,7 +8,7 @@ import Dropdown from "../../../components/Dropdown";
 import UploadImageInput from "../../UploadImageInput";
 import RadioButtons from "../../RadioButtons";
 import { TOPIC_STATUS } from "../../../configs/appConfig";
-import Subscribers from "./Subscribers";
+import TopicMembers from "./TopicMembers";
 
 const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   const editTopicFetcher = useFetcher();
@@ -165,11 +165,14 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
 
       {!isNew && (
         <>
-          <h2>Subscribers</h2>
+          <h2>Members</h2>
           <hr />
           <div className="row">
             <div className="mb-3">
-              <Subscribers topicId={topicId} defaultMembers={topic?.members ?? []} />
+              <TopicMembers 
+                topicId={topicId} 
+                defaultMembers={topic?.members ?? []} 
+              />
             </div>
           </div>
         </>

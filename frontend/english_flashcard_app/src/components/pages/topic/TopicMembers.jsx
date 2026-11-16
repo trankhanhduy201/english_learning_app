@@ -6,11 +6,11 @@ import useFetch from "../../../hooks/useFetch";
 import { getMembers } from "../../../services/topicApi";
 import RadioButtons from "../../RadioButtons";
 import FieldErrors from "../../FieldErrors";
-import { SUBCRIBER_STATUS } from "../../../configs/appConfig";
+import { TOPIC_MEMBER_STATUSES } from "../../../configs/appConfig";
 import UserAvatar, { getUserDisplayName } from "../../../commons/userAvatar";
 import { memberToUserData } from "../../../commons/topicMember"; 
 
-const Subscribers = memo(({ defaultMembers, topicId }) => {
+const TopicMembers = memo(({ defaultMembers, topicId }) => {
   const fetcher = useFetcher();
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -218,7 +218,7 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
             <UserAvatar
               user={memberToUserData(user)}
               size={45}
-              className="subcriber-avatar"
+              className="member-avatar"
             />
           </span>
         ))}
@@ -321,7 +321,7 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
                         <>
                           <RadioButtons
                             name={`status-${index}`}
-                            options={Object.values(SUBCRIBER_STATUS)}
+                            options={Object.values(TOPIC_MEMBER_STATUSES)}
                             selectedOption={user.status}
                             disabled={user.is_remove}
                             onChange={(e) => onChangeStatus(index, e.target.value)}
@@ -379,4 +379,4 @@ const Subscribers = memo(({ defaultMembers, topicId }) => {
   );
 });
 
-export default Subscribers;
+export default TopicMembers;

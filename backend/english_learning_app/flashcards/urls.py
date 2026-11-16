@@ -8,8 +8,8 @@ from flashcards.views.flashcards import (
 )
 from flashcards.views.topic_members import (
     TopicMemberView,
-    TopicSubscribeView,
-    TopicUnsubscribeView,
+    JoinTopicView,
+    LeaveTopicView,
 )
 from flashcards.views.dashboard import DashboardSummaryView
 
@@ -43,8 +43,8 @@ topic_vocab_patterns = [
 # Nested patterns for topic members
 topic_member_patterns = [
     path('members/', TopicMemberView.as_view(), name='topic-members'),
-    path('subscribe/', TopicSubscribeView.as_view(), name='topic-subscribe'),
-    path('unsubscribe/', TopicUnsubscribeView.as_view(), name='topic-unsubscribe'),
+    path('join/', JoinTopicView.as_view(), name='topic-join'),
+    path('leave/', LeaveTopicView.as_view(), name='topic-leave'),
 ]
 
 # Nested patterns for topic

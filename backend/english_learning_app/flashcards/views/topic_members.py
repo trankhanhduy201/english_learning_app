@@ -3,7 +3,7 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 
 from flashcards.models import Topic, TopicMember
-from flashcards.permissions import CanSubscribeTopic, CanUnsubscribeTopic, IsAccessable
+from flashcards.permissions import CanJoinTopic, CanLeaveTopic, IsAccessable
 from flashcards.views.flashcards import TopicScopedViewMixin
 from flashcards.serializers.topic_members import (
 	RetrieveTopicMembersSerializer,
@@ -57,12 +57,12 @@ class TopicMemberView(TopicScopedViewMixin, BaseGenericAPIView, ListModelMixin):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TopicSubscribeView(BaseGenericAPIView):
+class JoinTopicView(BaseGenericAPIView):
 	"""Create-only nested view for topic subscription."""
 	queryset = Topic.objects.all()
 	lookup_url_kwarg = 'topic_pk'
 	serializer_class = CurrentTopicMemberSerializer
-	permission_classes = [CanSubscribeTopic]
+	permission_classes = [CanJoinTopic]
 	http_method_names = ['post', 'options']
 
 	def get_queryset(self):
@@ -79,7 +79,7 @@ class TopicSubscribeView(BaseGenericAPIView):
 		topic = self.get_object()
 		topic_member = (
 			topic_member_service
-				.subscribe(request.user, topic)
+				.join_topic(request.user, topic)
 		)
 
 		return Response(
@@ -91,12 +91,12 @@ class TopicSubscribeView(BaseGenericAPIView):
 		)
 
 
-class TopicUnsubscribeView(BaseGenericAPIView):
+class LeaveTopicView(BaseGenericAPIView):
 	"""Delete-only nested view for topic unsubscription."""
 	queryset = Topic.objects.all()
 	lookup_url_kwarg = 'topic_pk'
 	serializer_class = CurrentTopicMemberSerializer
-	permission_classes = [CanUnsubscribeTopic]
+	permission_classes = [CanLeaveTopic]
 	http_method_names = ['post', 'options']
 
 	def get_queryset(self):
@@ -113,7 +113,7 @@ class TopicUnsubscribeView(BaseGenericAPIView):
 		topic = self.get_object()
 		topic_member = (
 			topic_member_service
-				.unsubscribe(request.user, topic)
+				.leave_topic(request.user, topic)
 		)
 
 		return Response(

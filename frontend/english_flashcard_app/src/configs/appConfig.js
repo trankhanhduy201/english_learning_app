@@ -15,7 +15,7 @@ export const TOPIC_STATUS = {
   }
 }
 
-export const SUBCRIBER_STATUS = {
+export const TOPIC_MEMBER_STATUSES = {
   READ_ONLY: {
     key: "read_only",
     text: "Read only"

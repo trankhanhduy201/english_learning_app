@@ -74,6 +74,7 @@ class TopicMember(models.Model):
 	member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="topic_members")
 	topic = models.ForeignKey("Topic", on_delete=models.CASCADE, related_name="topic_members")
 	status = models.CharField(max_length=20, choices=TopicMemberStatusEnums.choices, default=TopicMemberStatusEnums.READ_ONLY)
+	is_subcribe = models.BooleanField(default=True)
 	joined_at = models.DateField(auto_now_add=True)
 
 	objects = TopicMemberManager()

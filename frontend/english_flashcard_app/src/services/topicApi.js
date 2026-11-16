@@ -46,15 +46,15 @@ export const deleteTopic = async (id, options = {}) => {
   });
 };
 
-export const subcribeTopic = async (id, options = {}) => {
-  return await callApi(`topics/${id}/subscribe/`, {
+export const joinTopic = async (id, options = {}) => {
+  return await callApi(`topics/${id}/join/`, {
     method: "POST",
     ...options,
   });
 };
 
-export const unsubcribeTopic = async (id, options = {}) => {
-  return await callApi(`topics/${id}/unsubscribe/`, {
+export const leaveTopic = async (id, options = {}) => {
+  return await callApi(`topics/${id}/leave/`, {
     method: "POST",
     ...options,
   });

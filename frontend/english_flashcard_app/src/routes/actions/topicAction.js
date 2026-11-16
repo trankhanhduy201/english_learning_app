@@ -89,7 +89,7 @@ export const editTopic = async ({ request, params }) => {
     return deleteTopic(params.topicId, redirectTo);
   }
 
-  if (['subcribe', 'unsubcribe'].includes(params.action)) {
+  if (['join', 'leave'].includes(params.action)) {
     return await memberInteractTopic(params.topicId, params.action);
   }
 

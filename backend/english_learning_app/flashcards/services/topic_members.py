@@ -4,7 +4,7 @@ from flashcards.models import TopicMember
 
 
 class TopicMemberService:
-    def subscribe(self, user, topic):
+    def join_topic(self, user, topic):
         topic_member = topic.topic_members.first()
         if topic_member is not None:
             topic_member.status = TopicMember.TopicMemberStatusEnums.READ_ONLY
@@ -19,7 +19,7 @@ class TopicMemberService:
         topic_member.save()
         return topic_member
 
-    def unsubscribe(self, user, topic):
+    def leave_topic(self, user, topic):
         topic_member = topic.topic_members.first()
         if topic_member is None:
             raise NotFound('Topic member not found')

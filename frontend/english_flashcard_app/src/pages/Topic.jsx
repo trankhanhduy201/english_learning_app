@@ -11,7 +11,7 @@ import TopicDetail from "../components/pages/topic/TopicDetail";
 import ListVocab from "../components/pages/topic/ListVocab";
 import LoadingOverlay from "../components/LoadingOverlay";
 import { TopicProvider, useTopicContext } from "../contexts/TopicContext";
-import SubcribeButton from "../components/pages/topic/SubcribeButton";
+import JoinButton from "../components/pages/topic/JoinButton";
 
 const TopicHeader = memo(() => {
   const { topic, setTopic } = useTopicContext();
@@ -30,9 +30,9 @@ const TopicHeader = memo(() => {
       <div className="d-flex align-item-center">
         <h2>Topic info</h2>
         {topic?.current_member && 
-          <SubcribeButton
+          <JoinButton
             topicId={topic.id}
-            topicMember={topic.current_member} 
+            topicMember={topic.current_member}
             updateTopicMember={updateTopicMember}
           />
         }

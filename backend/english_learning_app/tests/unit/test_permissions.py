@@ -5,31 +5,31 @@ from flashcards.models import Topic, TopicMember
 from flashcards.permissions import (
     CanBulkDeleteTopic,
     CanBulkDeleteVocab,
-    CanSubscribeTopic,
-    CanUnsubscribeTopic,
+    CanJoinTopic,
+    CanLeaveTopic,
     IsAccessable,
 )
 
 
 @pytest.mark.django_db
-class TestCanSubscribeTopic:
+class TestCanJoinTopic:
     def test_has_permission_allows_authenticated_post(
         self, user_factory, build_permission_request
     ):
         user = user_factory()
         request, view = build_permission_request(user, method='post')
 
-        assert CanSubscribeTopic().has_permission(request, view) is True
+        assert CanJoinTopic().has_permission(request, view) is True
 
     def test_has_permission_rejects_get_requests_and_anonymous_users(
         self, user_factory, build_permission_request
     ):
         requester = user_factory()
         request, view = build_permission_request(requester, method='get')
-        assert CanSubscribeTopic().has_permission(request, view) is False
+        assert CanJoinTopic().has_permission(request, view) is False
 
         request, view = build_permission_request(AnonymousUser(), method='post')
-        assert CanSubscribeTopic().has_permission(request, view) is False
+        assert CanJoinTopic().has_permission(request, view) is False
 
     def test_has_object_permission_allows_public_topic_without_membership(
         self, user_factory, topic_factory, build_permission_request
@@ -39,7 +39,7 @@ class TestCanSubscribeTopic:
         requester = user_factory()
         request, view = build_permission_request(requester, method='post')
 
-        assert CanSubscribeTopic().has_object_permission(request, view, topic) is True
+        assert CanJoinTopic().has_object_permission(request, view, topic) is True
 
     def test_has_object_permission_rejects_owner_and_private_topics(
         self, user_factory, topic_factory, build_permission_request
@@ -47,12 +47,12 @@ class TestCanSubscribeTopic:
         owner = user_factory()
         public_topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
         request, view = build_permission_request(owner, method='post')
-        assert CanSubscribeTopic().has_object_permission(request, view, public_topic) is False
+        assert CanJoinTopic().has_object_permission(request, view, public_topic) is False
 
         another_user = user_factory()
         private_topic = topic_factory(created_by=user_factory(), status=Topic.TopicStatusEnums.PRIVATE)
         request, view = build_permission_request(another_user, method='post')
-        assert CanSubscribeTopic().has_object_permission(request, view, private_topic) is False
+        assert CanJoinTopic().has_object_permission(request, view, private_topic) is False
 
     def test_has_object_permission_allows_topic_members_in_leaving_state(
         self, user_factory, topic_factory, topic_member_factory, build_permission_request
@@ -67,11 +67,11 @@ class TestCanSubscribeTopic:
         )
         request, view = build_permission_request(requester, method='post')
 
-        assert CanSubscribeTopic().has_object_permission(request, view, topic) is True
+        assert CanJoinTopic().has_object_permission(request, view, topic) is True
 
 
 @pytest.mark.django_db
-class TestCanUnsubscribeTopic:
+class TestCanLeaveTopic:
     def test_has_object_permission_allows_pending_editable_and_read_only_members(
         self, user_factory, topic_factory, topic_member_factory, build_permission_request
     ):
@@ -87,7 +87,7 @@ class TestCanUnsubscribeTopic:
             current_requester = user_factory()
             topic_member_factory(topic=topic, member=current_requester, status=status)
             request, view = build_permission_request(current_requester, method='post')
-            assert CanUnsubscribeTopic().has_object_permission(request, view, topic) is True
+            assert CanLeaveTopic().has_object_permission(request, view, topic) is True
 
     def test_has_object_permission_rejects_owner_and_blocked_members(
         self, user_factory, topic_factory, topic_member_factory, build_permission_request
@@ -95,7 +95,7 @@ class TestCanUnsubscribeTopic:
         owner = user_factory()
         topic = topic_factory(created_by=owner)
         request, view = build_permission_request(owner, method='post')
-        assert CanUnsubscribeTopic().has_object_permission(request, view, topic) is False
+        assert CanLeaveTopic().has_object_permission(request, view, topic) is False
 
         requester = user_factory()
         topic_member_factory(
@@ -104,7 +104,7 @@ class TestCanUnsubscribeTopic:
             status=TopicMember.TopicMemberStatusEnums.BLOCK,
         )
         request, view = build_permission_request(requester, method='post')
-        assert CanUnsubscribeTopic().has_object_permission(request, view, topic) is False
+        assert CanLeaveTopic().has_object_permission(request, view, topic) is False
 
 
 @pytest.mark.django_db

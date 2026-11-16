@@ -76,6 +76,7 @@ class CurrentTopicMemberSerializer(Serializer):
     is_owner = SerializerMethodField()
     is_accepted = SerializerMethodField()
     is_accepting = SerializerMethodField()
+    is_member = SerializerMethodField()
     is_subcribing = SerializerMethodField()
     is_blocking = SerializerMethodField()
 
@@ -96,12 +97,10 @@ class CurrentTopicMemberSerializer(Serializer):
         if not instance:
             return False
 
-        pending_status = [
-            TopicMember.TopicMemberStatusEnums.PENDING,
-            TopicMember.TopicMemberStatusEnums.LEAVING,
-            TopicMember.TopicMemberStatusEnums.BLOCK,
+        return instance.status in [
+            TopicMember.TopicMemberStatusEnums.READ_ONLY,
+            TopicMember.TopicMemberStatusEnums.EDITABLE
         ]
-        return instance.status not in pending_status
 
     def get_is_accepting(self, instance):
         if self.get_is_owner(instance):
@@ -110,7 +109,18 @@ class CurrentTopicMemberSerializer(Serializer):
         if not instance:
             return False
 
-        return instance.status == TopicMember.TopicMemberStatusEnums.PENDING
+        return instance.status in [
+            TopicMember.TopicMemberStatusEnums.PENDING
+        ]
+
+    def get_is_member(self, instance):
+        if self.get_is_owner(instance):
+            return False
+
+        if not instance:
+            return False
+
+        return instance.status != TopicMember.TopicMemberStatusEnums.LEAVING
 
     def get_is_subcribing(self, instance):
         if self.get_is_owner(instance):
@@ -119,7 +129,7 @@ class CurrentTopicMemberSerializer(Serializer):
         if not instance:
             return False
 
-        return instance.status != TopicMember.TopicMemberStatusEnums.LEAVING
+        return bool(getattr(instance, 'is_subcribe', False))
 
     def get_is_blocking(self, instance):
         if self.get_is_owner(instance):

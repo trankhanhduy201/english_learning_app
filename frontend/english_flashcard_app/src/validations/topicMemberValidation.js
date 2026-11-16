@@ -1,9 +1,9 @@
 import * as yup from "yup";
-import { SUBCRIBER_STATUS } from "../configs/appConfig";
+import { TOPIC_MEMBER_STATUSES } from "../configs/appConfig";
 import { validateWithSchema } from "./base";
 import { parseJson } from "../utils/commons";
 
-const MEMBER_STATUS_KEYS = Object.values(SUBCRIBER_STATUS).map(
+const MEMBER_STATUS_KEYS = Object.values(TOPIC_MEMBER_STATUSES).map(
   (item) => item.key
 );
 

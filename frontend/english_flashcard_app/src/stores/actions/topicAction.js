@@ -98,13 +98,13 @@ export const memberInteractTopicThunk = createThunkWithCallback(
     try {
       let response, message;
       switch (action) {
-        case "subcribe":
-          response = await topicApi.subcribeTopic(topicId);
-          message = "Subcribed topic successfully";
+        case "join":
+          response = await topicApi.joinTopic(topicId);
+          message = "Joined topic successfully";
           break;
-        case "unsubcribe":
-          response = await topicApi.unsubcribeTopic(topicId);
-          message = "Unsubcribed topic successfully";
+        case "leave":
+          response = await topicApi.leaveTopic(topicId);
+          message = "Left topic successfully";
           break;
         default:
           throw new Error("Invalid action for interactTopicThunk");

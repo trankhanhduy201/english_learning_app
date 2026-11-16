@@ -3,7 +3,7 @@ from shared.permissions import IsOwnerMixin, CanBulkDelete, PostOnlyMixin
 from flashcards.models import Topic, TopicMember, Vocabulary
 
 
-class CanSubscribeTopic(
+class CanJoinTopic(
 	PostOnlyMixin, 
 	IsOwnerMixin, 
 	permissions.IsAuthenticated
@@ -26,7 +26,7 @@ class CanSubscribeTopic(
 		)
 
 
-class CanUnsubscribeTopic(
+class CanLeaveTopic(
 	PostOnlyMixin, 
 	IsOwnerMixin, 
 	permissions.IsAuthenticated
