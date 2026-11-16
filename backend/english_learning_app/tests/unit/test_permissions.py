@@ -222,14 +222,22 @@ class TestIsAccessable:
 
         assert IsAccessable().has_object_permission(request, view, topic) is False
 
-    def test_vocabulary_access_allows_public_topic_reads(self, user_factory, topic_factory, vocabulary_factory, build_permission_request):
+    def test_topic_owner_can_update_without_requires_vocabulary_ownership(
+        self, user_factory, topic_factory, vocabulary_factory, topic_member_factory, build_permission_request
+    ):
         owner = user_factory()
         topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
-        vocabulary = vocabulary_factory(topic=topic, created_by=owner)
-        requester = user_factory()
-        request, view = build_permission_request(requester, method='get')
+        member = user_factory()
+        topic_member_factory(
+            topic=topic,
+            member=member,
+            status=TopicMember.TopicMemberStatusEnums.EDITABLE,
+        )
+        vocabulary = vocabulary_factory(topic=topic, created_by=member)
 
-        assert IsAccessable().has_object_permission(request, view, vocabulary) is True
+        for method in ['put', 'patch', 'delete']:
+            request, view = build_permission_request(owner, method=method, basename='topic-vocabulary')
+            assert IsAccessable().has_object_permission(request, view, vocabulary) is True
 
     def test_vocabulary_update_requires_vocabulary_ownership(
         self, user_factory, topic_factory, vocabulary_factory, topic_member_factory, build_permission_request
@@ -243,9 +251,50 @@ class TestIsAccessable:
             member=requester,
             status=TopicMember.TopicMemberStatusEnums.EDITABLE,
         )
-        request, view = build_permission_request(requester, method='put')
 
-        assert IsAccessable().has_object_permission(request, view, vocabulary) is False
+        for method in ['put', 'patch', 'delete']:
+            request, view = build_permission_request(requester, method=method, basename='topic-vocabulary')
+            assert IsAccessable().has_object_permission(request, view, vocabulary) is False
+
+    def test_editable_member_can_create_vocabulary_in_public_topic(
+        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    ):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
+        requester = user_factory()
+        topic_member_factory(
+            topic=topic,
+            member=requester,
+            status=TopicMember.TopicMemberStatusEnums.EDITABLE,
+        )
+        request, view = build_permission_request(requester, method='post', basename='topic-vocabulary')
+
+        assert IsAccessable().has_object_permission(request, view, topic) is True
+
+    def test_readonly_member_can_not_create_vocabulary_in_public_topic(
+        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    ):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
+        requester = user_factory()
+        topic_member_factory(
+            topic=topic,
+            member=requester,
+            status=TopicMember.TopicMemberStatusEnums.READ_ONLY,
+        )
+        request, view = build_permission_request(requester, method='post', basename='topic-vocabulary')
+
+        assert IsAccessable().has_object_permission(request, view, topic) is False
+
+    def test_non_member_can_not_create_vocabulary_in_public_topic(
+        self, user_factory, topic_factory, build_permission_request
+    ):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
+        requester = user_factory()
+        request, view = build_permission_request(requester, method='post', basename='topic-vocabulary')
+
+        assert IsAccessable().has_object_permission(request, view, topic) is False
 
 
 @pytest.mark.django_db
