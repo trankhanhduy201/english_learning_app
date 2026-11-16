@@ -1,16 +1,43 @@
+
 import { memo, useCallback, useEffect } from "react";
 import { useFetcher } from "react-router-dom";
 
-const JoinButton = memo(({ buttonType = '', topicId, topicMember = null, updateTopicMember = null }) => {
-  const btnSmallClass = `btn-${buttonType}`;
+const JoinButton = memo(({
+  buttonType = '',
+  topicId,
+  topicMember = null,
+  updateTopicMember = null
+}) => {
+  const handleJoinFetcher = useFetcher();
+
+  // Button state
   const isMember = Boolean(topicMember?.is_member);
   const isAccepted = Boolean(topicMember?.is_accepted);
-  const btnTypeClass = `btn-${isMember ? 'danger' : 'primary'}`;
-  const handleJoinFetcher = useFetcher();
+  const isSubmitting = handleJoinFetcher.state === 'submitting';
+
+  // Button configuration
+  const buttonConfig = isMember
+    ? {
+        action: 'leave',
+        icon: 'bi-dash-circle',
+        className: 'btn-danger',
+        label: isSubmitting
+          ? 'Leaving...'
+          : isAccepted
+            ? 'Leave'
+            : 'Confirming',
+      }
+    : {
+        action: 'join',
+        icon: 'bi-plus-circle',
+        className: 'btn-primary',
+        label: isSubmitting ? 'Joining...' : 'Join',
+      };
 
   const handleJoin = useCallback((action) => {
     const formData = new FormData();
     formData.append("_not_revalidate", "1");
+
     handleJoinFetcher.submit(formData, {
       action: `/topic/${topicId}/${action}`,
       method: "post"
@@ -18,12 +45,13 @@ const JoinButton = memo(({ buttonType = '', topicId, topicMember = null, updateT
   }, [handleJoinFetcher, topicId]);
 
   useEffect(() => {
-    if (handleJoinFetcher.state === 'idle' &&
-        handleJoinFetcher.data?.status === 'success'
-      ) {
-        updateTopicMember?.({
-          ...handleJoinFetcher.data?.data
-        });
+    if (
+      handleJoinFetcher.state === 'idle' &&
+      handleJoinFetcher.data?.status === 'success'
+    ) {
+      updateTopicMember?.({
+        ...handleJoinFetcher.data.data
+      });
     }
   }, [
     handleJoinFetcher.state,
@@ -31,38 +59,19 @@ const JoinButton = memo(({ buttonType = '', topicId, topicMember = null, updateT
     updateTopicMember,
   ]);
 
+  if (!topicMember || topicMember.is_owner) {
+    return null;
+  }
+
   return (
-    <>
-      {(topicMember && !topicMember.is_owner) && (
-        <button
-          className={`btn ${btnSmallClass} ${btnTypeClass} ms-auto`}
-          onClick={() => handleJoin(
-            isMember ? 'leave' : 'join'
-          )}
-          disabled={handleJoinFetcher.state === 'submitting'}
-        >
-          {isMember ? (
-            <>
-              <i className="bi bi-dash-circle text-white me-1"></i>
-              {handleJoinFetcher.state === 'submitting'
-                ? 'Leaving...'
-                : isAccepted
-                  ? 'Leave'
-                  : 'Accepting'
-              }
-            </>
-          ) : (
-            <>
-              <i className="bi bi-plus-circle text-white me-1"></i>
-              {handleJoinFetcher.state === 'submitting'
-                ? 'Joining...'
-                : 'Join'
-              }
-            </>
-          )}
-        </button>
-      )}
-    </>
+    <button
+      className={`btn btn-${buttonType} ${buttonConfig.className} ms-auto`}
+      onClick={() => handleJoin(buttonConfig.action)}
+      disabled={isSubmitting}
+    >
+      <i className={`bi ${buttonConfig.icon} text-white me-1`}></i>
+      {buttonConfig.label}
+    </button>
   );
 });
 
