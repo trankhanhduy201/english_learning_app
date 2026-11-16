@@ -1,3 +1,4 @@
+
 import { memo, useEffect } from "react";
 import { useFetcher } from "react-router-dom";
 import useConfirmModal from "../hooks/useConfirmModal";
@@ -16,30 +17,72 @@ const DeleteConfirmButton = memo(
     label = "Delete",
     confirmMessage = "Are you sure you want to delete data?",
     fetcher: parentFetcher = null,
+    expectedId = null,
     disabled = false,
   }) => {
+    // Fetcher
     const localFetcher = useFetcher();
-    const fetcher = parentFetcher ?? localFetcher;
-    const confirmDeleteModal = useConfirmModal({ 
+    const submitFetcher = parentFetcher ?? localFetcher;
+
+    // Submission state
+    const currentSubmittedId =
+      expectedId == null
+        ? null
+        : submitFetcher.formData?.get("_submit_id");
+
+    const isDeletingThisItem =
+      submitFetcher.state === "submitting" &&
+      (expectedId == null
+        ? true
+        : String(currentSubmittedId ?? "") === String(expectedId));
+
+    // Confirm modal
+    const confirmDeleteModal = useConfirmModal({
       submitActionCallback: async () => {
         const formData = new FormData();
+
         if (!revalidate) {
           formData.append("_not_revalidate", "1");
         }
+
         if (formName) {
           formData.append("_form_name", formName);
         }
-        return await fetcher.submit(formData, { action, method });
-      }
+
+        if (expectedId != null) {
+          formData.append("_submit_id", String(expectedId));
+        }
+
+        return await submitFetcher.submit(formData, {
+          action,
+          method,
+        });
+      },
     });
 
+    // Success callback
     useEffect(() => {
       if (!additionalCallback) return;
-      if (fetcher.state !== "idle" || fetcher.data?.status !== "success") return;
 
-      const respId = fetcher.data?.data?.id;
+      if (
+        submitFetcher.state !== "idle" ||
+        submitFetcher.data?.status !== "success"
+      ) {
+        return;
+      }
+
+      const respId = submitFetcher.data?.data?.id;
       additionalCallback(respId);
-    }, [fetcher.state, fetcher.data, additionalCallback]);
+    }, [
+      submitFetcher.state,
+      submitFetcher.data,
+      additionalCallback,
+    ]);
+
+    // Button configuration
+    const displayLabel = isDeletingThisItem
+      ? "Deleting..."
+      : label;
 
     return (
       <>
@@ -47,14 +90,25 @@ const DeleteConfirmButton = memo(
           type="button"
           className={`btn ${btnClass}`}
           onClick={() => confirmDeleteModal.showConfirmModal()}
-          disabled={fetcher.state === "submitting" || disabled}
+          disabled={isDeletingThisItem || disabled}
         >
-          <i className="bi bi-trash" style={{ color }}></i>
-          <span
-            className={`btn-text ${allowHideBtnText ? '--d-sm-none' : ''}`}
+          <i
+            className="bi bi-trash"
             style={{ color }}
-          > {fetcher.state === "submitting" ? "Deleting..." : label}</span>
+          ></i>
+
+          {label && (
+            <span
+              className={`btn-text ${
+                allowHideBtnText ? "--d-sm-none" : ""
+              }`}
+              style={{ color }}
+            >
+              {displayLabel}
+            </span>
+          )}
         </button>
+
         {confirmDeleteModal.isShowModal && (
           <ConfirmModal
             message={confirmMessage}
@@ -66,6 +120,7 @@ const DeleteConfirmButton = memo(
         )}
       </>
     );
-  },
+  }
 );
+
 export default DeleteConfirmButton;

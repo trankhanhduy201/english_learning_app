@@ -45,7 +45,7 @@ const RowComponent = ({ index, style, ...rest }) => {
             color="#212529"
             label=""
             confirmMessage={`Are you sure you want to delete "${vocab.word}"?`}
-            allowHideBtnText={false}
+            allowHideBtnText={true}
             revalidate={false}
             expectedId={vocab.id}
             additionalCallback={onDeleteVocabSuccess}
