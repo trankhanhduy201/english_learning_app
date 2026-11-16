@@ -114,21 +114,54 @@ class TestIsAccessable:
     ):
         owner = user_factory()
         topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PRIVATE)
-        request, view = build_permission_request(owner, method='delete')
 
-        assert IsAccessable().has_object_permission(request, view, topic) is True
+        for method in ['get', 'post', 'put', 'patch', 'delete']:
+            request, view = build_permission_request(owner, method=method, basename='topic')
+            assert IsAccessable().has_object_permission(request, view, topic) is True
 
-    def test_private_topic_is_not_readable_by_non_member(
+    def test_non_member_can_not_read_and_update_private_topic(
         self, user_factory, topic_factory, build_permission_request
     ):
         owner = user_factory()
         topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PRIVATE)
         requester = user_factory()
+
+        for method in ['get', 'post', 'put', 'patch', 'delete']:
+            request, view = build_permission_request(requester, method=method, basename='topic')
+            assert IsAccessable().has_object_permission(request, view, topic) is False
+
+    def test_readonly_member_can_read_private_topic(
+        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    ):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PRIVATE)
+        requester = user_factory()
+        topic_member_factory(
+            topic=topic,
+            member=requester,
+            status=TopicMember.TopicMemberStatusEnums.READ_ONLY,
+        )
+
         request, view = build_permission_request(requester, method='get')
+        assert IsAccessable().has_object_permission(request, view, topic) is True
 
-        assert IsAccessable().has_object_permission(request, view, topic) is False
+    def test_readonly_member_can_not_update_private_topic(
+        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    ):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PRIVATE)
+        requester = user_factory()
+        topic_member_factory(
+            topic=topic,
+            member=requester,
+            status=TopicMember.TopicMemberStatusEnums.READ_ONLY,
+        )
 
-    def test_private_topic_is_readable_by_member(
+        for method in ['post', 'put', 'patch', 'delete']:
+            request, view = build_permission_request(requester, method=method, basename='topic')
+            assert IsAccessable().has_object_permission(request, view, topic) is False
+
+    def test_editable_member_can_update_private_topic(
         self, user_factory, topic_factory, topic_member_factory, build_permission_request
     ):
         owner = user_factory()
@@ -139,17 +172,27 @@ class TestIsAccessable:
             member=requester,
             status=TopicMember.TopicMemberStatusEnums.EDITABLE,
         )
-        request, view = build_permission_request(requester, method='get')
 
-        assert IsAccessable().has_object_permission(request, view, topic) is True
+        for method in ['post', 'put', 'patch']:
+            request, view = build_permission_request(requester, method=method, basename='topic')
+            assert IsAccessable().has_object_permission(request, view, topic) is True
 
-    def test_public_topic_is_readable_by_non_member(self, user_factory, topic_factory, build_permission_request):
+    def test_non_member_can_read_public_topic(self, user_factory, topic_factory, build_permission_request):
         owner = user_factory()
         topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
         requester = user_factory()
         request, view = build_permission_request(requester, method='get')
 
         assert IsAccessable().has_object_permission(request, view, topic) is True
+
+    def test_non_member_can_not_update_public_topic(self, user_factory, topic_factory, build_permission_request):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
+        requester = user_factory()
+
+        for method in ['post', 'put', 'patch', 'delete']:
+            request, view = build_permission_request(requester, method=method, basename='topic')
+            assert IsAccessable().has_object_permission(request, view, topic) is False
 
     def test_blocked_member_cannot_access_public_topic(self, user_factory, topic_factory, topic_member_factory, build_permission_request):
         owner = user_factory()
@@ -163,19 +206,6 @@ class TestIsAccessable:
         request, view = build_permission_request(requester, method='get')
 
         assert IsAccessable().has_object_permission(request, view, topic) is False
-
-    def test_editable_member_can_update_topic(self, user_factory, topic_factory, topic_member_factory, build_permission_request):
-        owner = user_factory()
-        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
-        requester = user_factory()
-        topic_member_factory(
-            topic=topic,
-            member=requester,
-            status=TopicMember.TopicMemberStatusEnums.EDITABLE,
-        )
-        request, view = build_permission_request(requester, method='put')
-
-        assert IsAccessable().has_object_permission(request, view, topic) is True
 
     def test_non_owner_cannot_delete_topic_from_member_context(
         self, user_factory, topic_factory, topic_member_factory, build_permission_request
