@@ -8,36 +8,39 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
     TOPIC_MEMBER_MODEL = 'flashcards.TopicMember'
     VOCAB_MODEL = 'flashcards.Vocabulary'
 
-    def with_defaults(self, **kwargs):
+    def with_defaults(self):
         qs = (
-            self.with_topic_members(
-                    check_accessible=True,
-                    includes=['member']
-                )
-                .with_owner()
+            self.with_owner()
                 .with_owner_profile()
                 .with_member_count()
                 .with_vocab_count()
         )
         return qs
     
-    def with_topic_members(self, includes=[], **kwargs):
+    def with_topic_members(self, includes=[], force_all_members=False, force_included_members=[]):
         TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
         qs = TopicMember.objects.order_by('-joined_at')
 
-        check_accessible = kwargs.get('check_accessible', False)
-        if check_accessible is True:
-            qs = qs.accessible()
+        if force_all_members is False:
+            qs = qs.joined_member(force_included_members)
 
         if 'member' in includes:
             qs = qs.with_member()
 
-        user = kwargs.get('user', None)
-        if user is not None:
-            qs = qs.filter(member=user)
-
         return self.prefetch_related(
 	        Prefetch('topic_members', queryset=qs)
+        )
+
+    def with_topic_member_by(self, user):
+        TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
+        qs = (
+            TopicMember.objects
+                .order_by('-joined_at')
+                .filter(member=user)
+        )
+
+        return self.prefetch_related(
+            Prefetch('topic_members', queryset=qs)
         )
 
     # subquery way for counting topic members

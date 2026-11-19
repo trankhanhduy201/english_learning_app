@@ -1,4 +1,4 @@
-from django.db.models import Case, Count, IntegerField, Value, When
+from django.db.models import Case, Count, IntegerField, Value, When, Q
 from flashcards.querysets.bases import BaseQuerySet
 
 
@@ -24,9 +24,18 @@ class TopicMemberQuerySet(BaseQuerySet):
         accessible_statuses = self.model.get_accessible_statuses()
         return self.filter(status__in=accessible_statuses)
 
+    def joined_member(self, force_included_members=[]):
+        joined_statuses = self.model.get_joined_statuses()
+        conditions = Q(status__in=joined_statuses)
+
+        if force_included_members:
+            conditions |= Q(member__in=force_included_members)
+
+        return self.filter(conditions)
+
     def count_members(self):
         return (
-            self.accessible()
+            self.joined_member()
                 .values('topic')
                 .annotate(count=Count('id'))
                 .values('count')
@@ -34,7 +43,7 @@ class TopicMemberQuerySet(BaseQuerySet):
     
     def joined_topic_ids(self, member_id):
         return (
-            self.accessible()
+            self.joined_member()
                 .filter(member_id=member_id)
                 .values_list('topic_id', flat=True)
         )

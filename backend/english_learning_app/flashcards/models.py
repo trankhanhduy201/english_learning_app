@@ -93,6 +93,14 @@ class TopicMember(models.Model):
 			cls.TopicMemberStatusEnums.EDITABLE
 		]
 
+	@classmethod
+	def get_joined_statuses(cls):
+		return [
+			cls.TopicMemberStatusEnums.READ_ONLY,
+			cls.TopicMemberStatusEnums.EDITABLE
+		]
+	
+
 
 class Vocabulary(CreatedBy):
 	word = models.CharField(max_length=100)

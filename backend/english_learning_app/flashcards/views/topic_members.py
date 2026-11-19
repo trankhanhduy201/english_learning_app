@@ -27,7 +27,6 @@ class TopicMemberView(TopicScopedViewMixin, BaseGenericAPIView, ListModelMixin):
 		return (
 			self.queryset
 				.with_member()
-				.accessible()
 				.filter(topic_id=self.get_topic_pk())
 				.ordered_by_status()
 		)
@@ -70,9 +69,7 @@ class JoinTopicView(BaseGenericAPIView):
 			self.queryset
 				.with_owner()
 				.with_owner_profile()
-				.with_topic_members(
-					user=self.request.user
-				)
+				.with_topic_member_by(self.request.user)
 		)
 
 	def post(self, request, *args, **kwargs):
@@ -104,9 +101,7 @@ class LeaveTopicView(BaseGenericAPIView):
 			self.queryset
 				.with_owner()
 				.with_owner_profile()
-				.with_topic_members(
-					user=self.request.user
-				)
+				.with_topic_member_by(self.request.user)
 		)
 
 	def post(self, request, *args, **kwargs):

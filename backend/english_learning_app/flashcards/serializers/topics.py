@@ -3,7 +3,6 @@ from django.db import models, transaction
 from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField, CharField, ListSerializer
 
 from flashcards.models import Topic, TopicMember
-from shared.decorators.handle_exceptions import handle_exceptions
 from shared.serializers.bases import BaseSerializer
 from shared.serializers.images import RelativeBase64ImageField, ImageInfoSerializerMixin
 from flashcards.serializers.topic_members import RetrieveTopicMembersSerializer

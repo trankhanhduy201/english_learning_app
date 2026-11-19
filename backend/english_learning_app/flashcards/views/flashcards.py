@@ -76,8 +76,15 @@ class TopicViewSet(OwnerListModelMixin, BaseModelViewSet, BulkDestroyModelMixin)
 	def get_queryset(self, **kwargs):
 		qs = super().get_queryset(**kwargs)
 		if self.request.method in ('GET'):
-			return qs.with_defaults()
-
+			return (
+				qs.with_defaults()
+					.with_topic_members(
+						includes=['member'], 
+						force_included_members=[self.request.user],
+						force_all_members=self.action == 'retrieve'
+					)
+			)
+				
 		if self.request.method in ('PUT', 'PATCH', 'DELETE'):
 			return qs.with_owner()
 		

@@ -11,10 +11,11 @@ class DashboardSummaryView(BaseAPIView):
         owned_vocab_count = Vocabulary.objects.filter(created_by=request.user).count()
         member_count = TopicMember.objects.filter(
             topic__created_by=request.user,
+            status__in=TopicMember.get_joined_statuses()
         ).count()
         subscribed_topic_count = TopicMember.objects.filter(
             member=request.user,
-            status__in=TopicMember.get_accessible_statuses(),
+            status__in=TopicMember.get_joined_statuses(),
         ).count()
         trending_topics = TrendingTopicSerializer(
             Topic.objects.trending(limit=4),
