@@ -1,5 +1,5 @@
 
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { useFetcher } from "react-router-dom";
 
 const JoinButton = memo(({
@@ -9,6 +9,7 @@ const JoinButton = memo(({
   updateTopicMember = null
 }) => {
   const handleJoinFetcher = useFetcher();
+  const processedResult = useRef(null);
 
   // Button state
   const isMember = Boolean(topicMember?.is_member);
@@ -47,8 +48,10 @@ const JoinButton = memo(({
   useEffect(() => {
     if (
       handleJoinFetcher.state === 'idle' &&
-      handleJoinFetcher.data?.status === 'success'
+      handleJoinFetcher.data?.status === 'success' &&
+      processedResult.current !== handleJoinFetcher.data
     ) {
+      processedResult.current = handleJoinFetcher.data;
       updateTopicMember?.({
         ...handleJoinFetcher.data.data
       });

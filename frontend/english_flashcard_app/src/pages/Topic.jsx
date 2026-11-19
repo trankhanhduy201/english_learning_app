@@ -23,7 +23,7 @@ const TopicHeader = memo(() => {
         ...newTopicMember
       }
     }));
-  });
+  }, [setTopic]);
 
   return (
     <>
