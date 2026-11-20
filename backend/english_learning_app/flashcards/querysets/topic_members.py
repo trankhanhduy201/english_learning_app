@@ -45,13 +45,6 @@ class TopicMemberQuerySet(BaseQuerySet):
                 .annotate(count=Count('id'))
                 .values('count')
         )
-    
-    def joined_topic_ids(self, member_id):
-        return (
-            self.joined_member()
-                .filter(member_id=member_id)
-                .values_list('topic_id', flat=True)
-        )
 
     def by_topic_owner(self, user):
         return self.filter(

@@ -69,7 +69,7 @@ class IsAccessable(IsOwnerMixin, permissions.BasePermission):
 		# Get the current user's membership status for this topic.
 		topic_member_status = (
 			TopicMember.objects
-				.get_status_for(topic, request.user)
+				.status_by(topic, request.user)
 		)
 
 		# Check read permissions for safe methods (GET, HEAD, OPTIONS).

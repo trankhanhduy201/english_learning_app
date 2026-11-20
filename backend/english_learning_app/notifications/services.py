@@ -29,7 +29,10 @@ class NotificationService:
         return f"topic_{topic_id}"
 
     def get_joined_topic_ids(self, member_id):
-        return TopicMember.objects.joined_topic_ids(member_id)
+        return (
+            TopicMember.objects
+                .joined_topic_ids(member_id)
+        )
 
     def notify_user(self, *, user_id, title, message, notification_type="notification", data=None, store=True):
         if user_id is None:
