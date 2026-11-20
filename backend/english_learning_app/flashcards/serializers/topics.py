@@ -75,7 +75,7 @@ class CurrentTopicMemberSerializer(Serializer):
     is_owner = SerializerMethodField()
     is_accepted = SerializerMethodField()
     is_accepting = SerializerMethodField()
-    is_member = SerializerMethodField()
+    has_member_record = SerializerMethodField()
     is_subcribing = SerializerMethodField()
     is_blocking = SerializerMethodField()
 
@@ -112,7 +112,7 @@ class CurrentTopicMemberSerializer(Serializer):
             TopicMember.TopicMemberStatusEnums.PENDING
         ]
 
-    def get_is_member(self, instance):
+    def get_has_member_record(self, instance):
         if self.get_is_owner(instance):
             return False
 

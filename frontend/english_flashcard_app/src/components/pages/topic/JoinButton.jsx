@@ -12,12 +12,12 @@ const JoinButton = memo(({
   const processedResult = useRef(null);
 
   // Button state
-  const isMember = Boolean(topicMember?.is_member);
+  const hasMemberRecord = Boolean(topicMember?.has_member_record);
   const isAccepted = Boolean(topicMember?.is_accepted);
   const isSubmitting = handleJoinFetcher.state === 'submitting';
 
   // Button configuration
-  const buttonConfig = isMember
+  const buttonConfig = hasMemberRecord
     ? {
         action: 'leave',
         icon: 'bi-dash-circle',
