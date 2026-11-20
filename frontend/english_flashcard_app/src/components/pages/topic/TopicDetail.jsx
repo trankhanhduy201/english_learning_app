@@ -26,9 +26,12 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
   useEffect(() => {
     if (
       editTopicFetcher.data?.status === "success" &&
-      editTopicFetcher.data.data
+      editTopicFetcher.data?.data
     ) {
-      setTopic(editTopicFetcher.data.data);
+      setTopic(prev => ({
+        ...prev,
+        ...editTopicFetcher.data.data
+      }));
     }
   }, [editTopicFetcher.data, setTopic]);
 

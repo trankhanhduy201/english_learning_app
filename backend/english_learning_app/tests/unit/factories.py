@@ -34,6 +34,7 @@ def make_topic_member(topic=None, member=None, **kwargs):
         'topic': topic,
         'member': member,
         'status': kwargs.pop('status', TopicMember.TopicMemberStatusEnums.READ_ONLY),
+        'is_left': kwargs.pop('is_left', False),
     }
     defaults.update(kwargs)
     return TopicMember.objects.create(**defaults)

@@ -14,8 +14,8 @@ const Dashboard = memo(() => {
     { key: "own_vocab_count", label: "My Vocabs", icon: "bi-card-text" },
     { key: "member_count", label: "Members", icon: "bi-people" },
     {
-      key: "subscribed_topic_count",
-      label: "Subscribed Topics",
+      key: "joined_topic_count",
+      label: "Joined Topics",
       icon: "bi-bell",
     },
   ];

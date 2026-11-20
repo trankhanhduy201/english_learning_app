@@ -4,11 +4,9 @@ from flashcards.models import TopicMember
 
 
 class TopicMemberService:
-    def join_topic(self, user, topic):
-        topic_member = topic.topic_members.first()
+    def join_topic(self, user, topic, topic_member):
         if topic_member is not None:
-            topic_member.status = TopicMember.TopicMemberStatusEnums.READ_ONLY
-            topic_member.save(update_fields=['status'])
+            topic_member.save_left(False)
             return topic_member
 
         topic_member = TopicMember(
@@ -19,18 +17,11 @@ class TopicMemberService:
         topic_member.save()
         return topic_member
 
-    def leave_topic(self, user, topic):
-        topic_member = topic.topic_members.first()
+    def leave_topic(self, topic_member):
         if topic_member is None:
             raise NotFound('Topic member not found')
 
-        previous_status = topic_member.status
-        topic_member.status = TopicMember.TopicMemberStatusEnums.LEAVING
-        if previous_status != TopicMember.TopicMemberStatusEnums.PENDING:
-            topic_member.save(update_fields=['status'])
-        else:
-            topic_member.delete()
-
+        topic_member.save_left(True)
         return topic_member
 
     def resolve_for_update(self, topic, data):

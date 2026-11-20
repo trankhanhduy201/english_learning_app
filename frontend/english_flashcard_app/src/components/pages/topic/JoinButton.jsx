@@ -32,7 +32,9 @@ const JoinButton = memo(({
         action: 'join',
         icon: 'bi-plus-circle',
         className: 'btn-primary',
-        label: isSubmitting ? 'Joining...' : 'Join',
+        label: isSubmitting 
+          ? 'Joining...' 
+          : 'Join',
       };
 
   const handleJoin = useCallback((action) => {

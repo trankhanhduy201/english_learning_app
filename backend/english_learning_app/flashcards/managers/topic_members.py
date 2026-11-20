@@ -6,7 +6,9 @@ class TopicMemberManager(BaseManager.from_queryset(TopicMemberQuerySet)):
     def get_status_for(self, topic, member):
         topic_member = (
             self.filter(topic=topic, member=member)
-            .only('status')
-            .first()
+                .only('status', 'is_left')
+                .first()
         )
-        return getattr(topic_member, 'status', None)
+        if topic_member is None or topic_member.is_left:
+            return None
+        return topic_member.status

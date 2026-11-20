@@ -68,13 +68,13 @@ class TopicMember(models.Model):
 		PENDING = ('pending', _('Pending'))
 		READ_ONLY = ('read_only', _('Read only'))
 		EDITABLE = ('editable', _('Editable'))
-		LEAVING = ('leaving', _('Leaving'))
 		BLOCK = ('block', _('Block'))
 
 	member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="topic_members")
 	topic = models.ForeignKey("Topic", on_delete=models.CASCADE, related_name="topic_members")
 	status = models.CharField(max_length=20, choices=TopicMemberStatusEnums.choices, default=TopicMemberStatusEnums.READ_ONLY)
 	is_subcribe = models.BooleanField(default=True)
+	is_left = models.BooleanField(default=False)
 	joined_at = models.DateField(auto_now_add=True)
 
 	objects = TopicMemberManager()
@@ -99,8 +99,12 @@ class TopicMember(models.Model):
 			cls.TopicMemberStatusEnums.READ_ONLY,
 			cls.TopicMemberStatusEnums.EDITABLE
 		]
-	
 
+	def save_left(self, value):
+		self.is_left = value
+		self.save(update_fields=['is_left'])
+		return self
+	
 
 class Vocabulary(CreatedBy):
 	word = models.CharField(max_length=100)

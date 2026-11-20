@@ -63,11 +63,28 @@ class TestCanJoinTopic:
         topic_member_factory(
             topic=topic,
             member=requester,
-            status=TopicMember.TopicMemberStatusEnums.LEAVING,
+            status=TopicMember.TopicMemberStatusEnums.READ_ONLY,
+            is_left=True,
         )
         request, view = build_permission_request(requester, method='post')
 
         assert CanJoinTopic().has_object_permission(request, view, topic) is True
+
+    def test_has_object_permission_rejectes_topic_members_not_in_leaving_state(
+            self, user_factory, topic_factory, topic_member_factory, build_permission_request
+        ):
+            owner = user_factory()
+            topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
+            requester = user_factory()
+            topic_member_factory(
+                topic=topic,
+                member=requester,
+                status=TopicMember.TopicMemberStatusEnums.EDITABLE,
+                is_left=False,
+            )
+            request, view = build_permission_request(requester, method='post')
+    
+            assert CanJoinTopic().has_object_permission(request, view, topic) is False
 
 
 @pytest.mark.django_db
@@ -76,32 +93,50 @@ class TestCanLeaveTopic:
         self, user_factory, topic_factory, topic_member_factory, build_permission_request
     ):
         owner = user_factory()
-        topic = topic_factory(created_by=owner)
-        requester = user_factory()
-
         for status in [
             TopicMember.TopicMemberStatusEnums.PENDING,
             TopicMember.TopicMemberStatusEnums.EDITABLE,
             TopicMember.TopicMemberStatusEnums.READ_ONLY,
         ]:
+            topic = topic_factory(created_by=owner)
             current_requester = user_factory()
             topic_member_factory(topic=topic, member=current_requester, status=status)
             request, view = build_permission_request(current_requester, method='post')
             assert CanLeaveTopic().has_object_permission(request, view, topic) is True
 
-    def test_has_object_permission_rejects_owner_and_blocked_members(
-        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    def test_has_object_permission_rejects_owner(
+        self, user_factory, topic_factory, build_permission_request
     ):
         owner = user_factory()
         topic = topic_factory(created_by=owner)
         request, view = build_permission_request(owner, method='post')
         assert CanLeaveTopic().has_object_permission(request, view, topic) is False
 
+    def test_has_object_permission_rejects_blocked_members(
+        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    ):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner)
         requester = user_factory()
         topic_member_factory(
             topic=topic,
             member=requester,
             status=TopicMember.TopicMemberStatusEnums.BLOCK,
+        )
+        request, view = build_permission_request(requester, method='post')
+        assert CanLeaveTopic().has_object_permission(request, view, topic) is False
+
+    def test_has_object_permission_rejects_leaving_members(
+        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    ):
+        owner = user_factory()
+        topic = topic_factory(created_by=owner)
+        requester = user_factory()
+        topic_member_factory(
+            topic=topic,
+            member=requester,
+            status=TopicMember.TopicMemberStatusEnums.EDITABLE,
+            is_left=True
         )
         request, view = build_permission_request(requester, method='post')
         assert CanLeaveTopic().has_object_permission(request, view, topic) is False
@@ -177,7 +212,9 @@ class TestIsAccessable:
             request, view = build_permission_request(requester, method=method, basename='topic')
             assert IsAccessable().has_object_permission(request, view, topic) is True
 
-    def test_non_member_can_read_public_topic(self, user_factory, topic_factory, build_permission_request):
+    def test_non_member_can_read_public_topic(
+        self, user_factory, topic_factory, build_permission_request
+    ):
         owner = user_factory()
         topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
         requester = user_factory()
@@ -185,7 +222,9 @@ class TestIsAccessable:
 
         assert IsAccessable().has_object_permission(request, view, topic) is True
 
-    def test_non_member_can_not_update_public_topic(self, user_factory, topic_factory, build_permission_request):
+    def test_non_member_can_not_update_public_topic(
+        self, user_factory, topic_factory, build_permission_request
+    ):
         owner = user_factory()
         topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
         requester = user_factory()
@@ -194,7 +233,9 @@ class TestIsAccessable:
             request, view = build_permission_request(requester, method=method, basename='topic')
             assert IsAccessable().has_object_permission(request, view, topic) is False
 
-    def test_blocked_member_cannot_access_public_topic(self, user_factory, topic_factory, topic_member_factory, build_permission_request):
+    def test_blocked_member_cannot_access_public_topic(
+        self, user_factory, topic_factory, topic_member_factory, build_permission_request
+    ):
         owner = user_factory()
         topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
         requester = user_factory()

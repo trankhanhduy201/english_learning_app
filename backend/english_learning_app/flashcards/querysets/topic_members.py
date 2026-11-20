@@ -22,7 +22,10 @@ class TopicMemberQuerySet(BaseQuerySet):
 
     def accessible(self):
         accessible_statuses = self.model.get_accessible_statuses()
-        return self.filter(status__in=accessible_statuses)
+        return self.filter(
+            status__in=accessible_statuses,
+            is_left=False
+        )
 
     def joined_member(self, force_included_members=[]):
         joined_statuses = self.model.get_joined_statuses()
@@ -31,7 +34,9 @@ class TopicMemberQuerySet(BaseQuerySet):
         if force_included_members:
             conditions |= Q(member__in=force_included_members)
 
-        return self.filter(conditions)
+        return self.filter(
+            conditions & Q(is_left=False)
+        )
 
     def count_members(self):
         return (
@@ -46,4 +51,9 @@ class TopicMemberQuerySet(BaseQuerySet):
             self.joined_member()
                 .filter(member_id=member_id)
                 .values_list('topic_id', flat=True)
+        )
+
+    def by_topic_owner(self, user):
+        return self.filter(
+            topic__created_by=user
         )

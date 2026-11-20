@@ -111,14 +111,16 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
 
     def accessible_by(self, user):
         TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
-        topic_member_accessable_statuses = TopicMember.get_accessible_statuses()
         topic_accessable_statuses = self.model.get_accessible_statuses()
         conditions = Q(created_by=user)
 
-        topic_member_qs = TopicMember.objects.filter(
-            member=user,
-            status__in=topic_member_accessable_statuses,
-            topic=OuterRef('pk')
+        topic_member_qs = (
+            TopicMember.objects
+                .accessible()
+                .filter(
+                    member=user,
+                    topic=OuterRef('pk')
+                )
         )
         conditions |= Q(
 			Q(status__in=topic_accessable_statuses) &

@@ -76,7 +76,11 @@ class JoinTopicView(BaseGenericAPIView):
 		topic = self.get_object()
 		topic_member = (
 			topic_member_service
-				.join_topic(request.user, topic)
+				.join_topic(
+					request.user, 
+					topic,
+					topic.topic_members.first()
+				)
 		)
 
 		return Response(
@@ -108,7 +112,9 @@ class LeaveTopicView(BaseGenericAPIView):
 		topic = self.get_object()
 		topic_member = (
 			topic_member_service
-				.leave_topic(request.user, topic)
+				.leave_topic(
+					topic.topic_members.first()
+				)
 		)
 
 		return Response(

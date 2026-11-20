@@ -19,10 +19,9 @@ class CanJoinTopic(
 			return False
 
 		topic_member = obj.topic_members.first()
-		topic_member_status = getattr(topic_member, 'status', None)
 		return (
-			topic_member_status is None or
-			topic_member_status == TopicMember.TopicMemberStatusEnums.LEAVING
+			topic_member is None or 
+			getattr(topic_member, 'is_left', False)
 		)
 
 
@@ -39,6 +38,9 @@ class CanLeaveTopic(
 			return False
 
 		topic_member = obj.topic_members.first()
+		if getattr(topic_member, 'is_left', False):
+			return False
+		
 		topic_member_status = getattr(topic_member, 'status', None)
 		allow_unsubscribe = [
 			TopicMember.TopicMemberStatusEnums.PENDING,

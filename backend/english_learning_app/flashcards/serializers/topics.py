@@ -119,7 +119,7 @@ class CurrentTopicMemberSerializer(Serializer):
         if not instance:
             return False
 
-        return instance.status != TopicMember.TopicMemberStatusEnums.LEAVING
+        return not bool(getattr(instance, 'is_left', False))
 
     def get_is_subcribing(self, instance):
         if self.get_is_owner(instance):
