@@ -109,11 +109,8 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
             Q(Exists(vocab_qs))
         )
 
-    def accessible_by(self, user):
+    def only_topic_of(self, user):
         TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
-        topic_accessable_statuses = self.model.get_accessible_statuses()
-        conditions = Q(created_by=user)
-
         topic_member_qs = (
             TopicMember.objects
                 .accessible()
@@ -122,8 +119,23 @@ class TopicQuerySet(BaseQuerySet, OwnerMixin):
                     topic=OuterRef('pk')
                 )
         )
-        conditions |= Q(
-			Q(status__in=topic_accessable_statuses) &
-			Exists(topic_member_qs)
-		)
-        return self.filter(conditions)
+
+        return self.filter(
+            Q(created_by=user) | 
+            Q(Exists(topic_member_qs))
+        )
+
+    def except_blocked_member_by(self, user):
+        TopicMember = self.get_model(self.TOPIC_MEMBER_MODEL)
+
+        topic_member_qs = (
+            TopicMember.objects
+                .inaccessible()
+                .filter(
+                    member=user,
+                    topic=OuterRef('pk')
+                )
+        )
+        return self.filter(
+            ~Exists(topic_member_qs)
+        )

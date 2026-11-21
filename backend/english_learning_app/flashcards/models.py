@@ -94,6 +94,12 @@ class TopicMember(models.Model):
 		]
 
 	@classmethod
+	def get_inaccessible_statuses(cls):
+		return [
+			cls.TopicMemberStatusEnums.BLOCK
+		]
+
+	@classmethod
 	def get_joined_statuses(cls):
 		return [
 			cls.TopicMemberStatusEnums.READ_ONLY,

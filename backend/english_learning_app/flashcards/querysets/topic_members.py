@@ -27,6 +27,12 @@ class TopicMemberQuerySet(BaseQuerySet):
             is_left=False
         )
 
+    def inaccessible(self):
+        accessible_statuses = self.model.get_inaccessible_statuses()
+        return self.filter(
+            status__in=accessible_statuses
+        )
+
     def joined_member(self, force_included_members=[]):
         joined_statuses = self.model.get_joined_statuses()
         conditions = Q(status__in=joined_statuses)

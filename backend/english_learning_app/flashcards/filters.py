@@ -14,6 +14,16 @@ class TopicFilter(django_filters.FilterSet):
 		method='filter_only_my_topic',
 		label='Only my topics'
 	)
+
+	def filter_queryset(self, queryset):
+		queryset = super().filter_queryset(queryset)
+
+		# Apply default behavior when parameter is omitted
+		only_my_topic = self.data.get('only_my_topic', False)
+		if not only_my_topic:
+			queryset = queryset.except_blocked_member_by(self.request.user)
+
+		return queryset
 	
 	def filter_text_search(self, queryset, name, value):
 		if not value:
@@ -23,7 +33,7 @@ class TopicFilter(django_filters.FilterSet):
 	def filter_only_my_topic(self, queryset, name, value):
 		if not value:
 			return queryset
-		return queryset.accessible_by(self.request.user)
+		return queryset.only_topic_of(self.request.user)
 
 
 class VocabularyFilter(django_filters.FilterSet):
