@@ -4,6 +4,7 @@ import { useFetcher } from "react-router-dom";
 
 const JoinButton = memo(({
   buttonType = '',
+  compact = false,
   topicId,
   topicMember = null,
   updateTopicMember = null
@@ -20,7 +21,7 @@ const JoinButton = memo(({
   const buttonConfig = hasMemberRecord
     ? {
         action: 'leave',
-        icon: 'bi-dash-circle',
+        icon: 'bi-box-arrow-in-left',
         className: 'btn-danger',
         label: isSubmitting
           ? 'Leaving...'
@@ -30,7 +31,7 @@ const JoinButton = memo(({
       }
     : {
         action: 'join',
-        icon: 'bi-plus-circle',
+        icon: 'bi-box-arrow-in-right',
         className: 'btn-primary',
         label: isSubmitting 
           ? 'Joining...' 
@@ -68,9 +69,15 @@ const JoinButton = memo(({
     return null;
   }
 
+  const sizeClass = buttonType ? `btn-${buttonType}` : '';
+  const compactClass = compact
+    ? 'badge border-0 py-1 px-2 text-uppercase small'
+    : '';
+
   return (
     <button
-      className={`btn btn-${buttonType} ${buttonConfig.className} ms-auto`}
+      type="button"
+      className={`btn ${sizeClass} ${compactClass} ${buttonConfig.className} ${compact ? '' : 'ms-auto'}`}
       onClick={() => handleJoin(buttonConfig.action)}
       disabled={isSubmitting}
     >

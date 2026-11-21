@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import BooleanField, CharField
+from rest_framework.serializers import BooleanField, CharField, Serializer, SerializerMethodField
 from flashcards.models import Topic, TopicMember
 from shared.serializers.bases import (
     BaseListSerializer,
@@ -10,7 +10,82 @@ from shared.serializers.bases import (
 User = get_user_model()
 
 
+class MemberPermissionSerializer(Serializer):
+    is_owner = SerializerMethodField()
+    is_accepted = SerializerMethodField()
+    is_accepting = SerializerMethodField()
+    has_member_record = SerializerMethodField()
+    is_subcribing = SerializerMethodField()
+    is_blocking = SerializerMethodField()
+
+    def get_topic(self):
+        return self.context.get('topic', None)
+
+    def get_is_owner(self, instance):
+        check_owner = self.context.get('check_owner', False)
+        if not check_owner:
+            return False
+
+        request = self.context.get('request', None)
+        topic = self.get_topic()
+        if request is None or topic is None:
+            return False
+        return request.user == topic.created_by
+
+    def get_is_accepted(self, instance):
+        if self.get_is_owner(instance):
+            return False
+
+        if not instance:
+            return False
+
+        return instance.status in [
+            TopicMember.TopicMemberStatusEnums.READ_ONLY,
+            TopicMember.TopicMemberStatusEnums.EDITABLE
+        ]
+
+    def get_is_accepting(self, instance):
+        if self.get_is_owner(instance):
+            return False
+
+        if not instance:
+            return False
+
+        return instance.status in [
+            TopicMember.TopicMemberStatusEnums.PENDING
+        ]
+
+    def get_has_member_record(self, instance):
+        if self.get_is_owner(instance):
+            return False
+
+        if not instance:
+            return False
+
+        return not bool(getattr(instance, 'is_left', False))
+
+    def get_is_subcribing(self, instance):
+        if self.get_is_owner(instance):
+            return False
+
+        if not instance:
+            return False
+
+        return bool(getattr(instance, 'is_subcribe', False))
+
+    def get_is_blocking(self, instance):
+        if self.get_is_owner(instance):
+            return False
+
+        if not instance:
+            return False
+
+        blocking_status = [TopicMember.TopicMemberStatusEnums.BLOCK]
+        return instance.status in blocking_status
+
+
 class RetrieveTopicMembersSerializer(BaseSerializer):
+    member_permissions = MemberPermissionSerializer(source='*', read_only=True)
     member_id = CharField(source='member.id', read_only=True)
     member_username = CharField(source='member.username', read_only=True)
     member_name = CharField(source="member.get_full_name", read_only=True)
@@ -28,6 +103,7 @@ class RetrieveTopicMembersSerializer(BaseSerializer):
             'member_username',
             'member_name',
             'member_avatar',
+            'member_permissions',
         ]
 
 

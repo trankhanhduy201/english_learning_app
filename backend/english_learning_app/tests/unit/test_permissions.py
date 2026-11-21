@@ -31,15 +31,20 @@ class TestCanJoinTopic:
         request, view = build_permission_request(AnonymousUser(), method='post')
         assert CanJoinTopic().has_permission(request, view) is False
 
-    def test_has_object_permission_allows_public_topic_without_membership(
+    def test_has_object_permission_allows_topic_without_membership(
         self, user_factory, topic_factory, build_permission_request
     ):
         owner = user_factory()
-        topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
+        public_topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
         requester = user_factory()
         request, view = build_permission_request(requester, method='post')
+        assert CanJoinTopic().has_object_permission(request, view, public_topic) is True
 
-        assert CanJoinTopic().has_object_permission(request, view, topic) is True
+        private_topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PRIVATE)
+        requester = user_factory()
+        request, view = build_permission_request(requester, method='post')
+        assert CanJoinTopic().has_object_permission(request, view, private_topic) is True
+        
 
     def test_has_object_permission_rejects_owner_and_private_topics(
         self, user_factory, topic_factory, build_permission_request
@@ -48,11 +53,6 @@ class TestCanJoinTopic:
         public_topic = topic_factory(created_by=owner, status=Topic.TopicStatusEnums.PUBLIC)
         request, view = build_permission_request(owner, method='post')
         assert CanJoinTopic().has_object_permission(request, view, public_topic) is False
-
-        another_user = user_factory()
-        private_topic = topic_factory(created_by=user_factory(), status=Topic.TopicStatusEnums.PRIVATE)
-        request, view = build_permission_request(another_user, method='post')
-        assert CanJoinTopic().has_object_permission(request, view, private_topic) is False
 
     def test_has_object_permission_allows_topic_members_in_leaving_state(
         self, user_factory, topic_factory, topic_member_factory, build_permission_request

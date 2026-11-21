@@ -1,11 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
-from rest_framework.serializers import SerializerMethodField, Serializer, IntegerField, CharField, ListSerializer
+from rest_framework.serializers import SerializerMethodField, IntegerField, CharField, ListSerializer
 
 from flashcards.models import Topic, TopicMember
 from shared.serializers.bases import BaseSerializer
 from shared.serializers.images import RelativeBase64ImageField, ImageInfoSerializerMixin
-from flashcards.serializers.topic_members import RetrieveTopicMembersSerializer
+from flashcards.serializers.topic_members import (
+    MemberPermissionSerializer,
+    RetrieveTopicMembersSerializer,
+)
 
 User = get_user_model()
 
@@ -71,76 +74,6 @@ class AuthorSerializer(BaseSerializer):
         ]
 
 
-class CurrentTopicMemberSerializer(Serializer):
-    is_owner = SerializerMethodField()
-    is_accepted = SerializerMethodField()
-    is_accepting = SerializerMethodField()
-    has_member_record = SerializerMethodField()
-    is_subcribing = SerializerMethodField()
-    is_blocking = SerializerMethodField()
-
-    def get_topic(self):
-        return self.context.get('topic', None)
-
-    def get_is_owner(self, instance):
-        request = self.context.get('request', None)
-        topic = self.get_topic()
-        if request is None or topic is None:
-            return False
-        return request.user == topic.created_by
-
-    def get_is_accepted(self, instance):
-        if self.get_is_owner(instance):
-            return False
-
-        if not instance:
-            return False
-
-        return instance.status in [
-            TopicMember.TopicMemberStatusEnums.READ_ONLY,
-            TopicMember.TopicMemberStatusEnums.EDITABLE
-        ]
-
-    def get_is_accepting(self, instance):
-        if self.get_is_owner(instance):
-            return False
-
-        if not instance:
-            return False
-
-        return instance.status in [
-            TopicMember.TopicMemberStatusEnums.PENDING
-        ]
-
-    def get_has_member_record(self, instance):
-        if self.get_is_owner(instance):
-            return False
-
-        if not instance:
-            return False
-
-        return not bool(getattr(instance, 'is_left', False))
-
-    def get_is_subcribing(self, instance):
-        if self.get_is_owner(instance):
-            return False
-
-        if not instance:
-            return False
-
-        return bool(getattr(instance, 'is_subcribe', False))
-
-    def get_is_blocking(self, instance):
-        if self.get_is_owner(instance):
-            return False
-
-        if not instance:
-            return False
-
-        blocking_status = [TopicMember.TopicMemberStatusEnums.BLOCK]
-        return instance.status in blocking_status
-
-
 class RetrieveTopicListSerializer(
     CurrentTopicMemberResolverMixin,
     ListSerializer
@@ -194,7 +127,13 @@ class RetrieveTopicSerializer(
 
     def get_members(self, instance):
         return RetrieveTopicMembersSerializer(
-            instance=instance.topic_members.all()[:15], many=True
+            instance=instance.topic_members.all()[:15],
+            many=True,
+            context={
+                **self.context, 
+                'topic': instance,
+                'check_owner': False
+            },
         ).data
 
     def _get_current_topic_member(self, instance):
@@ -216,8 +155,9 @@ class RetrieveTopicSerializer(
         serializer_context = {
             **self.context,
             'topic': instance,
+            'check_owner': True
         }
-        return CurrentTopicMemberSerializer(
+        return MemberPermissionSerializer(
             instance=current_topic_member or {},
             read_only=True,
             context=serializer_context,

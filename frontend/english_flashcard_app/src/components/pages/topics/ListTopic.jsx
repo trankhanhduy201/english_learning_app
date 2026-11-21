@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { TOPIC_STATUS } from "../../../configs/appConfig";
 import { getTopicImageSrc } from "../../../commons/topicImage";
@@ -6,19 +6,40 @@ import UserAvatar, { getUserDisplayName } from "../../../commons/userAvatar";
 import { memberToUserData } from "../../../commons/topicMember";
 import TopicStatTag from "../../TopicStatTag";
 import StatusBadge from "../../StatusBadge";
+import JoinButton from "../topic/JoinButton";
 
 const ListTopic = memo(({ topics, removeTopic }) => {
+  const [topicList, setTopicList] = useState(topics ?? []);
+
+  useEffect(() => {
+    setTopicList(topics ?? []);
+  }, [topics]);
+
+  const updateTopicMember = useCallback((topicId, newTopicMember) => {
+    setTopicList((currentTopics) => currentTopics.map((topic) =>
+      topic.id === topicId
+        ? {
+            ...topic,
+            current_member: {
+              ...topic.current_member,
+              ...newTopicMember,
+            },
+          }
+        : topic
+    ));
+  }, []);
+
   const allowLearn = (topic) =>
-    topic.current_member.is_owner || topic.current_member.is_accepted;
+    topic.current_member?.is_owner || topic.current_member?.is_accepted;
 
   const allowWatch = (topic) =>
     topic.status === TOPIC_STATUS.PUBLIC.key &&
-    topic.current_member.is_blocking === false;
+    topic.current_member?.is_blocking === false;
 
   const allowEdit = (topic) =>
-    topic.current_member.is_owner || topic.current_member.is_accepted;
+    topic.current_member?.is_owner || topic.current_member?.is_accepted;
 
-  const allowDelete = (topic) => topic.current_member.is_owner;
+  const allowDelete = (topic) => topic.current_member?.is_owner;
 
   const getShortDescription = (description) => {
     if (!description) {
@@ -32,8 +53,14 @@ const ListTopic = memo(({ topics, removeTopic }) => {
 
   const renderedMembers = (topic) => {
     const members = Array.isArray(topic?.members) ? topic.members : [];
-    const displayMembers = members.slice(0, 4);
-    const restCount = Math.max(0, members.length - displayMembers.length);
+    const displayMembers = members.reduce((results, member) => {
+      const isAccepted = member?.member_permissions?.is_accepted ?? false
+      if (isAccepted && results.length < 4) {
+          results.push(member);
+      }
+      return results;
+    }, []);
+    const restCount = Math.max(0, (topic?.member_count ?? 0) - displayMembers.length);
 
     return (
       <div className="d-flex align-items-center gap-1">
@@ -62,7 +89,7 @@ const ListTopic = memo(({ topics, removeTopic }) => {
 
   return (
     <div className="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
-      {topics?.map((topic) => {
+      {topicList.map((topic) => {
         const hasActions =
           allowLearn(topic) ||
           allowEdit(topic) ||
@@ -113,15 +140,26 @@ const ListTopic = memo(({ topics, removeTopic }) => {
                       value={topic.member_count ?? 0}
                       label="members"
                     />
-                    <StatusBadge
-                      className="position-absolute top-0 end-0 m-2"
-                      text={topic.status}
-                      tone={
-                        topic.status === TOPIC_STATUS.PUBLIC.key
-                          ? "success"
-                          : "secondary"
-                      }
-                    />
+                    <div className="position-absolute top-0 end-0 m-2 d-flex flex-column align-items-end gap-1">
+                      <StatusBadge
+                        text={topic.status}
+                        tone={
+                          topic.status === TOPIC_STATUS.PUBLIC.key
+                            ? "success"
+                            : "secondary"
+                        }
+                      />
+                      {topic.current_member && (
+                        <JoinButton
+                          compact
+                          topicId={topic.id}
+                          topicMember={topic.current_member}
+                          updateTopicMember={(newTopicMember) =>
+                            updateTopicMember(topic.id, newTopicMember)
+                          }
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="small text-muted mt-auto">

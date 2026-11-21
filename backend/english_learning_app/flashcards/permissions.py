@@ -15,8 +15,8 @@ class CanJoinTopic(
 		if super().has_object_permission(request, view, obj):
 			return False
 
-		if obj.status != Topic.TopicStatusEnums.PUBLIC:
-			return False
+		# if obj.status != Topic.TopicStatusEnums.PUBLIC:
+		# 	return False
 
 		topic_member = obj.topic_members.first()
 		return (
