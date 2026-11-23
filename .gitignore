@@ -23,3 +23,6 @@ htmlcov/
 venv/
 env/
 *.egg-info/
+
+# Github Copilot
+.github/
