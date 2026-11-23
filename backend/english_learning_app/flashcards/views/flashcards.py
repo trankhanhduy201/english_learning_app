@@ -157,20 +157,24 @@ class VocabularyViewSet(TopicScopedViewMixin, BaseModelViewSet, BulkDestroyModel
 		qs = qs.filter(topic_id=self.get_topic_pk())
 		return qs
 
+	def list(self, request, *args, **kwargs):
+		self.get_topic_object()
+		return super().list(request, *args, **kwargs)
+
 	def create(self, request, *args, **kwargs):
 		kwargs['serializer_context'] = {'topic': self.get_topic_object()}
 		return super().create(request, *args, **kwargs)
 	
-	@action(detail=False, methods=['post'], url_path='generate-audio')
-	def generate_audio(self, request, *args, **kwargs):
-		topic_id = request.GET.get('topic_id')
-		if topic_id:
-			generate_vocab_audio_async(
-				Vocabulary.objects.get_ids_has_no_audio(topic_id), 
-				user_id=request.user.pk
-			)
+	# @action(detail=False, methods=['post'], url_path='generate-audio')
+	# def generate_audio(self, request, *args, **kwargs):
+	# 	topic_id = request.GET.get('topic_id')
+	# 	if topic_id:
+	# 		generate_vocab_audio_async(
+	# 			Vocabulary.objects.get_ids_has_no_audio(topic_id), 
+	# 			user_id=request.user.pk
+	# 		)
 			
-		return Response(status=status.HTTP_204_NO_CONTENT)
+	# 	return Response(status=status.HTTP_204_NO_CONTENT)
 		
 	# Below code for using simple filtering without defining filterset
 	# Note that using filterset_fields and filterset_class together is not supported.
