@@ -39,7 +39,7 @@ const RowComponent = ({ index, style, ...rest }) => {
           </Link>
           <DeleteConfirmButton
             action={`/topic/${topicId}/vocab/${vocab.id}/delete`}
-            formName={"deleting_vocab"}
+            formName={"deleting_vocab_from_list"}
             fetcher={delVocabFetcher}
             btnClass="btn-link p-0"
             color="#212529"

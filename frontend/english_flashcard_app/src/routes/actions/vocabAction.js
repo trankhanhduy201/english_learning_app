@@ -28,7 +28,8 @@ const getValidatedVocabPayload = async (request) => {
   const formData = await request.formData();
   const rawData = qs.parse(Object.fromEntries(formData));
 
-  if (rawData?._form_name === "deleting_vocab") {
+  if (rawData?._form_name === "deleting_vocab" || 
+      rawData?._form_name === "deleting_vocab_from_list") {
     return rawData;
   }
 

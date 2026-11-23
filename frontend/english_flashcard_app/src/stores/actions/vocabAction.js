@@ -95,7 +95,7 @@ export const deleteAllVocabThunk = createThunkWithCallback(
     const respParams = { topic_id: topicId };
     const response = await vocabApi.deleteAllVocabs(topicId);
     if (response?.status === "error") {
-      return rejectWithErrorValue(null, rejectWithValue, response);
+      return rejectWithErrorValue(dispatch, rejectWithValue, response);
     }
 
     dispatchSuccessAlert(dispatch, "All vocabs are deleted successfully");
