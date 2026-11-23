@@ -78,10 +78,7 @@ export const deleteVocabThunk = createThunkWithCallback(
       );
     }
 
-    if (vocabDetailPage) {
-      dispatchSuccessAlert(dispatch, "Vocab is deleted successfully");
-    }
-
+    dispatchSuccessAlert(dispatch, "Vocab is deleted successfully");
     return {
       status: "success",
       data: respParams,
