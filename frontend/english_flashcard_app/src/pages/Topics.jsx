@@ -54,17 +54,17 @@ const Topics = memo(() => {
       <TopicFormSearch key={searchParams.toString()}/>
       <Suspense fallback={<LoadingOverlay />}>
         <Await resolve={topicDatas}>
-          {(topics) => 
+          {({ topics, paginations }) => 
             <>
               <ListTopic 
-                topics={topics.results} 
+                topics={topics} 
                 removeTopic={removeTopic} 
               />
-              {topics.results.length > 0 && (
+              {topics.length > 0 && paginations && (
                 <Pagination 
-                  current_page={topics.paginations.current_page}
-                  total_pages={topics.paginations.total_pages}
-                  total_items={topics.paginations.total_items}
+                  current_page={paginations.current_page}
+                  total_pages={paginations.total_pages}
+                  total_items={paginations.total_items}
                   onPageChange={(page) => navigate(getPageLink(page))}
                 />
               )}

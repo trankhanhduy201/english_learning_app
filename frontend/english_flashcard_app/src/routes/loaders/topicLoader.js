@@ -20,7 +20,10 @@ export const getTopics = async ({ request }) => {
         filters: getFilters({ request })
       }))
       .unwrap()
-      .then((resp) => resp.data);
+      .then((resp) => ({
+        topics: resp.data ?? [],
+        paginations: resp.meta?.paginations ?? null,
+      }));
     return { topicDatas };
   } catch (error) {
     throw new Response("", { status: 400 });
