@@ -231,7 +231,6 @@ class UpdateTopicSerializer(
         fields = [
             'id',
             'name',
-            'learning_language',
             'status',
             'descriptions',
             'upload_image',

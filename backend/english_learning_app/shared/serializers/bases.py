@@ -20,17 +20,47 @@ class GetUserContextMixin:
 class AddExtraDataBeforeCreateUpdateMixin:
     created_by_field = 'created_by'
 
+    def _get_child_serializer(self):
+        return getattr(self, 'child', None)
+
     def _get_extra_fields(self):
-        return [self.created_by_field]
+        extra_fields = [self.created_by_field]
+        child = self._get_child_serializer()
+
+        if child is not None:
+            getter = getattr(child, '_get_extra_fields', None)
+
+            if callable(getter):
+                for field_name in getter():
+                    if field_name not in extra_fields:
+                        extra_fields.append(field_name)
+
+        return extra_fields
+
+    def _get_extra_field_getter(self, field_name):
+        getter_name = f'get_{field_name}_context'
+
+        getter = getattr(self, getter_name, None)
+
+        if not callable(getter):
+            child = self._get_child_serializer()
+            getter = getattr(child, getter_name, None)
+
+        return getter if callable(getter) else None
 
     def _get_extra_field_values(self):
-        field_names = self._get_extra_fields()
         extras = {}
-        for field_name in field_names:
-            if field_name == self.created_by_field:
+
+        for field_name in self._get_extra_fields():
+            getter = self._get_extra_field_getter(field_name)
+
+            if getter:
+                extras[field_name] = getter()
+            elif field_name == self.created_by_field:
                 extras[field_name] = self.get_user_context()
             else:
                 extras[field_name] = self.get_context(field_name)
+
         return extras
 
     def _set_extra_fields(self, validated_data):

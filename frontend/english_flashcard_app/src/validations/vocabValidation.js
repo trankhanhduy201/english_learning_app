@@ -36,11 +36,6 @@ export const vocabDetailSchema = yup
       .string()
       .transform((value) => (value ?? "").toString().trim())
       .required("Word is required."),
-    language: yup
-      .string()
-      .transform((value) => (value ?? "").toString().trim())
-      .oneOf(LANGUAGE_KEYS, "Language is invalid.")
-      .required("Language is required."),
     descriptions: yup
       .string()
       .transform((value) => (value ?? "").toString().trim())

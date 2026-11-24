@@ -108,11 +108,16 @@ class CreateVocabularySerializer(
         read_only_fields = [
             'id', 
             'topic',
+            'language',
             'created_by'
         ]
 
     def _get_extra_fields(self):
-        return super()._get_extra_fields() + ['topic']
+        return super()._get_extra_fields() + ['topic', 'language']
+
+    def get_language_context(self):
+        topic = self.get_context('topic')
+        return getattr(topic, 'learning_language', None)
 
     @transaction.atomic
     def create(self, validated_data):
@@ -139,7 +144,6 @@ class UpdateVocabularySerializer(BaseSerializer):
         fields = [
             'id',
             'word',
-            'language',
             'translations',
             'descriptions',
         ]
@@ -160,11 +164,6 @@ class BaseListVocabulariesSerializer(
     AddExtraDataBeforeCreateMixin,
     BaseListSerializer
 ):
-    def _get_extra_fields(self):
-        if isinstance(self.child, AddExtraDataBeforeCreateMixin):
-            return self.child._get_extra_fields()
-        return []
-    
     @transaction.atomic
     def create(self, validated_data):
         validated_data, validated_translations = self._prepare_validated_data(validated_data)

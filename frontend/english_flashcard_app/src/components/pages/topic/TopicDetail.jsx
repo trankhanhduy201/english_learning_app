@@ -82,10 +82,18 @@ const TopicDetail = memo(({ topic = null, topicId = "", isNew = false }) => {
               <label htmlFor="learning_language" className="form-label">
                 Which language are you learning? <span className="text-danger">*</span>
               </label>
+              {!isNew && (
+                <input
+                  type="hidden"
+                  name="learning_language"
+                  defaultValue={topic?.learning_language}
+                />
+              )}
               <Dropdown
-                name="learning_language"
+                name={isNew ? "learning_language" : undefined}
                 defaultValue={topic?.learning_language}
                 options={Object.values(LANGUAGES)}
+                disabled={!isNew}
               />
               {editTopicFetcher.data?.errors?.learning_language && (
                 <FieldErrors

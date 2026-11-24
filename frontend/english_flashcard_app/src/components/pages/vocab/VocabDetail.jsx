@@ -36,6 +36,7 @@ const VocabDetail = memo(
               name="language"
               defaultValue={defaultLanguage}
               options={Object.values(LANGUAGES)}
+              disabled={true}
             />
             {errors?.language && <FieldErrors errors={errors.language} />}
           </div>
